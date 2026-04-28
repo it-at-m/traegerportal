@@ -17,9 +17,8 @@ on:
         description: "Select the node service to release"
         required: true
         default: frontend
-        options: # Add or modify paths according to your project structure
-          - frontend
-          - webcomponent
+        options:
+          - kita-stammdaten-webcomponent
       skip-deployment:
         default: true
         type: boolean
