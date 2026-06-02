@@ -29,7 +29,7 @@
 [![Made with love by it@M][made-with-love-shield]][itm-opensource]
 [![GitHub license][license-shield]][license]
 
-The repository contains components for the provider portal (German: "Trägerportal") of the City of Munich. The Provider Portal is an online platform designed for organizations managing daycare centers and kindergartens.
+The repository contains components for the provider portal (German: "Trägerportal") of the City of Munich. The provider portal is an online platform designed for organizations managing daycare centers and kindergartens.
 
 ## Build with
 

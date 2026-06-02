@@ -1,6 +1,6 @@
 import { defineCustomElement } from "vue";
 
-import RefarchHelloWorldVueComponent from "@/refarch-hello-world-webcomponent.ce.vue";
+import RefarchHelloWorldVueComponent from "@/traeger-overview.ce.vue";
 
 // convert into custom element constructor
 const RefarchHelloWorldWebComponent = defineCustomElement(
@@ -9,6 +9,6 @@ const RefarchHelloWorldWebComponent = defineCustomElement(
 
 // register
 customElements.define(
-  "refarch-hello-world-webcomponent",
+  "traeger-overview",
   RefarchHelloWorldWebComponent
 );

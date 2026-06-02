@@ -35,8 +35,8 @@ export default defineConfig(({ mode }) => {
       manifest: true, // required for post build logic in 'processes' folder
       rolldownOptions: {
         input: {
-          "refarch-hello-world-webcomponent":
-            "./src/refarch-hello-world-webcomponent.ts",
+          "traeger-overview":
+            "./src/traeger-overview.ts",
         },
         output: {
           entryFileNames: "entry-[name]-[hash].js",
