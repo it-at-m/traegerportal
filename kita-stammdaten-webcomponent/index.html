@@ -27,6 +27,21 @@
       src="src/traeger-overview.ts"
       type="module"
     ></script>
+    <script
+      src="src/einrichtung-overview.ts"
+      type="module"
+    ></script>
+    <style>
+      .component-display {
+          width: 90%;
+          margin: 0 auto;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border: 1px solid #ccc;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
+  </style>
   </head>
   <body>
     <noscript>
@@ -35,10 +50,13 @@
         be activated.
       </strong>
     </noscript>
-    <div>
+    <div class="component-display">
       <traeger-overview
         first-name="Max"
       ></traeger-overview>
+      <einrichtung-overview
+        first-name="Max"
+      ></einrichtung-overview>
     </div>
   </body>
 </html>
