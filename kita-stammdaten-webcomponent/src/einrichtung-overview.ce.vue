@@ -11,7 +11,7 @@
       <muc-accordion-item v-for="einrichtung in einrichtungen" :key="einrichtung.id" :header="einrichtung.name">
         <template #subtitle>
           {{ einrichtung.adresse }}
-          <muc-button variant="ghost" @click.stop="test()">Einrichtungsdetails<muc-icon icon="arrow-right" /></muc-button>
+          <a :href="bearbeitenFormularUrl(einrichtung.id)"><muc-button variant="ghost">Einrichtungsdetails<muc-icon icon="arrow-right" /></muc-button></a>
         </template>
         <template #content>
           <span class="einrichtung-attribute"><b>Kibigweb-ID:</b> {{ einrichtung.kibigwebid }}</span>
@@ -23,29 +23,48 @@
 </template>
 
 <script setup lang="ts">
+import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 
+import { ref, onMounted } from "vue";
 import { MucButton, MucIcon, MucAccordion, MucAccordionItem, MucInput } from "@muenchen/muc-patternlab-vue";
 
 import EinrichtungDTO from '@/types/EinrichtungDTO';
 
-function test() : void {
-  console.debug("Test");
+const props = defineProps<{
+  stammdatenUrl: string;
+}>();
+
+function bearbeitenFormularUrl(einrichtungId: string) : string {
+  return `${props.stammdatenUrl}/traegerAnzeigen/${einrichtungId}`;
 }
 
-const props = withDefaults(
-    defineProps<{
-      /**
-       * DTO representing a Traeger
-       */
-      einrichtungen?: EinrichtungDTO[];
-    }>(),
-    { einrichtungen: () => [
-      new EinrichtungDTO("123", "Testeinrichtung 1", "Teststraße 1, 80331 München", "1620011000", "In Betrieb"),
-      new EinrichtungDTO("124", "Testeinrichtung 2", "Teststraße 2, 80331 München", "1620011001", "Vorplanung")
-    ]}
-);
+const einrichtungen = ref<EinrichtungDTO[]>();
+
+function loadEinrichtungen() {
+  const service = new StammdatenService();
+  service
+    .searchEinrichtungen()
+    .then((resp) => {
+      if (resp.ok) {
+        resp.json().then((response: EinrichtungDTO[]) => {
+          einrichtungen.value = response;
+        });
+      } else {
+        resp.text().then((errBody) => {
+          throw Error(errBody);
+        });
+      }
+    })
+    .catch((error) => {
+      console.debug(error);
+    });
+}
+
+onMounted(() => {
+  loadEinrichtungen();
+})
 </script>
 
 <style>
