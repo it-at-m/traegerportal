@@ -1,0 +1,115 @@
+/*
+
+ * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
+ * der Landeshauptstadt München, 2022
+ */
+package de.muenchen.rbs.traegerportal.gateway.adapter;
+
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ *
+ * Provides an Access Token, which is requested via Client Credentials Flow.
+ *
+ * @author m.zollbrecht
+ * @see <a href=
+ *      "https://auth0.com/docs/flows/client-credentials-flow">https://auth0.com/docs/flows/client-credentials-flow</a>
+ */
+@Slf4j
+public class ClientCredentialsAccessTokenProvider {
+
+    private final WebClient webClient;
+    private final String tokenUrl;
+    private final String clientId;
+    private final String clientSecret;
+    private final String scope;
+    private final int tokenCacheInSeconds;
+    private Cache<String, String> tokenCache;
+
+    /**
+     * Erstellt einen ClientCredentialsAccessTokenProvider
+     *
+     * @param webClientBuilder zum Initialisieren des WebClient
+     * @param tokenUrl URL, an der Auth-Tokens abgeholt werden sollen
+     * @param clientId client-id mit der Auth-Tokens abgeholt werden sollen
+     * @param clientSecret client-secret, mit dem Auth-Tokens abgeholt werden sollen
+     * @param scope scope für die Anmeldung
+     * @param tokenCacheInSeconds Aufbewahrungszeit für Tokens
+     */
+    public ClientCredentialsAccessTokenProvider(WebClient.Builder webClientBuilder, String tokenUrl, String clientId,
+            String clientSecret, String scope, int tokenCacheInSeconds) {
+        this.webClient = webClientBuilder.baseUrl(tokenUrl).build();
+        this.tokenUrl = tokenUrl;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.scope = scope;
+        this.tokenCacheInSeconds = tokenCacheInSeconds;
+        log.info("Initialized with tokenUrl='{}', client-id: '{}' and scope '{}'.", this.tokenUrl, this.clientId,
+                this.scope);
+
+        tokenCache = CacheBuilder.newBuilder().maximumSize(1)
+                .expireAfterWrite(this.tokenCacheInSeconds, TimeUnit.SECONDS)
+                .build();
+
+        this.getAccessToken();
+
+        log.info("Retrieved initial access token, caching for {} seconds...", this.tokenCacheInSeconds);
+    }
+
+    /**
+     * @return retrieves an access token using client credentials flow
+     */
+    public String getAccessToken() {
+        String token = tokenCache.getIfPresent(this.clientId);
+        if (token != null) {
+            return token;
+        }
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "client_credentials");
+        params.add("client_id", this.clientId);
+        params.add("client_secret", this.clientSecret);
+        params.add("scope", this.scope);
+
+        HashMap<String, String> responseBody = this.webClient.post()
+                .uri("/")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(params))
+                .exchangeToMono(response -> {
+                    if (response.statusCode().is2xxSuccessful()) {
+                        return response.bodyToMono(new ParameterizedTypeReference<HashMap<String, String>>() {
+                        });
+                    } else {
+                        throw new RuntimeException(
+                                "Request for aquiring access token did not return 2XX successful status code.");
+                    }
+                }).block();
+
+        String accessToken = responseBody.get("access_token");
+        int expiresInSeconds = Integer.parseInt(responseBody.get("expires_in"));
+        log.info("Aquired access token (expires in: {} s)", expiresInSeconds);
+        if (expiresInSeconds <= this.tokenCacheInSeconds) {
+            log.error(
+                    "New access token expires in {} seconds, but it will be cached and used for the next {} seconds!" +
+                            "Consider configuring a shorter token cache duration!",
+                    expiresInSeconds, this.tokenCacheInSeconds);
+        }
+        tokenCache.put(this.clientId, accessToken);
+        return accessToken;
+    }
+
+}

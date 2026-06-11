@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.stereotype.Component;
+
+import de.muenchen.rbs.traegerportal.gateway.adapter.ClientCredentialsAccessTokenProvider;
 
 @Component
 public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<SecurityGatewayFilterFactory.Config> {
@@ -15,7 +17,10 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
     private final String UK_ID_CLAIM = "datenuebermittlerPseudonymId";
     
     @Autowired
-    private JwtDecoder jwtDecoder; 
+    private ReactiveJwtDecoder jwtDecoder;
+    
+    @Autowired
+    private ClientCredentialsAccessTokenProvider stammdatenAccesTokenProvider;
     
     public SecurityGatewayFilterFactory() {
         super(Config.class);
@@ -35,7 +40,7 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
                 
                 exchange.getRequest().mutate()
                         .uri(URI.create(newUri))
-                        .header("Authorization", "TODO")
+                        .header("Authorization", "Bearer " + stammdatenAccesTokenProvider.getAccessToken())
                         .build();
             }
 
@@ -44,7 +49,7 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
     }
 
     private String extractUkIdFromToken(String token) {
-        Jwt jwt = jwtDecoder.decode(token);
+        Jwt jwt = jwtDecoder.decode(token).block();
         return jwt.getClaimAsString(UK_ID_CLAIM);
     }
 

@@ -9,11 +9,11 @@
         <relativePath />
     </parent>
 
-    <groupId>de.muenchen.oss.refarch</groupId>
-    <artifactId>refarch-gateway</artifactId>
+    <groupId>de.muenchen.rbs.traegerportal</groupId>
+    <artifactId>traegerportal-gateway</artifactId>
     <version>1.9.0-SNAPSHOT</version>
 
-    <name>refarch-gateway</name>
+    <name>traegerportal-gateway</name>
     <description>Ready to use RefArch gateway based on Spring Cloud Gateway</description>
     <url>https://github.com/it-at-m/refarch</url>
     <licenses>
@@ -140,6 +140,21 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
+
+		<!-- Caching -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+		</dependency>
+        <dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>33.5.0-jre</version>
+		</dependency>
 
         <!-- Configuration Processor -->
         <dependency>
