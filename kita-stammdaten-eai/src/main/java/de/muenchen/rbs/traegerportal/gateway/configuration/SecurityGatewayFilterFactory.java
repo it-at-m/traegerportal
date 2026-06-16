@@ -5,23 +5,21 @@ import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import de.muenchen.rbs.traegerportal.gateway.adapter.ClientCredentialsAccessTokenProvider;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<SecurityGatewayFilterFactory.Config> {
 
-    private final String UK_ID_CLAIM = "datenuebermittlerPseudonymId";
-    
-    @Autowired
-    private ReactiveJwtDecoder jwtDecoder;
-    
     @Autowired
     private ClientCredentialsAccessTokenProvider stammdatenAccesTokenProvider;
-    
+
     public SecurityGatewayFilterFactory() {
         super(Config.class);
     }
@@ -32,25 +30,33 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
             String authorizationHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 String jwtToken = authorizationHeader.substring(7);
+                log.info("Token received: {}", jwtToken);
 
-                String ukId = extractUkIdFromToken(jwtToken);
+                URI newUri = UriComponentsBuilder
+                        .fromUri(exchange.getRequest().getURI())
+                        .build()
+                        .toUri();
 
-                URI uri = exchange.getRequest().getURI();
-                String newUri = uri.toString() + (uri.getQuery() == null ? "?" : "&") + "ukId=" + ukId;
-                
-                exchange.getRequest().mutate()
-                        .uri(URI.create(newUri))
-                        .header("Authorization", "Bearer " + stammdatenAccesTokenProvider.getAccessToken())
-                        .build();
+                return stammdatenAccesTokenProvider.getAccessToken().flatMap(accessToken -> {
+                    ServerHttpRequest newRequest = exchange.getRequest().mutate()
+                            .uri(newUri)
+                            .headers(httpHeaders -> {
+                                httpHeaders.remove("Authorization");
+                                httpHeaders.set("Authorization", "Bearer " + accessToken);
+                                httpHeaders.set("UserAuthorization", authorizationHeader);
+                            }).build();
+                    return chain.filter(exchange.mutate().request(newRequest).build());
+                });
+            } else {
+                log.debug("No Authorization found. Short-circuititing to 401 response.");
+                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                exchange.getResponse().getHeaders().set("Content-Type", "application/json");
+                exchange.getResponse().setComplete();
+
+                return chain.filter(exchange);
             }
 
-            return chain.filter(exchange);
         };
-    }
-
-    private String extractUkIdFromToken(String token) {
-        Jwt jwt = jwtDecoder.decode(token).block();
-        return jwt.getClaimAsString(UK_ID_CLAIM);
     }
 
     @Override

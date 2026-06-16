@@ -24,14 +24,29 @@ spring:
             - RemoveRequestHeader=x-xsrf-token
             - TokenRelay=
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://sso.muenchen.de/auth/realms/public
+          jwk-set-uri: https://sso.muenchen.de/auth/realms/public/protocol/openid-connect/certs
+          audience: rbseinr-traegerportal
+
+adapter:
+  einrichtungsverwaltung:
+    base-url: https://kita-einrichtung.muenchen.de/
+    security:
+      token-url: https://sso.muenchen.de/auth/realms/muenchen.de/protocol/openid-connect/token
+      client-id: rbseinr-traegerportal
+      client-secret: client_secret
+      scope: LHM_Extended
+      cache-seconds: 60
+
 server:
   error:
     include-message: always
     whitelabel:
       enabled: false
-		
-app:
-  einrichtungsverwaltung-url: https://kita-einrichtung.muenchen.de/
 
 management:
   endpoints:

@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -20,6 +19,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 /**
  *
@@ -73,10 +73,10 @@ public class ClientCredentialsAccessTokenProvider {
     /**
      * @return retrieves an access token using client credentials flow
      */
-    public String getAccessToken() {
+    public Mono<String> getAccessToken() {
         String token = tokenCache.getIfPresent(this.clientId);
         if (token != null) {
-            return token;
+            return Mono.just(token);
         }
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -85,7 +85,7 @@ public class ClientCredentialsAccessTokenProvider {
         params.add("client_secret", this.clientSecret);
         params.add("scope", this.scope);
 
-        HashMap<String, String> responseBody = this.webClient.post()
+        Mono<HashMap<String, String>> responseBody = this.webClient.post()
                 .uri("/")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(params))
@@ -97,19 +97,20 @@ public class ClientCredentialsAccessTokenProvider {
                         throw new RuntimeException(
                                 "Request for aquiring access token did not return 2XX successful status code.");
                     }
-                }).block();
+                });
 
-        String accessToken = responseBody.get("access_token");
-        int expiresInSeconds = Integer.parseInt(responseBody.get("expires_in"));
-        log.info("Aquired access token (expires in: {} s)", expiresInSeconds);
-        if (expiresInSeconds <= this.tokenCacheInSeconds) {
-            log.error(
-                    "New access token expires in {} seconds, but it will be cached and used for the next {} seconds!" +
-                            "Consider configuring a shorter token cache duration!",
-                    expiresInSeconds, this.tokenCacheInSeconds);
-        }
-        tokenCache.put(this.clientId, accessToken);
-        return accessToken;
+        return responseBody.flatMap(response -> {
+            String accessToken = response.get("access_token");
+            int expiresInSeconds = Integer.parseInt(response.get("expires_in"));
+            log.info("Aquired access token (expires in: {} s)", expiresInSeconds);
+            if (expiresInSeconds <= this.tokenCacheInSeconds) {
+                log.error(
+                        "New access token expires in {} seconds, but it will be cached and used for the next {} seconds!" +
+                                "Consider configuring a shorter token cache duration!",
+                        expiresInSeconds, this.tokenCacheInSeconds);
+            }
+            tokenCache.put(this.clientId, accessToken);
+            return Mono.just(accessToken);
+        }).switchIfEmpty(Mono.just("default"));
     }
-
 }

@@ -26,17 +26,14 @@ public class GatewayConfig {
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+        log.info("Configuring routes...");
+
         return builder.routes()
-                .route("traegerdaten", r -> r.path("/traegerdaten")
-                        .and().method("GET")
-                        .filters(f -> f.filter(gatewayFilterFactory.apply(new SecurityGatewayFilterFactory.Config()))
-                                .setPath("/"))
-                        .uri(evUrl + "/traegerdaten/"))
                 .route("einrichtungen", r -> r.path("/einrichtungen")
                         .and().method("GET")
                         .filters(f -> f.filter(gatewayFilterFactory.apply(new SecurityGatewayFilterFactory.Config()))
-                                .setPath("/"))
-                        .uri(evUrl + "/einrichtungen/"))
+                                .setPath("/einrichtungen"))
+                        .uri(evUrl))
                 .build();
     }
 }
