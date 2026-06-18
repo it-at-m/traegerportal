@@ -9,14 +9,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static de.muenchen.rbs.traegerportal.gateway.TestConstants.SPRING_TEST_PROFILE;
-import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
-import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
 
-import com.github.tomakehurst.wiremock.http.HttpHeader;
-import com.github.tomakehurst.wiremock.http.HttpHeaders;
-import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-import de.muenchen.rbs.traegerportal.gateway.OAuthSecurityMockConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,22 +23,23 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import com.github.tomakehurst.wiremock.http.HttpHeader;
+import com.github.tomakehurst.wiremock.http.HttpHeaders;
+import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+
+import de.muenchen.rbs.traegerportal.gateway.OAuthSecurityMockConfiguration;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(SPRING_TEST_PROFILE)
 @AutoConfigureWireMock
 @Import(OAuthSecurityMockConfiguration.class)
-class BackendRouteTest {
-    public static final String XSRF_HEADER_NAME = "X-XSRF-TOKEN";
+class StammdatenRouteTest {
     private static final String TEST_KEY = "testkey";
     public static final String TEST_VALUE = "testvalue";
     private static final String TEST_JSON = "{ \"" + TEST_KEY + "\" : \"" + TEST_VALUE + "\" }";
     public static final String TEST_KEY_EXPRESSION = "$." + TEST_KEY;
 
-    public static final String URI_PUBLIC = "/public/api/backend/test";
-    public static final String URI_PUBLIC_EXTRA_PATTERN = "/api/backend/public/test";
-    public static final String URI_CLIENTS = "/clients/api/backend/test";
-    public static final String URI_CLIENTS_EXTRA_PATTERN = "/api/backend/clients/test";
-    public static final String URI_DEFAULT = "/api/backend/test";
+    public static final String URI_EINRICHTUNGEN = "/einrichtungen";
 
     @Autowired
     private ApplicationContext context;
@@ -58,139 +53,36 @@ class BackendRouteTest {
                 .configureClient()
                 .build();
         // setup wiremock for routes
-        stubFor(get(urlMatching(".*/test"))
+        stubFor(get(urlMatching(".*/einrichtungen"))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeaders(new HttpHeaders(
                                 new HttpHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, "application/json"),
                                 new HttpHeader(org.springframework.http.HttpHeaders.WWW_AUTHENTICATE,
-                                        "Bearer realm=\"Access to the staging site\", charset=\"UTF-8\"") // removed by route filter
+                                        "Bearer realm=\"Access to the staging site\", charset=\"UTF-8\"")
                         ))
-                        .withBody(TEST_JSON)));
-        stubFor(post(urlEqualTo("/test"))
-                .willReturn(aResponse()
-                        .withStatus(HttpStatus.OK.value())
                         .withBody(TEST_JSON)));
     }
 
     @Test
     @WithMockUser
-    void backendGetSuccess() {
+    void stammdatenGetSuccess() {
         webTestClient
-                .get().uri(URI_DEFAULT)
-                .header(org.springframework.http.HttpHeaders.COOKIE,
-                        "SESSION=5cfb01a3-b691-4ca9-8735-a05690e6c2ec; XSRF-TOKEN=4d82f9f1-41f6-4a09-994a-df99d30d1be9") // removed by default-filter
-                .header(XSRF_HEADER_NAME, "5cfb01a3-b691-4ca9-8735-a05690e6c2ec") // angular specific -> removed by default-filter
+                .get().uri(URI_EINRICHTUNGEN)
                 .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, "application/hal+json")
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.OK)
-                .expectHeader().valueMatches(org.springframework.http.HttpHeaders.CONTENT_TYPE, "application/json")
-                .expectHeader().doesNotExist(org.springframework.http.HttpHeaders.WWW_AUTHENTICATE)
-                .expectBody().jsonPath(TEST_KEY_EXPRESSION).isEqualTo(TEST_VALUE);
+                .expectHeader().valueMatches(org.springframework.http.HttpHeaders.CONTENT_TYPE, "application/json");
 
-        verify(getRequestedFor(urlEqualTo("/test"))
-                .withoutHeader(org.springframework.http.HttpHeaders.COOKIE)
-                .withoutHeader(XSRF_HEADER_NAME)
+        verify(getRequestedFor(urlEqualTo("/einrichtungen"))
                 .withHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, new EqualToPattern("application/hal+json")));
     }
 
     @Test
-    void backendGetForbidden() {
+    void stammdatenGetForbidden() {
         webTestClient
-                .get().uri(URI_DEFAULT)
+                .get().uri(URI_EINRICHTUNGEN)
                 .exchange()
-                // because redirect to login
-                .expectStatus().isEqualTo(HttpStatus.FOUND)
-                .expectHeader().valueMatches(org.springframework.http.HttpHeaders.LOCATION, ".*/login.*");
-    }
-
-    @Test
-    void backendPostForbidden() {
-        // No CSRF, no auth -> blocked by CSRF (403)
-        webTestClient
-                .post().uri(URI_DEFAULT)
-                .exchange()
-                .expectStatus().isForbidden();
-
-        // With CSRF, still no auth -> redirected to login (302)
-        webTestClient
-                .mutateWith(csrf())
-                .post().uri(URI_DEFAULT)
-                .exchange()
-                .expectStatus().isFound();
-    }
-
-    @Test
-    void publicGetSuccess() {
-        webTestClient
-                .get().uri(URI_PUBLIC)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().jsonPath(TEST_KEY_EXPRESSION).isEqualTo(TEST_VALUE);
-    }
-
-    @Test
-    void publicPostSuccess() {
-        webTestClient
-                .mutateWith(csrf())
-                .post().uri(URI_PUBLIC)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().jsonPath(TEST_KEY_EXPRESSION).isEqualTo(TEST_VALUE);
-    }
-
-    @Test
-    void publicPostExtraPatternMissingMethod() {
-        // With CSRF, still no auth -> redirected to login (302)
-        webTestClient
-                .mutateWith(csrf())
-                .post().uri(URI_PUBLIC_EXTRA_PATTERN)
-                .exchange()
-                .expectStatus().isFound();
-    }
-
-    @Test
-    void publicGetSuccessExtraPattern() {
-        webTestClient
-                .get().uri(URI_PUBLIC_EXTRA_PATTERN)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().jsonPath(TEST_KEY_EXPRESSION).isEqualTo(TEST_VALUE);
-    }
-
-    @Test
-    void clientGetSuccess() {
-        webTestClient
-                .mutateWith(mockJwt())
-                .get().uri(URI_CLIENTS)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().jsonPath(TEST_KEY_EXPRESSION).isEqualTo(TEST_VALUE);
-    }
-
-    @Test
-    void clientGetForbidden() {
-        webTestClient
-                .get().uri(URI_CLIENTS)
-                .exchange()
-                .expectStatus().isUnauthorized();
-    }
-
-    @Test
-    void clientGetForbiddenExtraPattern() {
-        webTestClient
-                .get().uri(URI_CLIENTS_EXTRA_PATTERN)
-                .exchange()
-                .expectStatus().isUnauthorized();
-    }
-
-    @Test
-    void clientGetSuccessExtraPattern() {
-        webTestClient
-                .mutateWith(mockJwt())
-                .get().uri(URI_CLIENTS_EXTRA_PATTERN)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().jsonPath(TEST_KEY_EXPRESSION).isEqualTo(TEST_VALUE);
+                .expectStatus().isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 }
