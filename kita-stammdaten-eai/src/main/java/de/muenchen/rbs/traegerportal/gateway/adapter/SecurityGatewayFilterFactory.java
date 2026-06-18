@@ -1,4 +1,4 @@
-package de.muenchen.rbs.traegerportal.gateway.configuration;
+package de.muenchen.rbs.traegerportal.gateway.adapter;
 
 import java.net.URI;
 
@@ -7,10 +7,10 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import de.muenchen.rbs.traegerportal.gateway.adapter.ClientCredentialsAccessTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,6 +19,9 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
 
     @Autowired
     private ClientCredentialsAccessTokenProvider stammdatenAccesTokenProvider;
+
+    @Autowired
+    private ReactiveJwtDecoder jwtDecoder;
 
     public SecurityGatewayFilterFactory() {
         super(Config.class);
@@ -30,22 +33,28 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
             String authorizationHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 String jwtToken = authorizationHeader.substring(7);
-                log.info("Token received: {}", jwtToken);
 
-                URI newUri = UriComponentsBuilder
-                        .fromUri(exchange.getRequest().getURI())
-                        .build()
-                        .toUri();
+                return jwtDecoder.decode(jwtToken).flatMap(jwt -> {
+                    String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
+                    String user = jwt.getClaimAsString("username");
 
-                return stammdatenAccesTokenProvider.getAccessToken().flatMap(accessToken -> {
-                    ServerHttpRequest newRequest = exchange.getRequest().mutate()
-                            .uri(newUri)
-                            .headers(httpHeaders -> {
-                                httpHeaders.remove("Authorization");
-                                httpHeaders.set("Authorization", "Bearer " + accessToken);
-                                httpHeaders.set("UserAuthorization", authorizationHeader);
-                            }).build();
-                    return chain.filter(exchange.mutate().request(newRequest).build());
+                    URI newUri = UriComponentsBuilder
+                            .fromUri(exchange.getRequest().getURI())
+                            .queryParam("datenuebermittlerPesudonymId", ukId)
+                            .queryParam("username", user)
+                            .build()
+                            .toUri();
+
+                    return stammdatenAccesTokenProvider.getAccessToken().flatMap(accessToken -> {
+                        ServerHttpRequest newRequest = exchange.getRequest().mutate()
+                                .uri(newUri)
+                                .headers(httpHeaders -> {
+                                    httpHeaders.remove("Authorization");
+                                    httpHeaders.set("Authorization", "Bearer " + accessToken);
+                                    httpHeaders.set("UserAuthorization", authorizationHeader);
+                                }).build();
+                        return chain.filter(exchange.mutate().request(newRequest).build());
+                    });
                 });
             } else {
                 log.debug("No Authorization found. Short-circuititing to 401 response.");

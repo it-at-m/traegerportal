@@ -6,6 +6,7 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import de.muenchen.rbs.traegerportal.gateway.adapter.SecurityGatewayFilterFactory;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
