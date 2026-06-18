@@ -6,23 +6,6 @@ spring:
   main:
     web-application-type: reactive
     banner-mode: console
-  cloud:
-    gateway:
-      server:
-        webflux:
-          globalcors:
-            cors-configurations:
-              '[/public/**]':
-                allowedOriginPatterns: ${ALLOWED_ORIGINS_PUBLIC}
-              '[/clients/**]':
-                allowedOriginPatterns: ${ALLOWED_ORIGINS_CLIENTS}
-                allowedHeaders: "*"
-                allowCredentials: true
-                allowedMethods: "*"
-          default-filters:
-            - RemoveRequestHeader=cookie
-            - RemoveRequestHeader=x-xsrf-token
-            - TokenRelay=
 
   security:
     oauth2:

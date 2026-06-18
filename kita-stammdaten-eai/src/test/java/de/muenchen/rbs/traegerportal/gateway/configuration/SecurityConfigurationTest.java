@@ -1,7 +1,5 @@
 package de.muenchen.rbs.traegerportal.gateway.configuration;
 
-import de.muenchen.rbs.traegerportal.gateway.OAuthSecurityMockConfiguration;
-import de.muenchen.rbs.traegerportal.gateway.TestConstants;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
@@ -9,6 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import de.muenchen.rbs.traegerportal.gateway.OAuthSecurityMockConfiguration;
+import de.muenchen.rbs.traegerportal.gateway.TestConstants;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(profiles = { TestConstants.SPRING_TEST_PROFILE })
@@ -20,13 +21,12 @@ class SecurityConfigurationTest {
 
     @Test
     void accessSecuredResourceRootThenUnauthorized() {
-        // 302 is returned instead of 401 because auf cookie session
-        api.get().uri("/").exchange().expectStatus().isFound();
+        api.get().uri("/").exchange().expectStatus().isUnauthorized();
     }
 
     @Test
-    void accessSecuredResourceClientsThenUnauthorized() {
-        api.get().uri("/clients/test").exchange().expectStatus().isUnauthorized();
+    void accessSecuredEinrichtungenThenUnauthorized() {
+        api.get().uri("/einrichtungen").exchange().expectStatus().isUnauthorized();
     }
 
     @Test
