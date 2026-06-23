@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
@@ -55,6 +56,13 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
                                 }).build();
                         return chain.filter(exchange.mutate().request(newRequest).build());
                     });
+                }).onErrorResume(e -> {
+                    // Handle JWT decode errors
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    exchange.getResponse().getHeaders().set("Content-Type", "application/json");
+                    return exchange.getResponse().writeWith(
+                            Mono.just(exchange.getResponse().bufferFactory().wrap(
+                                    "{\"error\": \"Invalid token\"}".getBytes())));
                 });
             } else {
                 log.debug("No Authorization found. Short-circuititing to 401 response.");

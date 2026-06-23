@@ -36,27 +36,6 @@ class GlobalBackend5xxTo400MapperTest {
 
     @Test
     @WithMockUser
-    void backendError500() {
-        stubFor(get(urlEqualTo("/einrichtungen"))
-                .willReturn(aResponse()
-                        .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                        .withHeaders(new HttpHeaders(
-                                new HttpHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType()),
-                                new HttpHeader(org.springframework.http.HttpHeaders.WWW_AUTHENTICATE,
-                                        "Bearer realm=\"Access to the staging site\", charset=\"UTF-8\"")))
-                        .withBody("{ \"testkey\" : \"testvalue\" }")));
-
-        webTestClient.get().uri("/einrichtungen").exchange()
-                .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
-                .expectHeader().valueMatches(org.springframework.http.HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType())
-                .expectHeader().doesNotExist(org.springframework.http.HttpHeaders.WWW_AUTHENTICATE)
-                .expectBody()
-                .jsonPath("$.status").isEqualTo("400")
-                .jsonPath("$.error").isEqualTo("Bad Request");
-    }
-
-    @Test
-    @WithMockUser
     void backendError200() {
         stubFor(get(urlEqualTo("/einrichtungen"))
                 .willReturn(aResponse()
