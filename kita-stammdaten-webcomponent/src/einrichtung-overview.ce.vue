@@ -4,18 +4,33 @@
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
-    <muc-input class="einrichtung-suche" type="text" placeholder="Einrichtung suchen">
+    <muc-input
+      class="einrichtung-suche"
+      type="text"
+      placeholder="Einrichtung suchen"
+    >
       <template #prefix><muc-icon icon="search" /></template>
     </muc-input>
     <muc-accordion multiple>
-      <muc-accordion-item v-for="einrichtung in einrichtungen" :key="einrichtung.id" :header="einrichtung.name">
+      <muc-accordion-item
+        v-for="einrichtung in einrichtungen"
+        :key="einrichtung.id"
+        :header="einrichtung.name"
+      >
         <template #subtitle>
           {{ einrichtung.adresse }}
-          <a :href="bearbeitenFormularUrl(einrichtung.id)"><muc-button variant="ghost">Einrichtungsdetails<muc-icon icon="arrow-right" /></muc-button></a>
+          <a :href="bearbeitenFormularUrl(einrichtung.id)"
+            ><muc-button variant="ghost"
+              >Einrichtungsdetails<muc-icon icon="arrow-right" /></muc-button
+          ></a>
         </template>
         <template #content>
-          <span class="einrichtung-attribute"><b>Kibigweb-ID:</b> {{ einrichtung.kibigwebid }}</span>
-          <span class="einrichtung-attribute"><b>Status:</b> {{ einrichtung.status }}</span>
+          <span class="einrichtung-attribute"
+            ><b>Kibigweb-ID:</b> {{ einrichtung.kibigwebid }}</span
+          >
+          <span class="einrichtung-attribute"
+            ><b>Status:</b> {{ einrichtung.status }}</span
+          >
         </template>
       </muc-accordion-item>
     </muc-accordion>
@@ -23,20 +38,25 @@
 </template>
 
 <script setup lang="ts">
-import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
+import {
+  MucAccordion,
+  MucAccordionItem,
+  MucButton,
+  MucIcon,
+  MucInput,
+} from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
+import { onMounted, ref } from "vue";
 
-import { ref, onMounted } from "vue";
-import { MucButton, MucIcon, MucAccordion, MucAccordionItem, MucInput } from "@muenchen/muc-patternlab-vue";
-
-import EinrichtungDTO from '@/types/EinrichtungDTO';
+import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
+import EinrichtungDTO from "@/types/EinrichtungDTO";
 
 const props = defineProps<{
   stammdatenUrl: string;
 }>();
 
-function bearbeitenFormularUrl(einrichtungId: string) : string {
+function bearbeitenFormularUrl(einrichtungId: string): string {
   return `${props.stammdatenUrl}/traegerAnzeigen/${einrichtungId}`;
 }
 
@@ -64,7 +84,7 @@ function loadEinrichtungen() {
 
 onMounted(() => {
   loadEinrichtungen();
-})
+});
 </script>
 
 <style>

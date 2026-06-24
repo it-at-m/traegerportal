@@ -8,7 +8,4 @@ const EinrichtungOverviewWebComponent = defineCustomElement(
 );
 
 // register
-customElements.define(
-  "einrichtung-overview",
-  EinrichtungOverviewWebComponent
-);
+customElements.define("einrichtung-overview", EinrichtungOverviewWebComponent);

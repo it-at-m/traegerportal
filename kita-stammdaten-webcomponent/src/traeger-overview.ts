@@ -8,7 +8,4 @@ const TraegerOverviewWebComponent = defineCustomElement(
 );
 
 // register
-customElements.define(
-  "traeger-overview",
-  TraegerOverviewWebComponent
-);
+customElements.define("traeger-overview", TraegerOverviewWebComponent);

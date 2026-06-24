@@ -4,7 +4,11 @@
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
-    <muc-card v-if="traeger" :title="traeger.name" :href="hasLink ? traegerLink : undefined">
+    <muc-card
+      v-if="traeger"
+      :title="traeger.name"
+      :href="hasLink ? traegerLink : undefined"
+    >
       <template #content>
         <div><muc-icon icon="account" /><b>Träger-ID:</b> {{ traeger.id }}</div>
         <div><muc-icon icon="home" /><b>Name:</b> {{ traeger.name }}</div>
@@ -22,8 +26,8 @@
 import { MucCard, MucIcon } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
+import { computed, onMounted, ref } from "vue";
 
-import { ref, onMounted, computed  } from "vue";
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import TraegerDTO from "@/types/TraegerDTO";
 
@@ -55,15 +59,15 @@ function loadTraeger() {
 
 const traegerLink = computed(() => {
   return `${props.stammdatenUrl}/traegerAnzeigen/${traeger.value.id}`;
-})
+});
 
 const hasLink = computed(() => {
   return props.stammdatenUrl && traeger.value;
-})
+});
 
 onMounted(() => {
   loadTraeger();
-})
+});
 </script>
 
 <style>
