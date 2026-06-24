@@ -2,17 +2,6 @@ import EinrichtungDTO from "@/types/EinrichtungDTO";
 
 export default class StammdatenService {
   getTraeger(): Promise<Response> {
-    /* TODO: use service
-    const url = getAPIBaseURL() + "/clients/api/einrichtungsverwaltung-backend/external/traegerportal/traeger";
-
-    return fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + getAccessToken(),
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });*/
 
     const responseData = {
       id: "123",
@@ -21,13 +10,16 @@ export default class StammdatenService {
       adresse: "Teststraße 1, 80331 München",
       team: "Team 1",
     };
+    
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
     const mockResponse: Response = {
       status: 200,
       statusText: "OK",
-      headers: new Headers(),
+      headers: headers,
       ok: true,
       redirected: false,
-      body: responseData,
+      body: new Blob([JSON.stringify(responseData)]).stream(),
       bodyUsed: false,
 
       json: () => Promise.resolve(responseData),
@@ -65,13 +57,15 @@ export default class StammdatenService {
         "Vorplanung"
       ),
     ];
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json');
     const mockResponse: Response = {
       status: 200,
       statusText: "OK",
-      headers: new Headers(),
+      headers: headers,
       ok: true,
       redirected: false,
-      body: responseData,
+      body: new Blob([JSON.stringify(responseData)]).stream(),
       bodyUsed: false,
 
       json: () => Promise.resolve(responseData),
