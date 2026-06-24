@@ -11,9 +11,10 @@
     >
       <template #prefix><muc-icon icon="search" /></template>
     </muc-input>
-    <muc-accordion multiple>
+    <muc-accordion id="einrichtung-accordion" multiple>
       <muc-accordion-item
         v-for="einrichtung in einrichtungen"
+        :id="'einrichtung-accordion-item-' + einrichtung.id"
         :key="einrichtung.id"
         :header="einrichtung.name"
       >

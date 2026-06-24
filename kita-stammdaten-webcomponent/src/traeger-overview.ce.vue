@@ -6,8 +6,10 @@
     <div v-html="customIconsSprite" />
     <muc-card
       v-if="traeger"
+      id="traeger-card"
       :title="traeger.name"
       :href="hasLink ? traegerLink : undefined"
+      :disabled="!!traeger"
     >
       <template #content>
         <div><muc-icon icon="account" /><b>Träger-ID:</b> {{ traeger.id }}</div>
@@ -58,7 +60,7 @@ function loadTraeger() {
 }
 
 const traegerLink = computed(() => {
-  return `${props.stammdatenUrl}/traegerAnzeigen/${traeger.value.id}`;
+  return `${props.stammdatenUrl}/traegerAnzeigen/${traeger.value?.id}`;
 });
 
 const hasLink = computed(() => {
