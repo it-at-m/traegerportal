@@ -2,7 +2,6 @@ import EinrichtungDTO from "@/types/EinrichtungDTO";
 
 export default class StammdatenService {
   getTraeger(): Promise<Response> {
-
     const responseData = {
       id: "123",
       name: "Testname",
@@ -10,9 +9,9 @@ export default class StammdatenService {
       adresse: "Teststraße 1, 80331 München",
       team: "Team 1",
     };
-    
+
     const headers = new Headers();
-    headers.append('Content-Type', 'application/json');
+    headers.append("Content-Type", "application/json");
     const mockResponse: Response = {
       status: 200,
       statusText: "OK",
@@ -58,7 +57,7 @@ export default class StammdatenService {
       ),
     ];
     const headers = new Headers();
-    headers.append('Content-Type', 'application/json');
+    headers.append("Content-Type", "application/json");
     const mockResponse: Response = {
       status: 200,
       statusText: "OK",
