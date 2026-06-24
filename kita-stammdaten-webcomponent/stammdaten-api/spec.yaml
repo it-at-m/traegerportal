@@ -1,0 +1,37 @@
+openapi: 3.0.3
+info:
+  title: Einrichtungsverwaltung API
+  version: 1.0.0
+paths:
+  /treagerportal/einrichtungen:
+    get:
+      summary: TODO
+      description: TODO
+      parameters:
+        - name: datenuebermittlerPseudonymId
+          in: query
+          schema:
+            type: string
+        - name: username
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+  /treagerportal/traeger:
+    get:
+      summary: TODO
+      description: TODO
+      parameters:
+        - name: datenuebermittlerPseudonymId
+          in: query
+          schema:
+            type: string
+        - name: username
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
