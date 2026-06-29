@@ -12,12 +12,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GatewayConfig {
 
-    private String evUrl;
+    final private String evUrl;
 
     private final SecurityGatewayFilterFactory gatewayFilterFactory;
 
-    public GatewayConfig(SecurityGatewayFilterFactory gatewayFilterFactory,
-            @Value("${adapter.einrichtungsverwaltung.base-url}") String evUrl) {
+    public GatewayConfig(final SecurityGatewayFilterFactory gatewayFilterFactory,
+            @Value("${adapter.einrichtungsverwaltung.base-url}") final String evUrl) {
         log.info("Initializing Gateway with einrichtungsverwaltung-url {}...", evUrl);
 
         this.evUrl = evUrl;
@@ -25,7 +25,7 @@ public class GatewayConfig {
     }
 
     @Bean
-    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+    public RouteLocator customRouteLocator(final RouteLocatorBuilder builder) {
         log.info("Configuring routes...");
 
         return builder.routes()

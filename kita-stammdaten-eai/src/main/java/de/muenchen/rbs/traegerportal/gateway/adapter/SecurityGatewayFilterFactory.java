@@ -29,15 +29,15 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            String authorizationHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
+            final String authorizationHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                String jwtToken = authorizationHeader.substring(7);
+                final String jwtToken = authorizationHeader.substring(7);
 
                 return jwtDecoder.decode(jwtToken).flatMap(jwt -> {
-                    String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
-                    String user = jwt.getClaimAsString("username");
+                    final String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
+                    final String user = jwt.getClaimAsString("username");
 
-                    URI newUri = UriComponentsBuilder
+                    final URI newUri = UriComponentsBuilder
                             .fromUri(exchange.getRequest().getURI())
                             .queryParam("datenuebermittlerPesudonymId", ukId)
                             .queryParam("username", user)
@@ -45,7 +45,7 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
                             .toUri();
 
                     return stammdatenAccesTokenProvider.getAccessToken().flatMap(accessToken -> {
-                        ServerHttpRequest newRequest = exchange.getRequest().mutate()
+                        final ServerHttpRequest newRequest = exchange.getRequest().mutate()
                                 .uri(newUri)
                                 .headers(httpHeaders -> {
                                     httpHeaders.remove("Authorization");

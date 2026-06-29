@@ -35,7 +35,7 @@ public class ClientCredentialsAccessTokenProvider {
     private final String clientSecret;
     private final String scope;
     private final int tokenCacheInSeconds;
-    private Cache<String, String> tokenCache;
+    private final Cache<String, String> tokenCache;
 
     /**
      * Erstellt einen ClientCredentialsAccessTokenProvider
@@ -47,8 +47,8 @@ public class ClientCredentialsAccessTokenProvider {
      * @param scope scope für die Anmeldung
      * @param tokenCacheInSeconds Aufbewahrungszeit für Tokens
      */
-    public ClientCredentialsAccessTokenProvider(WebClient.Builder webClientBuilder, String tokenUrl, String clientId,
-            String clientSecret, String scope, int tokenCacheInSeconds) {
+    public ClientCredentialsAccessTokenProvider(final WebClient.Builder webClientBuilder, final String tokenUrl, final String clientId,
+            final String clientSecret, final String scope, final int tokenCacheInSeconds) {
         this.webClient = webClientBuilder.baseUrl(tokenUrl).build();
         this.tokenUrl = tokenUrl;
         this.clientId = clientId;
@@ -70,25 +70,25 @@ public class ClientCredentialsAccessTokenProvider {
     /**
      * @return retrieves an access token using client credentials flow
      */
-    public Mono<String> getAccessToken() {
-        String token = tokenCache.getIfPresent(this.clientId);
+    public final Mono<String> getAccessToken() {
+        final String token = tokenCache.getIfPresent(this.clientId);
         if (token != null) {
             return Mono.just(token);
         }
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "client_credentials");
         params.add("client_id", this.clientId);
         params.add("client_secret", this.clientSecret);
         params.add("scope", this.scope);
 
-        Mono<HashMap<String, String>> responseBody = this.webClient.post()
+        final Mono<HashMap<String, String>> responseBody = this.webClient.post()
                 .uri("/")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(params))
                 .exchangeToMono(response -> {
                     if (response.statusCode().is2xxSuccessful()) {
-                        return response.bodyToMono(new ParameterizedTypeReference<HashMap<String, String>>() {
+                        return response.bodyToMono(new ParameterizedTypeReference<>() {
                         });
                     } else {
                         throw new RuntimeException(
@@ -97,8 +97,8 @@ public class ClientCredentialsAccessTokenProvider {
                 });
 
         return responseBody.flatMap(response -> {
-            String accessToken = response.get("access_token");
-            int expiresInSeconds = Integer.parseInt(response.get("expires_in"));
+            final String accessToken = response.get("access_token");
+            final int expiresInSeconds = Integer.parseInt(response.get("expires_in"));
             log.info("Aquired access token (expires in: {} s)", expiresInSeconds);
             if (expiresInSeconds <= this.tokenCacheInSeconds) {
                 log.error(

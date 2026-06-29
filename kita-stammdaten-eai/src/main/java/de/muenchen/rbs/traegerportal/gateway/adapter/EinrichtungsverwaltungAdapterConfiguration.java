@@ -12,11 +12,11 @@ public class EinrichtungsverwaltungAdapterConfiguration {
 
     @Bean
     public ClientCredentialsAccessTokenProvider tokenProvider(WebClient.Builder webClientBuilder,
-            @Value("${adapter.einrichtungsverwaltung.security.token-url}") String tokenUrl,
-            @Value("${adapter.einrichtungsverwaltung.security.client-id}") String clientId,
-            @Value("${adapter.einrichtungsverwaltung.security.client-secret}") String clientSecret,
-            @Value("${adapter.einrichtungsverwaltung.security.scope}") String scope,
-            @Value("${adapter.einrichtungsverwaltung.security.cache-seconds}") int tokenCacheInSeconds) {
+            @Value("${adapter.einrichtungsverwaltung.security.token-url}") final String tokenUrl,
+            @Value("${adapter.einrichtungsverwaltung.security.client-id}") final String clientId,
+            @Value("${adapter.einrichtungsverwaltung.security.client-secret}") final String clientSecret,
+            @Value("${adapter.einrichtungsverwaltung.security.scope}") final String scope,
+            @Value("${adapter.einrichtungsverwaltung.security.cache-seconds}") final int tokenCacheInSeconds) {
         return new ClientCredentialsAccessTokenProvider(webClientBuilder, tokenUrl, clientId, clientSecret, scope, tokenCacheInSeconds);
     }
 }
