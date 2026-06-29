@@ -12,6 +12,7 @@ export default class StammdatenService {
 
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
+    // @ts-expect-error Ignore for now, as test data will be removed later
     const mockResponse: Response = {
       status: 200,
       statusText: "OK",
@@ -58,6 +59,7 @@ export default class StammdatenService {
     ];
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
+    // @ts-expect-error Ignore for now, as test data will be removed later
     const mockResponse: Response = {
       status: 200,
       statusText: "OK",
