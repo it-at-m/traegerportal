@@ -1,7 +1,7 @@
 package de.muenchen.rbs.traegerportal.gateway.configuration;
 
 import java.time.Duration;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.session.SessionProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
@@ -12,8 +12,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
-
-import lombok.RequiredArgsConstructor;
 
 @Configuration
 @Profile("!no-security")

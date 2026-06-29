@@ -3,7 +3,6 @@ package de.muenchen.rbs.traegerportal.gateway.route;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
@@ -11,6 +10,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static de.muenchen.rbs.traegerportal.gateway.TestConstants.SPRING_TEST_PROFILE;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
 
+import com.github.tomakehurst.wiremock.http.HttpHeader;
+import com.github.tomakehurst.wiremock.http.HttpHeaders;
+import com.github.tomakehurst.wiremock.matching.EqualToPattern;
+import de.muenchen.rbs.traegerportal.gateway.OAuthSecurityMockConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
-import com.github.tomakehurst.wiremock.http.HttpHeader;
-import com.github.tomakehurst.wiremock.http.HttpHeaders;
-import com.github.tomakehurst.wiremock.matching.EqualToPattern;
-
-import de.muenchen.rbs.traegerportal.gateway.OAuthSecurityMockConfiguration;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(SPRING_TEST_PROFILE)
@@ -59,8 +56,7 @@ class StammdatenRouteTest {
                         .withHeaders(new HttpHeaders(
                                 new HttpHeader(org.springframework.http.HttpHeaders.CONTENT_TYPE, "application/json"),
                                 new HttpHeader(org.springframework.http.HttpHeaders.WWW_AUTHENTICATE,
-                                        "Bearer realm=\"Access to the staging site\", charset=\"UTF-8\"")
-                        ))
+                                        "Bearer realm=\"Access to the staging site\", charset=\"UTF-8\"")))
                         .withBody(TEST_JSON)));
     }
 
