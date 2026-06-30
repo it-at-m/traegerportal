@@ -11,7 +11,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class EinrichtungsverwaltungAdapterConfiguration {
 
     @Bean
-    public ClientCredentialsAccessTokenProvider tokenProvider(WebClient.Builder webClientBuilder,
+    @SuppressWarnings("PMD.UseObjectForClearerAPI")
+    public ClientCredentialsAccessTokenProvider tokenProvider(final WebClient.Builder webClientBuilder,
             @Value("${adapter.einrichtungsverwaltung.security.token-url}") final String tokenUrl,
             @Value("${adapter.einrichtungsverwaltung.security.client-id}") final String clientId,
             @Value("${adapter.einrichtungsverwaltung.security.client-secret}") final String clientSecret,

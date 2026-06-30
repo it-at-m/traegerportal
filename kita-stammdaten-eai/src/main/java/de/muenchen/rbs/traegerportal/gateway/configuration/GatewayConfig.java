@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GatewayConfig {
 
-    final private String evUrl;
+    private final String evUrl;
 
     private final SecurityGatewayFilterFactory gatewayFilterFactory;
 

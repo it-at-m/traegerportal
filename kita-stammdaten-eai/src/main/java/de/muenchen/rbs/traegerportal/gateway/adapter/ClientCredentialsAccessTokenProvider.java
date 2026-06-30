@@ -70,6 +70,7 @@ public class ClientCredentialsAccessTokenProvider {
     /**
      * @return retrieves an access token using client credentials flow
      */
+    @SuppressWarnings("PMD.LooseCoupling")
     public final Mono<String> getAccessToken() {
         final String token = tokenCache.getIfPresent(this.clientId);
         if (token != null) {

@@ -1,6 +1,8 @@
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
 import java.net.URI;
+import java.nio.charset.Charset;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -60,7 +62,7 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
                     exchange.getResponse().getHeaders().set("Content-Type", "application/json");
                     return exchange.getResponse().writeWith(
                             Mono.just(exchange.getResponse().bufferFactory().wrap(
-                                    "{\"error\": \"Invalid token\"}".getBytes())));
+                                    "{\"error\": \"Invalid token\"}".getBytes(Charset.defaultCharset()))));
                 });
             } else {
                 log.debug("No Authorization found. Short-circuititing to 401 response.");
