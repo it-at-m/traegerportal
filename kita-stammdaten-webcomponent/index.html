@@ -34,12 +34,11 @@
     <style>
       .component-display {
         width: 90%;
-        margin: 0 auto;
+        margin: auto;
+        margin-top: 1rem;
         display: flex;
         justify-content: center;
         align-items: center;
-        border: 1px solid #ccc;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
     </style>
   </head>
@@ -54,6 +53,8 @@
       <traeger-overview
         stammdaten-url="https://kita-einrichtung.muenchen.de"
       ></traeger-overview>
+    </div>
+    <div class="component-display">
       <einrichtung-overview
         stammdaten-url="https://kita-einrichtung.muenchen.de"
       ></einrichtung-overview>

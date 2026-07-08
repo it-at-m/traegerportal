@@ -4,25 +4,17 @@
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
-    <muc-input
-      class="einrichtung-suche"
-      type="text"
-      placeholder="Einrichtung suchen"
-    >
-      <template #prefix><muc-icon icon="search" /></template>
-    </muc-input>
     <muc-accordion
       id="einrichtung-accordion"
       multiple
     >
       <muc-accordion-item
-        v-for="einrichtung in einrichtungen"
+        v-for="einrichtung in currentPage"
         :id="'einrichtung-accordion-item-' + einrichtung.id"
         :key="einrichtung.id"
-        :header="einrichtung.name"
+        :header="einrichtung.title()"
       >
         <template #subtitle>
-          {{ einrichtung.adresse }}
           <a :href="bearbeitenFormularUrl(einrichtung.id)"
             ><muc-button variant="ghost"
               >Einrichtungsdetails<muc-icon icon="arrow-right" /></muc-button
@@ -35,9 +27,19 @@
           <span class="einrichtung-attribute"
             ><b>Status:</b> {{ einrichtung.status }}</span
           >
+          <span class="einrichtung-attribute"
+            ><b>Adresse:</b> {{ einrichtung.adresse() }}</span
+          >
         </template>
       </muc-accordion-item>
     </muc-accordion>
+    <simple-pagination
+      v-if="!!einrichtungen"
+      v-model="pageNumber"
+      :total-items="einrichtungen.length"
+      style="padding-left: 24px"
+      :cookie-name="traegerUkId"
+    />
   </div>
 </template>
 
@@ -47,14 +49,16 @@ import {
   MucAccordionItem,
   MucButton,
   MucIcon,
-  MucInput,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
+import SimplePagination from "@/components/SimplePagination.vue";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
+
+const traegerUkId = "dummy-Value-for-now";
 
 const props = defineProps<{
   stammdatenUrl: string;
@@ -69,7 +73,7 @@ const einrichtungen = ref<EinrichtungDTO[]>();
 function loadEinrichtungen() {
   const service = new StammdatenService();
   service
-    .searchEinrichtungen()
+    .searchEinrichtungen(traegerUkId)
     .then((resp) => {
       if (resp.ok) {
         resp.json().then((response: EinrichtungDTO[]) => {
@@ -85,6 +89,17 @@ function loadEinrichtungen() {
       console.debug(error);
     });
 }
+
+const pageNumber = ref<number>(0);
+const pageSize = 3;
+const currentPage = computed(() => {
+  return einrichtungen.value instanceof Array
+    ? einrichtungen.value.slice(
+        pageNumber.value * pageSize,
+        (pageNumber.value + 1) * pageSize
+      )
+    : [];
+});
 
 onMounted(() => {
   loadEinrichtungen();

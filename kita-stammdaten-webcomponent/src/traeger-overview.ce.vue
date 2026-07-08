@@ -9,7 +9,7 @@
       id="traeger-card"
       :title="traeger.name"
       :href="hasLink ? traegerLink : undefined"
-      :disabled="!!traeger"
+      :disabled="!traeger"
     >
       <template #content>
         <div><muc-icon icon="account" /><b>Träger-ID:</b> {{ traeger.id }}</div>
@@ -35,6 +35,8 @@ import TraegerDTO from "@/types/TraegerDTO";
 
 const traeger = ref<TraegerDTO>();
 
+const traegerUkId = "dummy-Value-for-now";
+
 const props = defineProps<{
   stammdatenUrl: string;
 }>();
@@ -42,7 +44,7 @@ const props = defineProps<{
 function loadTraeger() {
   const service = new StammdatenService();
   service
-    .getTraeger()
+    .getTraeger(traegerUkId)
     .then((resp) => {
       if (resp.ok) {
         resp.json().then((response: TraegerDTO) => {
