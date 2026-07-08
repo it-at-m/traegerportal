@@ -35,7 +35,8 @@ export default defineConfig(({ mode }) => {
       manifest: true, // required for post build logic in 'processes' folder
       rolldownOptions: {
         input: {
-          "traeger-overview": "./src/traeger-overview.ts",
+          "traeger-overview": "./src/traeger-overview-webcomponent.ts",
+          "einrichtung-overview": "./src/einrichtung-overview-webcomponent.ts",
         },
         output: {
           entryFileNames: "entry-[name]-[hash].js",

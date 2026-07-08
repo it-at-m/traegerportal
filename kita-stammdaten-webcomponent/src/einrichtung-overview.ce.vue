@@ -21,15 +21,19 @@
           ></a>
         </template>
         <template #content>
-          <span class="einrichtung-attribute"
-            ><b>Kibigweb-ID:</b> {{ einrichtung.kibigwebid }}</span
-          >
-          <span class="einrichtung-attribute"
-            ><b>Status:</b> {{ einrichtung.status }}</span
-          >
-          <span class="einrichtung-attribute"
-            ><b>Adresse:</b> {{ einrichtung.adresse() }}</span
-          >
+          <div>
+            <span class="einrichtung-attribute"
+              ><b>Kibigweb-ID:</b> {{ einrichtung.kibigwebid }}</span
+            >
+            <span class="einrichtung-attribute"
+              ><b>Status:</b> {{ einrichtung.status }}</span
+            >
+          </div>
+          <div>
+            <span class="einrichtung-attribute"
+              ><b>Adresse:</b> {{ einrichtung.adresse() }}</span
+            >
+          </div>
         </template>
       </muc-accordion-item>
     </muc-accordion>
@@ -111,19 +115,11 @@ onMounted(() => {
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
 
-.einrichtung-suche {
-  padding-left: 1.5rem;
-}
-
 .m-accordion__section {
   border: solid 1px var(--color-neutrals-blue);
   border-bottom: solid 5px var(--color-brand-main-blue);
   padding-left: 1rem;
   padding-right: 1rem;
-}
-
-.m-accordion__section-content {
-  padding-bottom: 1rem;
 }
 
 .einrichtung-attribute {
