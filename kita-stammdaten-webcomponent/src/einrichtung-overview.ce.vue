@@ -70,12 +70,12 @@ const traegerUkId = "dummy-Value-for-now";
 const props = defineProps({
   stammdatenUrl: {
     type: String,
-    default: null
+    default: null,
   },
   pageSize: {
     type: Number,
-    default: 10
-  }
+    default: 10,
+  },
 });
 
 function bearbeitenFormularUrl(einrichtungId: string): string {

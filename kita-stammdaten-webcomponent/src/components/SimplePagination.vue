@@ -47,8 +47,8 @@ const props = defineProps({
   },
   cookieExpirationSeconds: {
     type: Number,
-    default: 600
-  }
+    default: 600,
+  },
 });
 
 // Emit Funktion
@@ -78,7 +78,9 @@ const currentPage = computed({
 
 function setCurrentPageCookie(page: number) {
   // default: 1 hour
-  const expires = new Date(Date.now() + props.cookieExpirationSeconds * 1000).toUTCString();
+  const expires = new Date(
+    Date.now() + props.cookieExpirationSeconds * 1000
+  ).toUTCString();
   document.cookie = `${props.cookieName}=${encodeURIComponent(page)}; expires=${expires}; path=/`;
 }
 
