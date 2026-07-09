@@ -24,6 +24,8 @@ adapter:
       client-secret: client_secret
       scope: LHM_Extended
       cache-seconds: 60
+  webcomponents:
+    base-url: https://kita-traegerportal-webcomponents-test.muenchen.de/
 
 server:
   error:

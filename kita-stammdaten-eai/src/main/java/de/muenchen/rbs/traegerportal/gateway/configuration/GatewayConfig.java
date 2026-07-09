@@ -13,14 +13,17 @@ import org.springframework.context.annotation.Configuration;
 public class GatewayConfig {
 
     private final String evUrl;
+    private final String webcomponentsUrl;
 
     private final SecurityGatewayFilterFactory gatewayFilterFactory;
 
     public GatewayConfig(final SecurityGatewayFilterFactory gatewayFilterFactory,
-            @Value("${adapter.einrichtungsverwaltung.base-url}") final String evUrl) {
-        log.info("Initializing Gateway with einrichtungsverwaltung-url {}...", evUrl);
+            @Value("${adapter.einrichtungsverwaltung.base-url}") final String evUrl,
+            @Value("${adapter.webcomponents.base-url}") final String webcomponentsUrl) {
+        log.info("Initializing Gateway with einrichtungsverwaltung-url {} and webcomponents-url {}...", evUrl, webcomponentsUrl);
 
         this.evUrl = evUrl;
+        this.webcomponentsUrl = webcomponentsUrl;
         this.gatewayFilterFactory = gatewayFilterFactory;
     }
 
@@ -35,6 +38,10 @@ public class GatewayConfig {
                                 .filter(gatewayFilterFactory.apply(new SecurityGatewayFilterFactory.Config()))
                                 .setPath("/einrichtungen"))
                         .uri(evUrl))
+                .route("webcomponents", r -> r.path("/webcomponents/**")
+                        .and().method("GET")
+                        .filters(f -> f.stripPrefix(1))
+                        .uri(webcomponentsUrl))
                 .build();
     }
 }

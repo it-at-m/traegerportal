@@ -37,7 +37,8 @@ public class SecurityConfiguration {
                                     "/actuator/info",
                                     "/actuator/metrics",
                                     "/actuator/sbom",
-                                    "/actuator/sbom/application")
+                                    "/actuator/sbom/application",
+                                    "/webcomponents/**")
                                     .permitAll();
                             authorizeExchangeSpec.anyExchange().authenticated();
                         })

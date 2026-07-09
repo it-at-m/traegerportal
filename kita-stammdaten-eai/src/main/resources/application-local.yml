@@ -30,6 +30,8 @@ adapter:
       client-secret: # add when running
       scope: lhm-core
       cache-seconds: 280
+  webcomponents:
+    base-url: http://localhost:8443
 
 logging:
   include-application-group: false # disabled because application group is only relevant when deployed
