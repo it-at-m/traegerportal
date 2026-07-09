@@ -116,6 +116,22 @@ export default class StammdatenService {
         "1620011001",
         "Vorplanung"
       ),
+      new EinrichtungDTO(
+        "131",
+        "Testeinrichtung 10",
+        "Teststraße 10",
+        "80331 München",
+        "1620011001",
+        "Vorplanung"
+      ),
+      new EinrichtungDTO(
+        "131",
+        "Testeinrichtung 11",
+        "Teststraße 11",
+        "80331 München",
+        "1620011001",
+        "Vorplanung"
+      ),
     ];
     const headers = new Headers();
     headers.append("Content-Type", "application/json");

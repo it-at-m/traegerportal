@@ -25,6 +25,8 @@
             <span class="einrichtung-attribute"
               ><b>Kibigweb-ID:</b> {{ einrichtung.kibigwebid }}</span
             >
+          </div>
+          <div>
             <span class="einrichtung-attribute"
               ><b>Status:</b> {{ einrichtung.status }}</span
             >
@@ -38,9 +40,10 @@
       </muc-accordion-item>
     </muc-accordion>
     <simple-pagination
-      v-if="!!einrichtungen"
+      v-if="!!einrichtungen && multiplePages"
       v-model="pageNumber"
       :total-items="einrichtungen.length"
+      :items-per-page="pageSize"
       style="padding-left: 24px"
       :cookie-name="traegerUkId"
     />
@@ -64,9 +67,16 @@ import EinrichtungDTO from "@/types/EinrichtungDTO";
 
 const traegerUkId = "dummy-Value-for-now";
 
-const props = defineProps<{
-  stammdatenUrl: string;
-}>();
+const props = defineProps({
+  stammdatenUrl: {
+    type: String,
+    default: null
+  },
+  pageSize: {
+    type: Number,
+    default: 10
+  }
+});
 
 function bearbeitenFormularUrl(einrichtungId: string): string {
   return `${props.stammdatenUrl}/traegerAnzeigen/${einrichtungId}`;
@@ -95,14 +105,20 @@ function loadEinrichtungen() {
 }
 
 const pageNumber = ref<number>(0);
-const pageSize = 3;
 const currentPage = computed(() => {
   return einrichtungen.value instanceof Array
     ? einrichtungen.value.slice(
-        pageNumber.value * pageSize,
-        (pageNumber.value + 1) * pageSize
+        pageNumber.value * props.pageSize,
+        (pageNumber.value + 1) * props.pageSize
       )
     : [];
+});
+const multiplePages = computed(() => {
+  if (einrichtungen.value) {
+    return props.pageSize < einrichtungen.value.length;
+  } else {
+    return false;
+  }
 });
 
 onMounted(() => {
@@ -120,6 +136,12 @@ onMounted(() => {
   border-bottom: solid 5px var(--color-brand-main-blue);
   padding-left: 1rem;
   padding-right: 1rem;
+  margin-bottom: 16px;
+}
+
+.m-accordion__section-button {
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .einrichtung-attribute {
