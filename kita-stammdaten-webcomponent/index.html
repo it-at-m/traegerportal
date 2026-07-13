@@ -31,6 +31,10 @@
       src="src/einrichtung-overview-webcomponent.ts"
       type="module"
     ></script>
+    <script
+      src="src/stammdaten-overview-webcomponent.ts"
+      type="module"
+    ></script>
     <style>
       .component-display {
         width: 90%;
@@ -49,13 +53,18 @@
         be activated.
       </strong>
     </noscript>
-    <div class="component-display">
+    <!--div class="component-display">
       <traeger-overview
         stammdaten-url="https://kita-einrichtung.muenchen.de"
       ></traeger-overview>
     </div>
     <div class="component-display">
       <einrichtung-overview
+        stammdaten-url="https://kita-einrichtung.muenchen.de"
+      ></einrichtung-overview>
+    </div-->
+    <div class="component-display">
+      <stammdaten-overview
         stammdaten-url="https://kita-einrichtung.muenchen.de"
       ></einrichtung-overview>
     </div>
