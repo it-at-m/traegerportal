@@ -133,7 +133,7 @@ onMounted(() => {
 
 .m-accordion__section {
   border: solid 1px var(--color-neutrals-blue);
-  border-bottom: solid 5px var(--color-brand-main-blue);
+  border-bottom: solid 5px var(--color-brand-main-blue) !important;
   padding-left: 1rem;
   padding-right: 1rem;
   margin-bottom: 16px;

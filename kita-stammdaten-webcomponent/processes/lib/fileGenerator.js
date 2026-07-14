@@ -15,9 +15,20 @@ export function generateLoaderJs(filename, subdirectory, suffix) {
     "{{path}}",
     `${subdirectory}/${filename}`
   );
-  // write script to the dist folder as loader.js.template
+  // write script to the dist folder as loader.js template
   fs.writeFileSync(
     path.resolve(`./dist/loader-${suffix}.js`),
+    loaderJsReplaced,
+    {
+      encoding: "utf-8",
+    }
+  );
+
+  if (!fs.existsSync(`./dist/${suffix}`)) {
+    fs.mkdirSync(`./dist/${suffix}`, { recursive: true });
+  }
+  fs.writeFileSync(
+    path.resolve(`./dist/${suffix}/loader.js`),
     loaderJsReplaced,
     {
       encoding: "utf-8",
