@@ -10,5 +10,4 @@ import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
 import TraegerOverviewVueComponent from "@/traeger-overview.ce.vue";
 </script>
 
-<style>
-</style>
+<style></style>
