@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/traeger/by-id/32443223/einrichtungen",
+    "queryParameters": {
+      "username": {
+        "equalTo": "max.mustermann"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json",
+      "WWW-Authenticate": "Bearer realm=\"Access to the staging site\", charset=\"UTF-8\""
+    },
+    "bodyFileName": "einrichtungen-response.json"
+  }
+}

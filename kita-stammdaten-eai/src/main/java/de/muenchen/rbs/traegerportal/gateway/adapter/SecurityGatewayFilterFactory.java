@@ -1,18 +1,20 @@
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
-import java.net.URI;
-import java.nio.charset.Charset;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.nio.charset.Charset;
 
 @Slf4j
 @Component
@@ -38,12 +40,17 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
                 return jwtDecoder.decode(jwtToken).flatMap(jwt -> {
                     final String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
                     final String user = jwt.getClaimAsString("username");
+                    
+                    final String path = exchange.getRequest().getPath().value();
+                    final String pathReplacement = path.replaceFirst("^/meintraeger", "/traeger/by-id/" + ukId);
 
                     final URI newUri = UriComponentsBuilder
                             .fromUri(exchange.getRequest().getURI())
-                            .queryParam("datenuebermittlerPesudonymId", ukId)
+                            .replacePath(pathReplacement)
+                            // TODO: Expected behaviour with username?
                             .queryParam("username", user)
                             .build()
+                            .encode()
                             .toUri();
 
                     return stammdatenAccesTokenProvider.getAccessToken().flatMap(accessToken -> {
@@ -59,7 +66,7 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
                 }).onErrorResume(e -> {
                     // Handle JWT decode errors
                     exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                    exchange.getResponse().getHeaders().set("Content-Type", "application/json");
+                    exchange.getResponse().getHeaders().set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
                     return exchange.getResponse().writeWith(
                             Mono.just(exchange.getResponse().bufferFactory().wrap(
                                     "{\"error\": \"Invalid token\"}".getBytes(Charset.defaultCharset()))));
@@ -67,10 +74,7 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
             } else {
                 log.debug("No Authorization found. Short-circuititing to 401 response.");
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                exchange.getResponse().getHeaders().set("Content-Type", "application/json");
-                exchange.getResponse().setComplete();
-
-                return chain.filter(exchange);
+                return exchange.getResponse().setComplete();
             }
 
         };

@@ -1,11 +1,6 @@
 package de.muenchen.rbs.traegerportal.gateway.filter;
 
-import static de.muenchen.rbs.traegerportal.gateway.TestConstants.SPRING_TEST_PROFILE;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import de.muenchen.rbs.traegerportal.gateway.OAuthSecurityMockConfiguration;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
+import static de.muenchen.rbs.traegerportal.gateway.TestConstants.SPRING_TEST_PROFILE;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(SPRING_TEST_PROFILE)
@@ -27,7 +28,7 @@ class GlobalRequestParameterPollutionFilterTest {
     @WithMockUser
     void parameterPollutionAttack() {
         final StringBuilder jsonResponseBody = new StringBuilder();
-        final String url = "/einrichtungen?parameter1=testdata_1&parameter2=testdata&parameter1=testdata_2";
+        final String url = "/meintraeger?parameter1=testdata_1&parameter2=testdata&parameter1=testdata_2";
         webTestClient.get().uri(url).exchange()
                 .expectStatus()
                 .isEqualTo(HttpStatus.BAD_REQUEST)

@@ -24,8 +24,13 @@ class SecurityConfigurationTest {
     }
 
     @Test
-    void accessSecuredEinrichtungenThenUnauthorized() {
-        api.get().uri("/einrichtungen").exchange().expectStatus().isUnauthorized();
+    void accessSecuredMeinTraegerThenUnauthorized() {
+        api.get().uri("/meintraeger").exchange().expectStatus().isUnauthorized();
+    }
+
+    @Test
+    void accessSecuredMeinTraegerEinrichtungenThenUnauthorized() {
+        api.get().uri("/meintraeger/einrichtungen").exchange().expectStatus().isUnauthorized();
     }
 
     @Test

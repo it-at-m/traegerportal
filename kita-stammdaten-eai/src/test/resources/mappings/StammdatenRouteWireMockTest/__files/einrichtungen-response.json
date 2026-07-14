@@ -1,0 +1,108 @@
+{
+  "content": [
+    {
+      "id": 1337,
+      "name": "Reuber UG",
+      "adresse": {
+        "strasse": "Im Winkel",
+        "hausnummer": "86",
+        "adresszusatz": "s",
+        "adresszusatz2": "qgsdsqvumb",
+        "plz": "55821",
+        "ort": "Süd Raul"
+      },
+      "merkmale": {
+        "kibigWebId": "2728351586"
+      },
+      "aktuellGueltigerStatus": {
+        "id": null,
+        "version": 0,
+        "createdBy": "nila.finke",
+        "lastModifiedBy": "martha.ritter",
+        "createdDate": "2026-06-29T11:52:31.651",
+        "lastModifiedDate": "2026-06-29T11:52:31.651",
+        "gueltigAb": "2025-08-24",
+        "gueltigBis": null,
+        "status": "IN_BETRIEB",
+        "abgeloest": false,
+        "bemerkung": "wldzxiw60jyw5mb00cp3esar2b6fukajt2byx5xf6mjzt80zv85p2o57e8afyl9",
+        "gueltigUnabhaengigVomZeitraum": true,
+        "aktuellGueltig": true
+      }
+    },
+    {
+      "id": 1339,
+      "name": "Nolte Gruppe",
+      "adresse": {
+        "strasse": "Wilhelm-Leuschner-Str.",
+        "hausnummer": "86",
+        "adresszusatz": "x",
+        "adresszusatz2": "eljzozorzf",
+        "plz": "45821",
+        "ort": "Josefland"
+      },
+      "merkmale": {
+        "kibigWebId": "1559732041"
+      },
+      "aktuellGueltigerStatus": {
+        "id": null,
+        "version": 0,
+        "createdBy": "janis.kerl",
+        "lastModifiedBy": "kim.skibicki",
+        "createdDate": "2026-06-29T11:52:31.671",
+        "lastModifiedDate": "2026-06-29T11:52:31.671",
+        "gueltigAb": "2025-10-27",
+        "gueltigBis": null,
+        "status": "IN_BETRIEB",
+        "abgeloest": false,
+        "bemerkung": "wd8ximracb6rvbdtrwbhu0xwjn0xwrvmtvzqaik0zgdo6mtf5b",
+        "gueltigUnabhaengigVomZeitraum": true,
+        "aktuellGueltig": true
+      }
+    },
+    {
+      "id": 1338,
+      "name": "Rädler-Mensing",
+      "adresse": {
+        "strasse": "Düppeler Str.",
+        "hausnummer": "24",
+        "adresszusatz": "i",
+        "adresszusatz2": "gdvmvatadz",
+        "plz": "44858",
+        "ort": "Bruckmannland"
+      },
+      "merkmale": {
+        "kibigWebId": "9560812911"
+      },
+      "aktuellGueltigerStatus": {
+        "id": null,
+        "version": 0,
+        "createdBy": "antonio.kallensee",
+        "lastModifiedBy": "odin.weller",
+        "createdDate": "2026-06-29T11:52:31.661",
+        "lastModifiedDate": "2026-06-29T11:52:31.661",
+        "gueltigAb": "2025-10-04",
+        "gueltigBis": null,
+        "status": "IN_BETRIEB",
+        "abgeloest": false,
+        "bemerkung": "wcdj2nw4ixgjqdrgt2dtp8ps76l5snkid58vr0405wc6zicibof1zxdpjnzds98si1t",
+        "gueltigUnabhaengigVomZeitraum": true,
+        "aktuellGueltig": true
+      }
+    }
+  ],
+  "pageable": "INSTANCE",
+  "last": true,
+  "totalPages": 1,
+  "totalElements": 3,
+  "first": true,
+  "numberOfElements": 3,
+  "size": 3,
+  "number": 0,
+  "sort": {
+    "unsorted": true,
+    "sorted": false,
+    "empty": true
+  },
+  "empty": false
+}
