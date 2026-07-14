@@ -31,7 +31,6 @@ import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts
 import { MucCallout } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import { ref } from "vue";
 
 import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
 import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
@@ -45,8 +44,6 @@ function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
     setAccessToken(authEventDetails.accessToken);
   }
 }
-
-const token = ref<string | undefined>();
 
 defineProps({
   stammdatenUrl: {
