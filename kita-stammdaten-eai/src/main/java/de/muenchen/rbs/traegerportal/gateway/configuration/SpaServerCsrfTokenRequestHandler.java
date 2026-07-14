@@ -27,7 +27,7 @@ public class SpaServerCsrfTokenRequestHandler extends ServerCsrfTokenRequestAttr
          * the header value automatically, which was obtained via a cookie containing the
          * raw CsrfToken.
          */
-        if (exchange.getRequest().getHeaders().containsKey(csrfToken.getHeaderName())) {
+        if (exchange.getRequest().getHeaders().containsHeader(csrfToken.getHeaderName())) {
             return super.resolveCsrfTokenValue(exchange, csrfToken);
         }
         /*

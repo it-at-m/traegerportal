@@ -2,8 +2,9 @@ package de.muenchen.rbs.traegerportal.gateway.configuration;
 
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.session.SessionProperties;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.session.autoconfigure.SessionProperties;
+import org.springframework.boot.session.autoconfigure.SessionTimeout;
+import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,8 +19,7 @@ import org.springframework.security.web.server.util.matcher.ServerWebExchangeMat
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private final SessionProperties sessionProperties;
-    private final ServerProperties serverProperties;
+    private final SessionTimeout sessionTimeout;
 
     @Bean
     public SecurityWebFilterChain clientAccessFilterChain(final ServerHttpSecurity http) {
@@ -58,6 +58,6 @@ public class SecurityConfiguration {
      * @return Spring session timeout.
      */
     protected Duration getSessionTimeout() {
-        return sessionProperties.determineTimeout(() -> serverProperties.getServlet().getSession().getTimeout());
+        return sessionTimeout.getTimeout();
     }
 }

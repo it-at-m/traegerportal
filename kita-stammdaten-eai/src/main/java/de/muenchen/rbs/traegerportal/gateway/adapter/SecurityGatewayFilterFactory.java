@@ -1,86 +1,85 @@
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
+import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
-
-import java.net.URI;
-import java.nio.charset.Charset;
 
 @Slf4j
 @Component
 public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<SecurityGatewayFilterFactory.Config> {
 
-    @Autowired
-    private ClientCredentialsAccessTokenProvider stammdatenAccesTokenProvider;
+    private final ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider;
 
-    @Autowired
-    private ReactiveJwtDecoder jwtDecoder;
-
-    public SecurityGatewayFilterFactory() {
+    public SecurityGatewayFilterFactory(ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider) {
         super(Config.class);
+        this.stammdatenAccessTokenProvider = stammdatenAccessTokenProvider;
     }
 
     @Override
+    @NullMarked
     public GatewayFilter apply(Config config) {
-        return (exchange, chain) -> {
-            final String authorizationHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-                final String jwtToken = authorizationHeader.substring(7);
+        return (exchange, chain) -> ReactiveSecurityContextHolder.getContext()
 
-                return jwtDecoder.decode(jwtToken).flatMap(jwt -> {
-                    final String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
-                    final String user = jwt.getClaimAsString("username");
-                    
-                    final String path = exchange.getRequest().getPath().value();
-                    final String pathReplacement = path.replaceFirst("^/meintraeger", "/traeger/by-id/" + ukId);
+                .mapNotNull(SecurityContext::getAuthentication)
+                .filter(JwtAuthenticationToken.class::isInstance)
+                .cast(JwtAuthenticationToken.class)
+                .map(JwtAuthenticationToken::getToken)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)))
 
-                    final URI newUri = UriComponentsBuilder
-                            .fromUri(exchange.getRequest().getURI())
-                            .replacePath(pathReplacement)
-                            // TODO: Expected behaviour with username?
-                            .queryParam("username", user)
-                            .build()
-                            .encode()
-                            .toUri();
+                .flatMap(jwt -> stammdatenAccessTokenProvider.getAccessToken()
+                        .flatMap(accessToken -> {
 
-                    return stammdatenAccesTokenProvider.getAccessToken().flatMap(accessToken -> {
-                        final ServerHttpRequest newRequest = exchange.getRequest().mutate()
-                                .uri(newUri)
-                                .headers(httpHeaders -> {
-                                    httpHeaders.remove("Authorization");
-                                    httpHeaders.set("Authorization", "Bearer " + accessToken);
-                                    httpHeaders.set("UserAuthorization", authorizationHeader);
-                                }).build();
-                        return chain.filter(exchange.mutate().request(newRequest).build());
-                    });
-                }).onErrorResume(e -> {
-                    // Handle JWT decode errors
-                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                    exchange.getResponse().getHeaders().set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
-                    return exchange.getResponse().writeWith(
-                            Mono.just(exchange.getResponse().bufferFactory().wrap(
-                                    "{\"error\": \"Invalid token\"}".getBytes(Charset.defaultCharset()))));
-                });
-            } else {
-                log.debug("No Authorization found. Short-circuititing to 401 response.");
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
-            }
+                            String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
+                            String user = jwt.getClaimAsString("username");
 
-        };
+                            String path = exchange.getRequest().getPath().value();
+                            String pathReplacement = path.replaceFirst(
+                                    "^/meintraeger", "/traeger/by-unternehmenskontoid/" + ukId);
+
+                            URI targetUri = UriComponentsBuilder
+                                    .fromUri(exchange.getRequest().getURI())
+                                    .replacePath(pathReplacement)
+                                    .build()
+                                    .encode()
+                                    .toUri();
+
+                            ServerHttpRequest newRequest = exchange.getRequest()
+                                    .mutate()
+                                    .uri(targetUri)
+                                    .headers(headers -> {
+                                        headers.setBearerAuth(accessToken);
+                                        headers.set(
+                                                "Original-Authorization",
+                                                exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+                                        headers.set(
+                                                "Original-Username",
+                                                user);
+                                    })
+                                    .build();
+
+                            return chain.filter(
+                                    exchange.mutate()
+                                            .request(newRequest)
+                                            .build());
+                        }))
+
+                .onErrorResume(ResponseStatusException.class, ex -> Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token")));
     }
 
     @Override
+    @NullMarked
     public Class<Config> getConfigClass() {
         return Config.class;
     }

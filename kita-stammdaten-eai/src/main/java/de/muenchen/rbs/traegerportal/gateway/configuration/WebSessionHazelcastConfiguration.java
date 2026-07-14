@@ -8,6 +8,7 @@ import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
+import com.hazelcast.spring.session.HazelcastIndexedSessionRepository;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import org.springframework.session.ReactiveMapSessionRepository;
 import org.springframework.session.ReactiveSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.session.config.annotation.web.server.EnableSpringWebSession;
-import org.springframework.session.hazelcast.HazelcastIndexedSessionRepository;
 import org.springframework.util.StringUtils;
 
 /**

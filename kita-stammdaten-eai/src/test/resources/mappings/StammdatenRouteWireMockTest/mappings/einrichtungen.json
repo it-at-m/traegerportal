@@ -1,9 +1,12 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/traeger/by-id/32443223/einrichtungen",
-    "queryParameters": {
-      "username": {
+    "urlPathPattern": "/traeger/by-unternehmenskontoid/32443223/einrichtungen",
+    "headers": {
+      "Original-Authorization": {
+        "equalTo": "Bearer test-token"
+      },
+      "Original-Username": {
         "equalTo": "max.mustermann"
       }
     }

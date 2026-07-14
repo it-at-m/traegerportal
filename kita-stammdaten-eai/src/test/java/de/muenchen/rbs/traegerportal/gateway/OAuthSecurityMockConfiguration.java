@@ -1,23 +1,25 @@
 package de.muenchen.rbs.traegerportal.gateway;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
+
 import de.muenchen.rbs.traegerportal.gateway.adapter.ClientCredentialsAccessTokenProvider;
 import de.muenchen.rbs.traegerportal.gateway.adapter.SecurityGatewayFilterFactory;
 import de.muenchen.rbs.traegerportal.gateway.configuration.GatewayConfig;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test configuration providing mocked authentication and JWT infrastructure.
@@ -32,23 +34,16 @@ public class OAuthSecurityMockConfiguration {
 
     public static final String JWT_FRONTEND_DEFAULT_TOKEN_VALUE = "test-token";
     public static final Map<String, String> JWT_FRONTEND_DEFAULT_HEADERS = Map.of(
-            JWT_KEYS_HEADERS_ALG, "none"
-    );
+            JWT_KEYS_HEADERS_ALG, "none");
     public static final Map<String, String> JWT_FRONTEND_DEFAULT_CLAIMS = Map.of(
             JWT_KEYS_CLAIMS_DATENUEBERMITTLERPSEUDONYMID, "32443223",
-            JWT_KEYS_CLAIMS_USERNAME, "max.mustermann"
-    );
+            JWT_KEYS_CLAIMS_USERNAME, "max.mustermann");
 
     public static final String JWT_BACKEND_DEFAULT_TOKEN_VALUE = "service-token";
     public static final Map<String, String> JWT_BACKEND_DEFAULT_HEADERS = Map.of(
-            // TODO: values?
-            JWT_KEYS_HEADERS_ALG, "none"
-    );
+            "notYetSepcified", "notYetSepcified");
     public static final Map<String, String> JWT_BACKEND_DEFAULT_CLAIMS = Map.of(
-            // TODO: values?
-            JWT_KEYS_CLAIMS_DATENUEBERMITTLERPSEUDONYMID, "32443223",
-            JWT_KEYS_CLAIMS_USERNAME, "max.mustermann"
-    );
+            "notYetSepcified", "notYetSepcified");
 
     @Setter
     @Getter
@@ -64,30 +59,28 @@ public class OAuthSecurityMockConfiguration {
             .claims(claims -> claims.putAll(JWT_BACKEND_DEFAULT_CLAIMS))
             .build();
 
-    public void addFrontendBearerAuth(HttpHeaders headers) {
+    public void addFrontendBearerAuth(final HttpHeaders headers) {
         headers.setBearerAuth(this.getJwtFrontend().getTokenValue());
     }
 
-    public void addBackendBearerAuth(HttpHeaders headers) {
+    public void addBackendBearerAuth(final HttpHeaders headers) {
         headers.setBearerAuth(this.getJwtBackend().getTokenValue());
     }
-    
+
     @Bean
     @Primary
     public ReactiveJwtDecoder mJwtDecoder() {
-        ReactiveJwtDecoder mock = mock(ReactiveJwtDecoder.class);
+        final ReactiveJwtDecoder mock = mock(ReactiveJwtDecoder.class);
 
         when(mock.decode(JWT_FRONTEND_DEFAULT_TOKEN_VALUE))
-                .thenAnswer(invocation ->
-                        jwtFrontend != null
-                                ? Mono.just(jwtFrontend)
-                                : Mono.error(new IllegalStateException("Frontend JWT not available")));
+                .thenAnswer(invocation -> jwtFrontend != null
+                        ? Mono.just(jwtFrontend)
+                        : Mono.error(new IllegalStateException("Frontend JWT not available")));
 
         when(mock.decode(JWT_BACKEND_DEFAULT_TOKEN_VALUE))
-                .thenAnswer(invocation ->
-                        jwtBackend != null
-                                ? Mono.just(jwtBackend)
-                                : Mono.error(new IllegalStateException("Backend JWT not available")));
+                .thenAnswer(invocation -> jwtBackend != null
+                        ? Mono.just(jwtBackend)
+                        : Mono.error(new IllegalStateException("Backend JWT not available")));
 
         return mock;
     }
@@ -95,7 +88,7 @@ public class OAuthSecurityMockConfiguration {
     @Bean
     @Primary
     public ClientCredentialsAccessTokenProvider mClientCredentialsAccessTokenProvider() {
-        ClientCredentialsAccessTokenProvider mock = mock(ClientCredentialsAccessTokenProvider.class);
+        final ClientCredentialsAccessTokenProvider mock = mock(ClientCredentialsAccessTokenProvider.class);
 
         when(mock.getAccessToken()).thenAnswer(invocation -> {
             if (getJwtBackend() == null) {
@@ -105,6 +98,15 @@ public class OAuthSecurityMockConfiguration {
         });
 
         return mock;
+    }
+
+    @Bean
+    @Primary
+    public WebTestClient webTestClientWithMockedSecurity(ApplicationContext context) {
+        return WebTestClient.bindToApplicationContext(context)
+                .apply(springSecurity())
+                .configureClient()
+                .build();
     }
 
 }
