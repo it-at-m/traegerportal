@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <muc-spinner
+    v-if="loading"
+    size="200px"
+    text="Lade Einrichtungen ..."
+  />
+  <div v-else>
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
@@ -56,10 +61,11 @@ import {
   MucAccordionItem,
   MucButton,
   MucIcon,
+  MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
 import SimplePagination from "@/components/SimplePagination.vue";
@@ -76,7 +82,13 @@ const props = defineProps({
     type: Number,
     default: 10,
   },
+  token: {
+    type: String,
+    default: null,
+  },
 });
+
+const loading = ref<boolean>();
 
 function bearbeitenFormularUrl(einrichtungId: string): string {
   return `${props.stammdatenUrl}/traegerAnzeigen/${einrichtungId}`;
@@ -85,6 +97,7 @@ function bearbeitenFormularUrl(einrichtungId: string): string {
 const einrichtungen = ref<EinrichtungDTO[]>();
 
 function loadEinrichtungen() {
+  loading.value = true;
   const service = new StammdatenService();
   service
     .searchEinrichtungen(traegerUkId)
@@ -101,6 +114,9 @@ function loadEinrichtungen() {
     })
     .catch((error) => {
       console.debug(error);
+    })
+    .finally(() => {
+      loading.value = false;
     });
 }
 
@@ -121,9 +137,15 @@ const multiplePages = computed(() => {
   }
 });
 
-onMounted(() => {
-  loadEinrichtungen();
-});
+watch(
+  () => props.token,
+  (newToken, oldToken) => {
+    if (newToken !== oldToken) {
+      loadEinrichtungen();
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style>

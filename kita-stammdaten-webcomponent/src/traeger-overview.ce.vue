@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <muc-spinner
+    v-if="loading"
+    size="200px"
+    text="Lade Träger ..."
+  />
+  <div v-else>
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
@@ -25,26 +30,34 @@
 </template>
 
 <script setup lang="ts">
-import { MucCard, MucIcon } from "@muenchen/muc-patternlab-vue";
+import { MucCard, MucIcon, MucSpinner } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import TraegerDTO from "@/types/TraegerDTO";
 
 const traeger = ref<TraegerDTO>();
 
-const traegerUkId = "dummy-Value-for-now";
+const props = defineProps({
+  stammdatenUrl: {
+    type: String,
+    default: null,
+  },
+  token: {
+    type: String,
+    default: null,
+  },
+});
 
-const props = defineProps<{
-  stammdatenUrl: string;
-}>();
+const loading = ref<boolean>();
 
 function loadTraeger() {
+  loading.value = true;
   const service = new StammdatenService();
   service
-    .getTraeger(traegerUkId)
+    .getTraeger(props.token)
     .then((resp) => {
       if (resp.ok) {
         resp.json().then((response: TraegerDTO) => {
@@ -58,6 +71,9 @@ function loadTraeger() {
     })
     .catch((error) => {
       console.debug(error);
+    })
+    .finally(() => {
+      loading.value = false;
     });
 }
 
@@ -69,9 +85,15 @@ const hasLink = computed(() => {
   return props.stammdatenUrl && traeger.value;
 });
 
-onMounted(() => {
-  loadTraeger();
-});
+watch(
+  () => props.token,
+  (newToken, oldToken) => {
+    if (newToken !== oldToken) {
+      loadTraeger();
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style>

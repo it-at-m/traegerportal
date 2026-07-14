@@ -1,8 +1,8 @@
 import EinrichtungDTO from "@/types/EinrichtungDTO";
 
 export default class StammdatenService {
-  getTraeger(traegerUkId: string): Promise<Response> {
-    console.debug("Mocking traeger data: " + traegerUkId);
+  getTraeger(token: string): Promise<Response> {
+    console.debug("Mocking traeger data: " + token);
     const responseData = {
       id: "123",
       name: "Testname",
@@ -26,10 +26,14 @@ export default class StammdatenService {
       json: () => Promise.resolve(responseData),
     };
 
-    return new Promise((resolve) => resolve(mockResponse));
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(mockResponse);
+      }, 1000);
+    });
   }
 
-  searchEinrichtungen(traegerUkId: string): Promise<Response> {
+  searchEinrichtungen(token: string): Promise<Response> {
     /* TODO: use service
     const url = getAPIBaseURL() + "/clients/api/einrichtungsverwaltung-backend/external/traegerportal/traeger";
 
@@ -41,7 +45,7 @@ export default class StammdatenService {
       },
       credentials: "include",
     });*/
-    console.debug("Mocking einrichtungen for traeger: " + traegerUkId);
+    console.debug("Mocking einrichtungen for traeger: " + token);
 
     const responseData = [
       new EinrichtungDTO(
@@ -148,6 +152,10 @@ export default class StammdatenService {
       json: () => Promise.resolve(responseData),
     };
 
-    return new Promise((resolve) => resolve(mockResponse));
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(mockResponse);
+      }, 2000);
+    });
   }
 }

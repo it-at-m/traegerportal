@@ -9,18 +9,21 @@
         <p>Um diese Inhalte anzuzeigen, müssen Sie sich anmelden.</p>
       </template>
     </muc-callout>
+    <button @click="dummyLogin">Dummy-Login</button>
   </div>
   <div v-else>
     <div class="wide-container">
       <traeger-overview-vue-component
         class="flex-area"
         :stammdaten-url="stammdatenUrl"
+        :token="token"
       />
       <div class="flex-area">Vorgänge</div>
     </div>
     <einrichtung-overview-vue-component
       :stammdaten-url="stammdatenUrl"
       :page-size="pageSize"
+      :token="token"
     />
   </div>
 </template>
@@ -31,6 +34,7 @@ import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts
 import { MucCallout } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
+import { ref } from "vue";
 
 import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
 import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
@@ -42,8 +46,16 @@ const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
 function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
   if (authEventDetails && authEventDetails.accessToken) {
     setAccessToken(authEventDetails.accessToken);
+    token.value = authEventDetails.accessToken;
   }
 }
+
+function dummyLogin() {
+  token.value = "test";
+  loggedIn.value = true;
+}
+
+const token = ref<string | undefined>();
 
 defineProps({
   stammdatenUrl: {
