@@ -1,6 +1,5 @@
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
-import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -15,6 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
+
+import java.net.URI;
 
 @Slf4j
 @Component
@@ -32,50 +33,57 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> ReactiveSecurityContextHolder.getContext()
 
+                // Only JWT-based authentication is supported
                 .mapNotNull(SecurityContext::getAuthentication)
                 .filter(JwtAuthenticationToken.class::isInstance)
                 .cast(JwtAuthenticationToken.class)
                 .map(JwtAuthenticationToken::getToken)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)))
+                // Reject unauthenticated requests
+                .switchIfEmpty(Mono.error(
+                        new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing JWT authentication")))
 
-                .flatMap(jwt -> stammdatenAccessTokenProvider.getAccessToken()
-                        .flatMap(accessToken -> {
+                .flatMap(jwt -> {
 
-                            String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
-                            String user = jwt.getClaimAsString("username");
+                    String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
+                    String user = jwt.getClaimAsString("username");
 
-                            String path = exchange.getRequest().getPath().value();
-                            String pathReplacement = path.replaceFirst(
-                                    "^/meintraeger", "/traeger/by-unternehmenskontoid/" + ukId);
+                    String path = exchange.getRequest().getPath().value();
+                    String pathReplacement = path.replaceFirst(
+                            "^/meintraeger",
+                            "/traeger/by-unternehmenskontoid/" + ukId);
 
-                            URI targetUri = UriComponentsBuilder
-                                    .fromUri(exchange.getRequest().getURI())
-                                    .replacePath(pathReplacement)
-                                    .build()
-                                    .encode()
-                                    .toUri();
+                    URI targetUri = UriComponentsBuilder
+                            .fromUri(exchange.getRequest().getURI())
+                            .replacePath(pathReplacement)
+                            .build()
+                            .encode()
+                            .toUri();
 
-                            ServerHttpRequest newRequest = exchange.getRequest()
-                                    .mutate()
-                                    .uri(targetUri)
-                                    .headers(headers -> {
-                                        headers.setBearerAuth(accessToken);
-                                        headers.set(
-                                                "Original-Authorization",
-                                                exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
-                                        headers.set(
-                                                "Original-Username",
-                                                user);
-                                    })
-                                    .build();
+                    return stammdatenAccessTokenProvider.getAccessToken()
+                            .doOnError(ex -> log.warn("Failed to obtain access token for backend.", ex))
 
-                            return chain.filter(
-                                    exchange.mutate()
-                                            .request(newRequest)
-                                            .build());
-                        }))
+                            .flatMap(accessTokenForBackend -> {
 
-                .onErrorResume(ResponseStatusException.class, ex -> Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token")));
+                                ServerHttpRequest requestToBackend = exchange.getRequest()
+                                        .mutate()
+                                        .uri(targetUri)
+                                        .headers(headers -> {
+                                            headers.setBearerAuth(accessTokenForBackend);
+                                            headers.set(
+                                                    "Original-Authorization",
+                                                    exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+                                            headers.set("Original-Username", user);
+                                        })
+                                        .build();
+
+                                return chain.filter(
+                                        exchange.mutate()
+                                                .request(requestToBackend)
+                                                .build());
+                            })
+                            .onErrorMap(ex ->
+                                    new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Call to backend failed", ex));
+                });
     }
 
     @Override
