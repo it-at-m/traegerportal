@@ -49,15 +49,23 @@ public class SecurityConfiguration {
     }
 
     /**
-     * Get Spring Session timeout. Uses {@link SessionProperties} and
-     * {@link ServerProperties#getServlet()} as fallback, like Spring Session
-     * itself. See according <a href=
-     * "https://docs.spring.io/spring-boot/reference/web/spring-session.html">Spring
-     * documentation</a>.
+     * Returns the session timeout determined by Spring Boot.
+     * <p>
+     * Prior to Spring Boot 4, the timeout was resolved explicitly using {@link SessionProperties} with {@link ServerProperties#getServlet()} as a fallback,
+     * mirroring the timeout resolution described in the <a href="https://docs.spring.io/spring-boot/reference/web/spring-session.html">Spring Session</a>
+     * documentation.
+     * <p>
+     * Since Spring Boot 4, this resolution is encapsulated by {@link SessionTimeout}. An {@link IllegalStateException} is thrown if no session timeout could be
+     * determined.
      *
-     * @return Spring session timeout.
+     * @return the resolved session timeout
+     * @throws IllegalStateException if no session timeout could be determined
      */
     protected Duration getSessionTimeout() {
-        return sessionTimeout.getTimeout();
+        Duration timeout = sessionTimeout.getTimeout();
+        if (timeout == null) {
+            throw new IllegalStateException("Unable to determine the session timeout.");
+        }
+        return timeout;
     }
 }
