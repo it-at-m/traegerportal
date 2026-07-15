@@ -1,6 +1,5 @@
 package de.muenchen.rbs.traegerportal.gateway.configuration;
 
-import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.session.autoconfigure.SessionProperties;
 import org.springframework.boot.session.autoconfigure.SessionTimeout;
@@ -13,6 +12,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+
+import java.time.Duration;
 
 @Configuration
 @Profile("!no-security")
@@ -51,11 +52,14 @@ public class SecurityConfiguration {
     /**
      * Returns the session timeout determined by Spring Boot.
      * <p>
-     * Prior to Spring Boot 4, the timeout was resolved explicitly using {@link SessionProperties} with {@link ServerProperties#getServlet()} as a fallback,
-     * mirroring the timeout resolution described in the <a href="https://docs.spring.io/spring-boot/reference/web/spring-session.html">Spring Session</a>
+     * Prior to Spring Boot 4, the timeout was resolved explicitly using {@link SessionProperties} with
+     * {@link ServerProperties#getServlet()} as a fallback,
+     * mirroring the timeout resolution described in the
+     * <a href="https://docs.spring.io/spring-boot/reference/web/spring-session.html">Spring Session</a>
      * documentation.
      * <p>
-     * Since Spring Boot 4, this resolution is encapsulated by {@link SessionTimeout}. An {@link IllegalStateException} is thrown if no session timeout could be
+     * Since Spring Boot 4, this resolution is encapsulated by {@link SessionTimeout}. An
+     * {@link IllegalStateException} is thrown if no session timeout could be
      * determined.
      *
      * @return the resolved session timeout

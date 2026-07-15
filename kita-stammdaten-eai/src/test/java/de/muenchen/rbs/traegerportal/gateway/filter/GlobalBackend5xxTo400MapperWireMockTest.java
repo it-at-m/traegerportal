@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -16,13 +15,15 @@ import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 
 import static de.muenchen.rbs.traegerportal.gateway.TestConstants.SPRING_TEST_PROFILE;
+import static de.muenchen.rbs.traegerportal.gateway.filter.GlobalBackend5xxTo400Mapper.GENERIC_ERROR_400;
+import static de.muenchen.rbs.traegerportal.gateway.filter.GlobalBackend5xxTo400Mapper.GENERIC_ERROR_500;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(SPRING_TEST_PROFILE)
 @EnableWireMock(
-        @ConfigureWireMock(
-                filesUnderDirectory = "src/test/resources/mappings/GlobalBackend5xxTo400MapperWireMockTest"
-        )
+    @ConfigureWireMock(
+            filesUnderDirectory = "src/test/resources/mappings/GlobalBackend5xxTo400MapperWireMockTest"
+    )
 )
 @Import(OAuthSecurityMockConfiguration.class)
 class GlobalBackend5xxTo400MapperWireMockTest {
@@ -43,11 +44,9 @@ class GlobalBackend5xxTo400MapperWireMockTest {
                     .headers(oauthSecurityMockConfiguration::addFrontendBearerAuth)
                     .exchange()
                     .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
-                    .expectHeader().valueMatches(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                    .expectBody()
-                    .jsonPath("$.error").isEqualTo("Bad Request")
-                    .jsonPath("$.status").isEqualTo("400")
-                    .jsonPath("$.testkey").doesNotExist();
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                    .expectBody(String.class)
+                    .isEqualTo(GENERIC_ERROR_400);
         }
     }
 
@@ -62,11 +61,9 @@ class GlobalBackend5xxTo400MapperWireMockTest {
                     .headers(oauthSecurityMockConfiguration::addFrontendBearerAuth)
                     .exchange()
                     .expectStatus().isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .expectHeader().valueMatches(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                    .expectBody()
-                    .jsonPath("$.error").isEqualTo("Internal Server Error")
-                    .jsonPath("$.status").isEqualTo("500")
-                    .jsonPath("$.testkey").doesNotExist();
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                    .expectBody(String.class)
+                    .isEqualTo(GENERIC_ERROR_500);
         }
     }
 

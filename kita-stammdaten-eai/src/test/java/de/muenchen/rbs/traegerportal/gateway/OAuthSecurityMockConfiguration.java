@@ -1,13 +1,8 @@
 package de.muenchen.rbs.traegerportal.gateway;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
-
 import de.muenchen.rbs.traegerportal.gateway.adapter.ClientCredentialsAccessTokenProvider;
 import de.muenchen.rbs.traegerportal.gateway.adapter.SecurityGatewayFilterFactory;
 import de.muenchen.rbs.traegerportal.gateway.configuration.GatewayConfig;
-import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -20,6 +15,12 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
+
+import java.util.Map;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
 
 /**
  * Test configuration providing mocked authentication and JWT infrastructure.
@@ -41,9 +42,9 @@ public class OAuthSecurityMockConfiguration {
 
     public static final String JWT_BACKEND_DEFAULT_TOKEN_VALUE = "service-token";
     public static final Map<String, String> JWT_BACKEND_DEFAULT_HEADERS = Map.of(
-            "notYetSepcified", "notYetSepcified");
+            "notYetSpecified", "notYetSpecified");
     public static final Map<String, String> JWT_BACKEND_DEFAULT_CLAIMS = Map.of(
-            "notYetSepcified", "notYetSepcified");
+            "notYetSpecified", "notYetSpecified");
 
     @Setter
     @Getter

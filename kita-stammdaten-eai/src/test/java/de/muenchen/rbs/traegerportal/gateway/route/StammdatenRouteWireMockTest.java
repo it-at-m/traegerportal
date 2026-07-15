@@ -1,21 +1,20 @@
 package de.muenchen.rbs.traegerportal.gateway.route;
 
-import static de.muenchen.rbs.traegerportal.gateway.TestConstants.SPRING_TEST_PROFILE;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import de.muenchen.rbs.traegerportal.gateway.OAuthSecurityMockConfiguration;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
+
+import static de.muenchen.rbs.traegerportal.gateway.TestConstants.SPRING_TEST_PROFILE;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(SPRING_TEST_PROFILE)
@@ -42,7 +41,7 @@ class StammdatenRouteWireMockTest {
                 .headers(oauthSecurityMockConfiguration::addFrontendBearerAuth)
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.OK)
-                .expectHeader().valueMatches(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody()
                 .jsonPath("$.id").isEqualTo(1337);
     }
@@ -54,7 +53,7 @@ class StammdatenRouteWireMockTest {
                 .headers(oauthSecurityMockConfiguration::addFrontendBearerAuth)
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.OK)
-                .expectHeader().valueMatches(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody()
                 .jsonPath("$.content[*].id").value(ids -> assertThat(ids).asInstanceOf(InstanceOfAssertFactories.LIST)
                         .containsExactlyInAnyOrder(1337, 1338, 1339));

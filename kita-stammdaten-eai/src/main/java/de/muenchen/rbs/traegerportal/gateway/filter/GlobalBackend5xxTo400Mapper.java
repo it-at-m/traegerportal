@@ -1,7 +1,6 @@
 package de.muenchen.rbs.traegerportal.gateway.filter;
 
 import jakarta.validation.constraints.NotNull;
-import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +22,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * This {@link GlobalFilter} replaces the body by a generic error body, when a server responses with
  * a {@link HttpStatus#INTERNAL_SERVER_ERROR}.
@@ -32,8 +33,8 @@ import reactor.core.publisher.Mono;
 public class GlobalBackend5xxTo400Mapper implements GlobalFilter, Ordered {
 
     public static final int ORDER_GLOBAL_FILTER = -3;
-    private static final String GENERIC_ERROR_400 = "{ \"status\":400, \"error\":\"Bad Request\" }";
-    private static final String GENERIC_ERROR_500 = "{ \"status\":500, \"error\":\"Internal Server Error\" }";
+    public static final String GENERIC_ERROR_400 = "{ \"status\":400, \"error\":\"Bad Request\" }";
+    public static final String GENERIC_ERROR_500 = "{ \"status\":500, \"error\":\"Internal Server Error\" }";
     /**
      * Variable entscheidet, ob alle 5xx Fehler auf 400 gemappt werden sollen.
      **/

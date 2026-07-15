@@ -81,8 +81,7 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
                                                 .request(requestToBackend)
                                                 .build());
                             })
-                            .onErrorMap(ex ->
-                                    new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Call to backend failed", ex));
+                            .onErrorMap(ex -> new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Call to backend failed", ex));
                 });
     }
 
