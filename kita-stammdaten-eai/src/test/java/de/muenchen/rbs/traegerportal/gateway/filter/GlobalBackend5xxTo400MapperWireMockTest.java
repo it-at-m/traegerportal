@@ -1,5 +1,9 @@
 package de.muenchen.rbs.traegerportal.gateway.filter;
 
+import static de.muenchen.rbs.traegerportal.gateway.TestConstants.SPRING_TEST_PROFILE;
+import static de.muenchen.rbs.traegerportal.gateway.filter.GlobalBackend5xxTo400Mapper.GENERIC_ERROR_400;
+import static de.muenchen.rbs.traegerportal.gateway.filter.GlobalBackend5xxTo400Mapper.GENERIC_ERROR_500;
+
 import de.muenchen.rbs.traegerportal.gateway.OAuthSecurityMockConfiguration;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,10 +17,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
-
-import static de.muenchen.rbs.traegerportal.gateway.TestConstants.SPRING_TEST_PROFILE;
-import static de.muenchen.rbs.traegerportal.gateway.filter.GlobalBackend5xxTo400Mapper.GENERIC_ERROR_400;
-import static de.muenchen.rbs.traegerportal.gateway.filter.GlobalBackend5xxTo400Mapper.GENERIC_ERROR_500;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(SPRING_TEST_PROFILE)

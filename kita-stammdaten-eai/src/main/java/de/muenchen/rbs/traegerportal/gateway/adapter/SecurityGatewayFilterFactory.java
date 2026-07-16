@@ -1,5 +1,6 @@
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
+import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -14,8 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
-
-import java.net.URI;
 
 @Slf4j
 @Component

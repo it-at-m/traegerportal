@@ -1,6 +1,7 @@
 package de.muenchen.rbs.traegerportal.gateway.filter;
 
 import jakarta.validation.constraints.NotNull;
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,8 +22,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * This {@link GlobalFilter} replaces the body by a generic error body, when a server responses with
