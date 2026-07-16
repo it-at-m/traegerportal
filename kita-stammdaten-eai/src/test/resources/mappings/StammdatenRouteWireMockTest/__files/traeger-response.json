@@ -1,0 +1,14 @@
+{
+  "id": 1337,
+  "name": "Klein AG",
+  "traegerform": null,
+  "adresse": {
+    "strasse": "Steinweg",
+    "hausnummer": "47",
+    "adresszusatz": "x",
+    "adresszusatz2": "lbjriwnojw",
+    "plz": "02352",
+    "ort": "Neu Jordanburg"
+  },
+  "team": null
+}

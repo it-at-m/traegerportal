@@ -2,8 +2,9 @@ package de.muenchen.rbs.traegerportal.gateway.configuration;
 
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.session.SessionProperties;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.session.autoconfigure.SessionProperties;
+import org.springframework.boot.session.autoconfigure.SessionTimeout;
+import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,8 +19,7 @@ import org.springframework.security.web.server.util.matcher.ServerWebExchangeMat
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private final SessionProperties sessionProperties;
-    private final ServerProperties serverProperties;
+    private final SessionTimeout sessionTimeout;
 
     @Bean
     public SecurityWebFilterChain clientAccessFilterChain(final ServerHttpSecurity http) {
@@ -49,15 +49,26 @@ public class SecurityConfiguration {
     }
 
     /**
-     * Get Spring Session timeout. Uses {@link SessionProperties} and
-     * {@link ServerProperties#getServlet()} as fallback, like Spring Session
-     * itself. See according <a href=
-     * "https://docs.spring.io/spring-boot/reference/web/spring-session.html">Spring
-     * documentation</a>.
+     * Returns the session timeout determined by Spring Boot.
+     * <p>
+     * Prior to Spring Boot 4, the timeout was resolved explicitly using {@link SessionProperties} with
+     * {@link ServerProperties#getServlet()} as a fallback,
+     * mirroring the timeout resolution described in the
+     * <a href="https://docs.spring.io/spring-boot/reference/web/spring-session.html">Spring Session</a>
+     * documentation.
+     * <p>
+     * Since Spring Boot 4, this resolution is encapsulated by {@link SessionTimeout}. An
+     * {@link IllegalStateException} is thrown if no session timeout could be
+     * determined.
      *
-     * @return Spring session timeout.
+     * @return the resolved session timeout
+     * @throws IllegalStateException if no session timeout could be determined
      */
     protected Duration getSessionTimeout() {
-        return sessionProperties.determineTimeout(() -> serverProperties.getServlet().getSession().getTimeout());
+        final Duration timeout = sessionTimeout.getTimeout();
+        if (timeout == null) {
+            throw new IllegalStateException("Unable to determine the session timeout.");
+        }
+        return timeout;
     }
 }

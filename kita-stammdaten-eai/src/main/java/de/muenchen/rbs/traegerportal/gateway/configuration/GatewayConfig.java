@@ -32,11 +32,10 @@ public class GatewayConfig {
         log.info("Configuring routes...");
 
         return builder.routes()
-                .route("einrichtungen", r -> r.path("/einrichtungen")
+                .route("meintraeger", r -> r.path("/meintraeger", "/meintraeger/**")
                         .and().method("GET")
                         .filters(f -> f
-                                .filter(gatewayFilterFactory.apply(new SecurityGatewayFilterFactory.Config()))
-                                .setPath("/einrichtungen"))
+                                .filter(gatewayFilterFactory.apply(new SecurityGatewayFilterFactory.Config())))
                         .uri(evUrl))
                 .route("webcomponents", r -> r.path("/webcomponents/**")
                         .and().method("GET")

@@ -32,8 +32,8 @@ import reactor.core.publisher.Mono;
 public class GlobalBackend5xxTo400Mapper implements GlobalFilter, Ordered {
 
     public static final int ORDER_GLOBAL_FILTER = -3;
-    private static final String GENERIC_ERROR_400 = "{ \"status\":400, \"error\":\"Bad Request\" }";
-    private static final String GENERIC_ERROR_500 = "{ \"status\":500, \"error\":\"Internal Server Error\" }";
+    public static final String GENERIC_ERROR_400 = "{ \"status\":400, \"error\":\"Bad Request\" }";
+    public static final String GENERIC_ERROR_500 = "{ \"status\":500, \"error\":\"Internal Server Error\" }";
     /**
      * Variable entscheidet, ob alle 5xx Fehler auf 400 gemappt werden sollen.
      **/

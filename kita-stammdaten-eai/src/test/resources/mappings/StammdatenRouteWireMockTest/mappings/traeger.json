@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/traeger/by-unternehmenskontoid/32443223",
+    "headers": {
+      "Original-Authorization": {
+        "equalTo": "Bearer test-token"
+      },
+      "Original-Username": {
+        "equalTo": "max.mustermann"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "traeger-response.json"
+  }
+}

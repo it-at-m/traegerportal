@@ -1,3 +1,3 @@
-FROM registry.access.redhat.com/ubi10/openjdk-21-runtime:1.24-6@sha256:b39bdcb3ed9c7bdbef51a8f2692f81a771303351a9d87e6887f8affe56bd197a
+FROM registry.redhat.io/ubi10/openjdk-25-runtime:1.24-9@sha256:071a1da2b4243b72b5416c46258dfbf8f84ae82437c254ae6819a38873a7b9b4
 
 COPY target/*.jar /deployments/spring-boot-application.jar
