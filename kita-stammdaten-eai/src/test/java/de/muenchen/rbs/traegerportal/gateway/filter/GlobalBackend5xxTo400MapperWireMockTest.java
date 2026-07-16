@@ -38,7 +38,7 @@ class GlobalBackend5xxTo400MapperWireMockTest {
     class MapTo400 {
 
         @Test
-        void map_503_response_to_400_and_do_not_pass_original_payload() {
+        void map_503Response_to_400Response_and_do_not_pass_original_payload() {
             webTestClient
                     .get().uri("/meintraeger")
                     .headers(oauthSecurityMockConfiguration::addFrontendBearerAuth)
@@ -55,7 +55,7 @@ class GlobalBackend5xxTo400MapperWireMockTest {
     class MapTo500 {
 
         @Test
-        void map_503_response_to_500_and_do_not_pass_original_payload() {
+        void map_503Response_to_500Response_and_do_not_pass_original_payload() {
             webTestClient
                     .get().uri("/meintraeger")
                     .headers(oauthSecurityMockConfiguration::addFrontendBearerAuth)

@@ -41,9 +41,9 @@ public class OAuthSecurityMockConfiguration {
 
     public static final String JWT_BACKEND_DEFAULT_TOKEN_VALUE = "service-token";
     public static final Map<String, String> JWT_BACKEND_DEFAULT_HEADERS = Map.of(
-            "notYetSpecified", "notYetSpecified");
+            "notYetSpecified1", "notYetSpecified2");
     public static final Map<String, String> JWT_BACKEND_DEFAULT_CLAIMS = Map.of(
-            "notYetSpecified", "notYetSpecified");
+            "notYetSpecified3", "notYetSpecified4");
 
     @Setter
     @Getter
@@ -94,7 +94,7 @@ public class OAuthSecurityMockConfiguration {
             if (getJwtBackend() == null) {
                 return Mono.error(new IllegalStateException("Access token not available"));
             }
-            return Mono.just(getJwtBackend().toString());
+            return Mono.just(getJwtBackend().getTokenValue());
         });
 
         return mock;
@@ -102,7 +102,7 @@ public class OAuthSecurityMockConfiguration {
 
     @Bean
     @Primary
-    public WebTestClient webTestClientWithMockedSecurity(ApplicationContext context) {
+    public WebTestClient webTestClientWithMockedSecurity(final ApplicationContext context) {
         return WebTestClient.bindToApplicationContext(context)
                 .apply(springSecurity())
                 .configureClient()

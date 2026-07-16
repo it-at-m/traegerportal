@@ -12,6 +12,7 @@ import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
@@ -22,7 +23,7 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
 
     private final ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider;
 
-    public SecurityGatewayFilterFactory(ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider) {
+    public SecurityGatewayFilterFactory(final ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider) {
         super(Config.class);
         this.stammdatenAccessTokenProvider = stammdatenAccessTokenProvider;
     }
@@ -43,15 +44,20 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
 
                 .flatMap(jwt -> {
 
-                    String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
-                    String user = jwt.getClaimAsString("username");
+                    final String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
+                    final String user = jwt.getClaimAsString("username");
 
-                    String path = exchange.getRequest().getPath().value();
-                    String pathReplacement = path.replaceFirst(
+                    // Reject requests with missing claims
+                    if (!StringUtils.hasText(ukId) || !StringUtils.hasText(user)) {
+                        return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing claim"));
+                    }
+
+                    final String path = exchange.getRequest().getPath().value();
+                    final String pathReplacement = path.replaceFirst(
                             "^/meintraeger",
                             "/traeger/by-unternehmenskontoid/" + ukId);
 
-                    URI targetUri = UriComponentsBuilder
+                    final URI targetUri = UriComponentsBuilder
                             .fromUri(exchange.getRequest().getURI())
                             .replacePath(pathReplacement)
                             .build()
@@ -63,7 +69,7 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
 
                             .flatMap(accessTokenForBackend -> {
 
-                                ServerHttpRequest requestToBackend = exchange.getRequest()
+                                final ServerHttpRequest requestToBackend = exchange.getRequest()
                                         .mutate()
                                         .uri(targetUri)
                                         .headers(headers -> {

@@ -65,7 +65,7 @@ public class SecurityConfiguration {
      * @throws IllegalStateException if no session timeout could be determined
      */
     protected Duration getSessionTimeout() {
-        Duration timeout = sessionTimeout.getTimeout();
+        final Duration timeout = sessionTimeout.getTimeout();
         if (timeout == null) {
             throw new IllegalStateException("Unable to determine the session timeout.");
         }
