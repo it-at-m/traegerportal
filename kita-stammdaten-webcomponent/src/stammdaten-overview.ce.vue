@@ -26,6 +26,7 @@
     </muc-callout>
     <button @click="dummyLogin">Dummy-Login</button>
   </div>
+  <div>Logged in: {{ loggedIn }}</div>
 </template>
 
 <script setup lang="ts">
