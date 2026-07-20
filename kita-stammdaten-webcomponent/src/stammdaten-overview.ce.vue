@@ -3,21 +3,12 @@
   <div v-html="mucIconsSprite" />
   <!-- eslint-disable-next-line vue/no-v-html -->
   <div v-html="customIconsSprite" />
-  <div v-if="!loggedIn">
-    <muc-callout type="info">
-      <template #content>
-        <p>Um diese Inhalte anzuzeigen, müssen Sie sich anmelden.</p>
-      </template>
-    </muc-callout>
-    <button @click="dummyLogin">Dummy-Login</button>
-  </div>
-  <div v-else>
+  <div v-if="loggedIn">
     <div class="wide-container">
       <traeger-overview-vue-component
         class="flex-area"
         :stammdaten-url="stammdatenUrl"
         :token="token"
-        :auth-loading="authLoading"
       />
       <div class="flex-area">Vorgänge</div>
     </div>
@@ -25,8 +16,15 @@
       :stammdaten-url="stammdatenUrl"
       :page-size="pageSize"
       :token="token"
-      :auth-loading="authLoading"
     />
+  </div>
+  <div v-else>
+    <muc-callout type="info">
+      <template #content>
+        <p>Um diese Inhalte anzuzeigen, müssen Sie sich anmelden.</p>
+      </template>
+    </muc-callout>
+    <button @click="dummyLogin">Dummy-Login</button>
   </div>
 </template>
 
@@ -43,8 +41,7 @@ import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
 import TraegerOverviewVueComponent from "@/traeger-overview.ce.vue";
 import { setAccessToken } from "@/util/constants";
 
-const { authLoading, loggedIn } =
-  useDBSLoginWebcomponentPlugin(_authChangedCallback);
+const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
 
 function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
   if (authEventDetails && authEventDetails.accessToken) {
