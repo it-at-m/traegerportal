@@ -17,7 +17,7 @@
         class="flex-area"
         :stammdaten-url="stammdatenUrl"
         :token="token"
-        :authLoading="authLoading"
+        :auth-loading="authLoading"
       />
       <div class="flex-area">Vorgänge</div>
     </div>
@@ -25,7 +25,7 @@
       :stammdaten-url="stammdatenUrl"
       :page-size="pageSize"
       :token="token"
-      :authLoading="authLoading"
+      :auth-loading="authLoading"
     />
   </div>
 </template>
@@ -43,7 +43,8 @@ import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
 import TraegerOverviewVueComponent from "@/traeger-overview.ce.vue";
 import { setAccessToken } from "@/util/constants";
 
-const { authLoading, loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
+const { authLoading, loggedIn } =
+  useDBSLoginWebcomponentPlugin(_authChangedCallback);
 
 function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
   if (authEventDetails && authEventDetails.accessToken) {
