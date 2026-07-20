@@ -86,6 +86,10 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  authLoading: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const loading = ref<boolean>();
