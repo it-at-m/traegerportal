@@ -41,6 +41,7 @@ export function useDBSLoginWebcomponentPlugin(
 
   function authChanged(newAuthDetails: AuthorizationEventDetails | undefined) {
     authLoading.value = false;
+    console.debug("Auth:" + newAuthDetails);
     if (newAuthDetails) {
       loggedIn.value = true;
       if (JSON.stringify(newAuthDetails) !== JSON.stringify(prevAuthDetails)) {
