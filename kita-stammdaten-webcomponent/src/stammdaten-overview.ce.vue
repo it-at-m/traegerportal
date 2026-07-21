@@ -45,7 +45,7 @@ import { setAccessToken } from "@/util/constants";
 const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
 
 function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
-  console.debug("Auth:" + authEventDetails)
+  console.debug("Auth:" + authEventDetails);
   if (authEventDetails && authEventDetails.accessToken) {
     setAccessToken(authEventDetails.accessToken);
     token.value = authEventDetails.accessToken;
