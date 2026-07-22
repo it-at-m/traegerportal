@@ -154,10 +154,9 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
-        <dependency>
-		    <groupId>io.opentelemetry.instrumentation</groupId>
-		    <artifactId>opentelemetry-spring-boot-starter</artifactId>
-		    <version>2.29.0</version>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-micrometer-tracing</artifactId>
 		</dependency>
 
 		<!-- Caching -->
