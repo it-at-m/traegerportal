@@ -1,7 +1,8 @@
 package de.muenchen.rbs.traegerportal.gateway.configuration;
 
 import java.time.Duration;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.session.autoconfigure.SessionProperties;
 import org.springframework.boot.session.autoconfigure.SessionTimeout;
@@ -15,9 +16,6 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Configuration
 @Profile("!no-security")
@@ -28,10 +26,10 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityWebFilterChain clientAccessFilterChain(final ServerHttpSecurity http,
-            @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuerUri, 
-           @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") String jwkSetUri) {
+            @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuerUri,
+            @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") String jwkSetUri) {
         log.info("Initializing security with issuer URI {} and jwk set uri {}", issuerUri, jwkSetUri);
-        
+
         // security config
         http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/**"))
                 .authorizeExchange(
