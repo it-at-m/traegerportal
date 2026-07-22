@@ -13,7 +13,6 @@ spring:
         jwt:
           issuer-uri: https://sso.muenchen.de/auth/realms/public
           jwk-set-uri: https://sso.muenchen.de/auth/realms/public/protocol/openid-connect/certs
-          audience: rbseinr-traegerportal
 
 adapter:
   einrichtungsverwaltung:

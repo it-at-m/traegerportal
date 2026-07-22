@@ -19,7 +19,6 @@ spring:
         jwt:
           issuer-uri: http://localhost:8100/auth/realms/local_realm
           jwk-set-uri: http://localhost:8100/auth/realms/local_realm/protocol/openid-connect/certs
-          audience: local
 
 adapter:
   einrichtungsverwaltung:
