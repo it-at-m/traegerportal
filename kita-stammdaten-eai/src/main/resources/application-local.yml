@@ -22,6 +22,7 @@ spring:
 
 adapter:
   einrichtungsverwaltung:
+    base-url: http://localhost:8080
     base-path: /api/einrichtungsverwaltung-backend/external/traeger/by-unternehmenskontoid/(ukId)
     security:
       token-url: https://ssodev.muenchen.de/auth/realms/A23/protocol/openid-connect/token

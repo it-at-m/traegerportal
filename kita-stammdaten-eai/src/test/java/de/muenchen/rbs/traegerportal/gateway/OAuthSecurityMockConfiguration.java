@@ -30,7 +30,7 @@ public class OAuthSecurityMockConfiguration {
 
     public static final String JWT_KEYS_HEADERS_ALG = "alg";
     public static final String JWT_KEYS_CLAIMS_DATENUEBERMITTLERPSEUDONYMID = "datenuebermittlerPseudonymId";
-    public static final String JWT_KEYS_CLAIMS_USERNAME = "username";
+    public static final String JWT_KEYS_CLAIMS_USERNAME = "preferred_username";
 
     public static final String JWT_FRONTEND_DEFAULT_TOKEN_VALUE = "test-token";
     public static final Map<String, String> JWT_FRONTEND_DEFAULT_HEADERS = Map.of(
