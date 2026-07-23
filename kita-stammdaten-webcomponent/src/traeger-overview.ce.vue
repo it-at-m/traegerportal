@@ -4,6 +4,11 @@
     size="200px"
     text="Lade Träger ..."
   />
+  <muc-callout v-else-if="dataLoadingError" type="error">
+    <template #content>
+      <p>Die Schnittstelle ist nicht erreichbar. Bitte versuchen Sie es zu einem späteren Zeitpunkt erneut.</p>
+    </template>
+  </muc-callout>
   <div v-else>
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="mucIconsSprite" />
@@ -31,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { MucCard, MucIcon, MucSpinner } from "@muenchen/muc-patternlab-vue";
+import { MucCard, MucIcon, MucSpinner, MucCallout, } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref, watch } from "vue";
@@ -58,6 +63,7 @@ const props = defineProps({
 });
 
 const loading = ref<boolean>();
+const dataLoadingError = ref<boolean>();
 
 function loadTraeger() {
   loading.value = true;
@@ -68,14 +74,17 @@ function loadTraeger() {
       if (resp.ok) {
         resp.json().then((response: TraegerDTO) => {
           traeger.value = response;
+          dataLoadingError.value = false;
         });
       } else {
         resp.text().then((errBody) => {
+          dataLoadingError.value = true;
           throw Error(errBody);
         });
       }
     })
     .catch((error) => {
+      dataLoadingError.value = true;
       console.debug(error);
     })
     .finally(() => {

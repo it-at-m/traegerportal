@@ -4,6 +4,11 @@
     size="200px"
     text="Lade Einrichtungen ..."
   />
+  <muc-callout v-else-if="dataLoadingError" type="error">
+    <template #content>
+      <p>Die Schnittstelle ist nicht erreichbar. Bitte versuchen Sie es zu einem späteren Zeitpunkt erneut.</p>
+    </template>
+  </muc-callout>
   <div v-else>
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="mucIconsSprite" />
@@ -65,6 +70,7 @@ import {
   MucButton,
   MucIcon,
   MucSpinner,
+  MucCallout,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
@@ -101,6 +107,7 @@ const props = defineProps({
 });
 
 const loading = ref<boolean>();
+const dataLoadingError = ref<boolean>();
 
 function bearbeitenFormularUrl(einrichtungId: string): string {
   return `${props.stammdatenUrl}/traegerAnzeigen/${einrichtungId}`;
@@ -117,15 +124,18 @@ function loadEinrichtungen() {
       if (resp.ok) {
         resp.json().then((response) => {
           einrichtungen.value = response.content as EinrichtungDTO[];
+          dataLoadingError.value = false;
         });
       } else {
         resp.text().then((errBody) => {
+          dataLoadingError.value = true;
           throw Error(errBody);
         });
       }
     })
     .catch((error) => {
       console.debug(error);
+      dataLoadingError.value = true;
     })
     .finally(() => {
       loading.value = false;
