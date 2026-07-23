@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
 
 import de.muenchen.rbs.traegerportal.gateway.adapter.ClientCredentialsAccessTokenProvider;
-import de.muenchen.rbs.traegerportal.gateway.adapter.SecurityGatewayFilterFactory;
+import de.muenchen.rbs.traegerportal.gateway.adapter.StammdatenSecurityGatewayFilterFactory;
 import de.muenchen.rbs.traegerportal.gateway.configuration.GatewayConfig;
 import java.util.Map;
 import lombok.Getter;
@@ -25,7 +25,7 @@ import reactor.core.publisher.Mono;
  * Test configuration providing mocked authentication and JWT infrastructure.
  */
 @TestConfiguration
-@Import({ GatewayConfig.class, SecurityGatewayFilterFactory.class })
+@Import({ GatewayConfig.class, StammdatenSecurityGatewayFilterFactory.class })
 public class OAuthSecurityMockConfiguration {
 
     public static final String JWT_KEYS_HEADERS_ALG = "alg";

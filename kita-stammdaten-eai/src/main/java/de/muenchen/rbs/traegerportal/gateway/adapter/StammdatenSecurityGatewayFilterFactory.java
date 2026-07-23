@@ -1,10 +1,9 @@
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
-import java.net.URI;
-import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -14,16 +13,17 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.util.UriComponentsBuilder;
+
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<SecurityGatewayFilterFactory.Config> {
+public class StammdatenSecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<StammdatenSecurityGatewayFilterFactory.Config> {
 
     private final ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider;
 
-    public SecurityGatewayFilterFactory(final ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider) {
+    public StammdatenSecurityGatewayFilterFactory(final ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider) {
         super(Config.class);
         this.stammdatenAccessTokenProvider = stammdatenAccessTokenProvider;
     }
@@ -43,9 +43,8 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
                         new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing JWT authentication")))
 
                 .flatMap(jwt -> {
-
                     final String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
-                    final String user = jwt.getClaimAsString("username");
+                    final String user = jwt.getClaimAsString("preferred_username");
 
                     // Reject requests with missing claims
                     if (!StringUtils.hasText(ukId) || !StringUtils.hasText(user)) {
@@ -53,25 +52,15 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
                     }
 
                     final String path = exchange.getRequest().getPath().value();
-                    final String pathReplacement = path.replaceFirst(
-                            "^/meintraeger",
-                            "/traeger/by-unternehmenskontoid/" + ukId);
-
-                    final URI targetUri = UriComponentsBuilder
-                            .fromUri(exchange.getRequest().getURI())
-                            .replacePath(pathReplacement)
-                            .build()
-                            .encode()
-                            .toUri();
+                    final String pathWithUkId = path.replace("(ukId)", ukId);
 
                     return stammdatenAccessTokenProvider.getAccessToken()
                             .doOnError(ex -> log.warn("Failed to obtain access token for backend.", ex))
 
                             .flatMap(accessTokenForBackend -> {
-
                                 final ServerHttpRequest requestToBackend = exchange.getRequest()
                                         .mutate()
-                                        .uri(targetUri)
+                                        .path(pathWithUkId)
                                         .headers(headers -> {
                                             headers.setBearerAuth(accessTokenForBackend);
                                             headers.set(
@@ -80,7 +69,7 @@ public class SecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<S
                                             headers.set("Original-Username", user);
                                         })
                                         .build();
-
+                                        
                                 return chain.filter(
                                         exchange.mutate()
                                                 .request(requestToBackend)
