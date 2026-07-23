@@ -15,13 +15,13 @@ public class GatewayConfig {
     private final String evUrl;
     private final String webcomponentsUrl;
     private final String evTraegerBasePath;
-    
+
     private final StammdatenSecurityGatewayFilterFactory gatewayFilterFactory;
 
     public GatewayConfig(final StammdatenSecurityGatewayFilterFactory gatewayFilterFactory,
             @Value("${adapter.einrichtungsverwaltung.base-url}") final String evUrl,
             @Value("${adapter.webcomponents.base-url}") final String webcomponentsUrl,
-            @Value("${adapter.einrichtungsverwaltung.base-path}")final String evTraegerBasePath) {
+            @Value("${adapter.einrichtungsverwaltung.base-path}") final String evTraegerBasePath) {
         log.info("Initializing Gateway with einrichtungsverwaltung-url {}, path {} and webcomponents-url {}...", evUrl, evTraegerBasePath, webcomponentsUrl);
 
         this.evUrl = evUrl;

@@ -1,9 +1,9 @@
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -13,8 +13,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
-
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -69,7 +67,7 @@ public class StammdatenSecurityGatewayFilterFactory extends AbstractGatewayFilte
                                             headers.set("Original-Username", user);
                                         })
                                         .build();
-                                        
+
                                 return chain.filter(
                                         exchange.mutate()
                                                 .request(requestToBackend)
