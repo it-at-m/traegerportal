@@ -10,7 +10,13 @@
         :stammdaten-url="stammdatenUrl"
         :token="token"
       />
-      <div class="flex-area">Vorgänge</div>
+      <muc-card
+        id="vorgang-anzeige"
+        title="Vorgänge"
+        :disabled="true"
+        class="flex-area"
+        ><template #content>TODO</template></muc-card
+      >
     </div>
     <einrichtung-overview-vue-component
       :stammdaten-url="stammdatenUrl"
@@ -24,15 +30,13 @@
         <p>Um diese Inhalte anzuzeigen, müssen Sie sich anmelden.</p>
       </template>
     </muc-callout>
-    <button @click="dummyLogin">Dummy-Login</button>
   </div>
-  <div>Logged in: {{ loggedIn }}</div>
 </template>
 
 <script setup lang="ts">
 import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts";
 
-import { MucCallout } from "@muenchen/muc-patternlab-vue";
+import { MucCallout, MucCard } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { ref } from "vue";
@@ -49,11 +53,6 @@ function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
     setAccessToken(authEventDetails.accessToken);
     token.value = authEventDetails.accessToken;
   }
-}
-
-function dummyLogin() {
-  token.value = "test";
-  loggedIn.value = true;
 }
 
 const token = ref<string | undefined>();
@@ -81,6 +80,7 @@ defineProps({
 
 .wide-container {
   display: flex;
+
   width: 100%;
 }
 
@@ -89,7 +89,9 @@ defineProps({
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
 }
 
 .bottom-area {
