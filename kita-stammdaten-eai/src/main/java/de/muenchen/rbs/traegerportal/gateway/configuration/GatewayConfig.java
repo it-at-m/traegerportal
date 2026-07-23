@@ -36,7 +36,7 @@ public class GatewayConfig {
 
         return builder.routes()
                 .route("meintraeger", r -> r.path("/meintraeger", "/meintraeger/**")
-                        .and().method("GET")
+                        .and().method(HttpMethod.GET, HttpMethod.OPTIONS)
                         .filters(f -> f
                                 .rewritePath("^/meintraeger", evTraegerBasePath)
                                 .filter(gatewayFilterFactory.apply(new StammdatenSecurityGatewayFilterFactory.Config())))
