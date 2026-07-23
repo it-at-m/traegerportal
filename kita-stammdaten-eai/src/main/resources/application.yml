@@ -6,7 +6,17 @@ spring:
   main:
     web-application-type: reactive
     banner-mode: console
-
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowed-origins:
+                - https://stadt-i.muenchen.de
+                allowed-methods:
+                - GET,POST,OPTIONS
   security:
     oauth2:
       resourceserver:
