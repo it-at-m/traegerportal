@@ -12,3 +12,4 @@ wiremock:
 adapter:
   einrichtungsverwaltung:
     base-url: http://localhost:${wiremock.server.port}/
+    base-path: /api/einrichtungsverwaltung-backend/external/traeger/by-unternehmenskontoid/(ukId)
