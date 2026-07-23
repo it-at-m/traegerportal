@@ -17,7 +17,7 @@
         v-for="einrichtung in currentPage"
         :id="'einrichtung-accordion-item-' + einrichtung.id"
         :key="einrichtung.id"
-        :header="einrichtung.title()"
+        :header="formatEinrichtungTitle(einrichtung)"
       >
         <template #subtitle>
           <a :href="bearbeitenFormularUrl(einrichtung.id)"
@@ -28,17 +28,20 @@
         <template #content>
           <div>
             <span class="einrichtung-attribute"
-              ><b>Kibigweb-ID:</b> {{ einrichtung.kibigwebid }}</span
+              ><b>Kibigweb-ID:</b> {{ einrichtung.merkmale.kibigWebId }}</span
             >
           </div>
           <div>
             <span class="einrichtung-attribute"
-              ><b>Status:</b> {{ einrichtung.status }}</span
+              ><b>Status:</b>
+              {{
+                formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus)
+              }}</span
             >
           </div>
           <div>
             <span class="einrichtung-attribute"
-              ><b>Adresse:</b> {{ einrichtung.adresse() }}</span
+              ><b>Adresse:</b> {{ formatAdresse(einrichtung.adresse) }}</span
             >
           </div>
         </template>
@@ -70,6 +73,11 @@ import { computed, ref, watch } from "vue";
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
 import SimplePagination from "@/components/SimplePagination.vue";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
+import {
+  formatAdresse,
+  formatEinrichtungsstatus,
+  formatEinrichtungTitle,
+} from "./util/format";
 
 const traegerUkId = "dummy-Value-for-now";
 
@@ -107,8 +115,8 @@ function loadEinrichtungen() {
     .searchEinrichtungen(traegerUkId)
     .then((resp) => {
       if (resp.ok) {
-        resp.json().then((response: EinrichtungDTO[]) => {
-          einrichtungen.value = response;
+        resp.json().then((response) => {
+          einrichtungen.value = response.content as EinrichtungDTO[];
         });
       } else {
         resp.text().then((errBody) => {

@@ -1,4 +1,4 @@
-export const BASE_API_PATH = import.meta.env.VITE_BASE_API_PATH;
+export const BASE_API_PATH = "http://localhost:8082/api";
 
 export const enum STATUS_INDICATORS {
   SUCCESS = "success",
@@ -10,11 +10,7 @@ export const enum STATUS_INDICATORS {
 let ACCESS_TOKEN: string | undefined = undefined;
 
 export function getAPIBaseURL(): string {
-  if (import.meta.env.VITE_VUE_APP_API_URL) {
-    return import.meta.env.VITE_VUE_APP_API_URL;
-  } else {
-    return new URL(import.meta.url).origin;
-  }
+  return BASE_API_PATH;
 }
 
 export function setAccessToken(newAccessToken: string): void {

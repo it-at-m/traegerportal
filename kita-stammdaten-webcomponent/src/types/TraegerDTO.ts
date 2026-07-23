@@ -1,15 +1,17 @@
+import type AdresseDTO from "./AdresseDTO";
+
 export default class TraegerDTO {
   id: string;
   name: string;
   form: string;
-  adresse: string;
+  adresse: AdresseDTO;
   team: string;
 
   constructor(
     id: string,
     name: string,
     form: string,
-    adresse: string,
+    adresse: AdresseDTO,
     team: string
   ) {
     this.id = id;

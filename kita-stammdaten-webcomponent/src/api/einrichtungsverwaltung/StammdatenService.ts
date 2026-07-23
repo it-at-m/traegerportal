@@ -1,161 +1,30 @@
-import EinrichtungDTO from "@/types/EinrichtungDTO";
+import { getAPIBaseURL } from "@/util/constants";
 
 export default class StammdatenService {
   getTraeger(token: string): Promise<Response> {
-    console.debug("Mocking traeger data: " + token);
-    const responseData = {
-      id: "123",
-      name: "Testname",
-      form: "TestForm",
-      adresse: "Teststraße 1, 80331 München",
-      team: "Team 1",
-    };
-
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    // @ts-expect-error Ignore for now, as test data will be removed later
-    const mockResponse: Response = {
-      status: 200,
-      statusText: "OK",
-      headers: headers,
-      ok: true,
-      redirected: false,
-      body: new Blob([JSON.stringify(responseData)]).stream(),
-      bodyUsed: false,
-
-      json: () => Promise.resolve(responseData),
-    };
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(mockResponse);
-      }, 1000);
-    });
-  }
-
-  searchEinrichtungen(token: string): Promise<Response> {
-    /* TODO: use service
-    const url = getAPIBaseURL() + "/clients/api/einrichtungsverwaltung-backend/external/traegerportal/traeger";
+    const url = getAPIBaseURL() + "/meintraeger";
 
     return fetch(url, {
       method: "GET",
       headers: {
-        Authorization: "Bearer " + getAccessToken(),
+        Authorization: "Bearer " + token,
         "Content-Type": "application/json",
       },
       credentials: "include",
-    });*/
-    console.debug("Mocking einrichtungen for traeger: " + token);
+    });
+  }
 
-    const responseData = [
-      new EinrichtungDTO(
-        "123",
-        "Testeinrichtung 1",
-        "Teststraße 1",
-        "80331 München",
-        "1620011000",
-        "In Betrieb"
-      ),
-      new EinrichtungDTO(
-        "124",
-        "Testeinrichtung 2",
-        "Teststraße 2",
-        "80331 München",
-        "1620011001",
-        "Vorplanung"
-      ),
-      new EinrichtungDTO(
-        "125",
-        "Testeinrichtung 3",
-        "Teststraße 3",
-        "80331 München",
-        "1620011001",
-        "Vorplanung"
-      ),
-      new EinrichtungDTO(
-        "126",
-        "Testeinrichtung 4",
-        "Teststraße 4",
-        "80331 München",
-        "1620011001",
-        "Vorplanung"
-      ),
-      new EinrichtungDTO(
-        "127",
-        "Testeinrichtung 5",
-        "Teststraße 5",
-        "80331 München",
-        "1620011001",
-        "Vorplanung"
-      ),
-      new EinrichtungDTO(
-        "128",
-        "Testeinrichtung 6",
-        "Teststraße 6",
-        "80331 München",
-        "1620011001",
-        "Vorplanung"
-      ),
-      new EinrichtungDTO(
-        "129",
-        "Testeinrichtung 7",
-        "Teststraße 7",
-        "80331 München",
-        "1620011001",
-        "Vorplanung"
-      ),
-      new EinrichtungDTO(
-        "130",
-        "Testeinrichtung 8",
-        "Teststraße 8",
-        "80331 München",
-        "1620011001",
-        "Vorplanung"
-      ),
-      new EinrichtungDTO(
-        "131",
-        "Testeinrichtung 9",
-        "Teststraße 9",
-        "80331 München",
-        "1620011001",
-        "Vorplanung"
-      ),
-      new EinrichtungDTO(
-        "131",
-        "Testeinrichtung 10",
-        "Teststraße 10",
-        "80331 München",
-        "1620011001",
-        "Vorplanung"
-      ),
-      new EinrichtungDTO(
-        "131",
-        "Testeinrichtung 11",
-        "Teststraße 11",
-        "80331 München",
-        "1620011001",
-        "Vorplanung"
-      ),
-    ];
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    // @ts-expect-error Ignore for now, as test data will be removed later
-    const mockResponse: Response = {
-      status: 200,
-      statusText: "OK",
-      headers: headers,
-      ok: true,
-      redirected: false,
-      body: new Blob([JSON.stringify(responseData)]).stream(),
-      bodyUsed: false,
+  searchEinrichtungen(token: string): Promise<Response> {
+    // ignore paging for now
+    const url = getAPIBaseURL() + "/meintraeger/einrichtungen?size=999";
 
-      json: () => Promise.resolve(responseData),
-    };
-
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(mockResponse);
-      }, 2000);
+    return fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
     });
   }
 }

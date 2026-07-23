@@ -22,7 +22,7 @@ spring:
 
 adapter:
   einrichtungsverwaltung:
-    base-url: http://localhost:8080
+    base-url: https://kita-einrichtung-test.muenchen.de
     base-path: /api/einrichtungsverwaltung-backend/external/traeger/by-unternehmenskontoid/(ukId)
     security:
       token-url: https://ssodev.muenchen.de/auth/realms/A23/protocol/openid-connect/token
