@@ -4,9 +4,15 @@
     size="200px"
     text="Lade Einrichtungen ..."
   />
-  <muc-callout v-else-if="dataLoadingError" type="error">
+  <muc-callout
+    v-else-if="dataLoadingError"
+    type="error"
+  >
     <template #content>
-      <p>Die Schnittstelle ist nicht erreichbar. Bitte versuchen Sie es zu einem späteren Zeitpunkt erneut.</p>
+      <p>
+        Die Schnittstelle ist nicht erreichbar. Bitte versuchen Sie es zu einem
+        späteren Zeitpunkt erneut.
+      </p>
     </template>
   </muc-callout>
   <div v-else>
@@ -68,9 +74,9 @@ import {
   MucAccordion,
   MucAccordionItem,
   MucButton,
+  MucCallout,
   MucIcon,
   MucSpinner,
-  MucCallout,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
