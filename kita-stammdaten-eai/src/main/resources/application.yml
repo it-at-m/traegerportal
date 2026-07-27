@@ -17,7 +17,9 @@ spring:
                 allowed-origins:
                 - https://stadt-i.muenchen.de
                 allowed-methods:
-                - GET,POST,OPTIONS
+                - GET
+                - POST
+                - OPTIONS
   security:
     oauth2:
       resourceserver:
