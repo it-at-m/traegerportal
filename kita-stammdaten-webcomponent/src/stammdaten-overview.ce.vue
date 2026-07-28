@@ -102,7 +102,6 @@ defineProps({
   margin-right: 1.5rem;
 }
 
-
 .bottom-area {
   width: 100%;
 }
