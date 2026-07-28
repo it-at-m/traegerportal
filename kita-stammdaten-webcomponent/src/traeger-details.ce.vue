@@ -32,7 +32,7 @@
       <template #content>
         <div><b>Träger-ID:</b> {{ traeger.id }}</div>
         <div><b>Name:</b> {{ traeger.name }}</div>
-        <div><b>Form:</b> {{ traeger.form }}</div>
+        <div><b>Form:</b> {{ traeger.traegerform }}</div>
         <div><b>Adresse:</b>{{ formatAdresse(traeger.adresse) }}</div>
         <div><b>Team:</b> {{ traeger.team }}</div>
       </template>
