@@ -15,7 +15,10 @@
       </p>
     </template>
   </muc-callout>
-  <div v-else style="width: 100%">
+  <div
+    v-else
+    style="width: 100%"
+  >
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
@@ -66,11 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  MucCallout,
-  MucCard,
-  MucSpinner,
-} from "@muenchen/muc-patternlab-vue";
+import { MucCallout, MucCard, MucSpinner } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref, watch } from "vue";

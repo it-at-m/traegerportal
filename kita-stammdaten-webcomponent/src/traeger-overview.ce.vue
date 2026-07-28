@@ -36,7 +36,10 @@
           <muc-icon icon="map-pin" /><b>Adresse:</b>
           {{ formatAdresse(traeger.adresse) }}
         </div>
-        <div><muc-icon icon="user-group" /><b>Team:</b> {{ formatTraegerTeam(traeger.team) }}</div>
+        <div>
+          <muc-icon icon="user-group" /><b>Team:</b>
+          {{ formatTraegerTeam(traeger.team) }}
+        </div>
       </template>
     </muc-card>
   </div>

@@ -1,7 +1,7 @@
 import type AdresseDTO from "@/types/AdresseDTO";
 import type EinrichtungDTO from "@/types/EinrichtungDTO";
-import type { TeamDTO } from "@/types/TraegerDTO";
 import type { EinrichtungsstatusDTO } from "@/types/EinrichtungDTO";
+import type { TeamDTO } from "@/types/TraegerDTO";
 
 export function getPreceededStringOrEmptyString(stringParameter: string) {
   return stringParameter ? " " + stringParameter : "";

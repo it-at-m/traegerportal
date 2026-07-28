@@ -4,10 +4,7 @@ export class TeamDTO {
   name: string;
   postfach: string;
 
-  constructor(
-    name: string,
-    postfach: string
-  ) {
+  constructor(name: string, postfach: string) {
     this.name = name;
     this.postfach = postfach;
   }
@@ -37,7 +34,6 @@ export class AnsprechpartnerDTO {
     this.rollen = rollen;
   }
 }
-
 
 export default class TraegerDTO {
   id: string;
