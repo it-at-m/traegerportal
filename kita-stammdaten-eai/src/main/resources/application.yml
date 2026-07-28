@@ -6,6 +6,11 @@ spring:
   main:
     web-application-type: reactive
     banner-mode: console
+  web:
+    error:
+      include-message: always
+      whitelabel:
+        enabled: false
   cloud:
     gateway:
       server:
@@ -14,9 +19,9 @@ spring:
             add-to-simple-url-handler-mapping: true
             cors-configurations:
               '[/**]':
-                allowed-origins:
+                allowedOrigins:
                 - https://stadt-i.muenchen.de
-                allowed-methods:
+                allowedMethods:
                 - GET
                 - POST
                 - OPTIONS
@@ -40,12 +45,6 @@ adapter:
   webcomponents:
     base-url: https://kita-traegerportal-webcomponents-test.muenchen.de/
 
-server:
-  error:
-    include-message: always
-    whitelabel:
-      enabled: false
-
 management:
   endpoints:
     access:
@@ -61,15 +60,15 @@ management:
         prometheus: metrics
   endpoint:
     health:
-      access: read_only
+      access: READ_ONLY
       probes:
         enabled: true
     info:
-      access: read_only
+      access: READ_ONLY
     prometheus:
-      access: read_only
+      access: READ_ONLY
     sbom:
-      access: read_only
+      access: READ_ONLY
   info:
     env:
       enabled: true
