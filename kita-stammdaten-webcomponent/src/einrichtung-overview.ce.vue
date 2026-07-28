@@ -63,7 +63,6 @@
       v-model="pageNumber"
       :total-items="einrichtungen.length"
       :items-per-page="pageSize"
-      style="padding-left: 24px"
       :cookie-name="traegerUkId"
     />
   </div>
@@ -100,7 +99,7 @@ const props = defineProps({
   },
   pageSize: {
     type: Number,
-    default: 10,
+    default: 5,
   },
   token: {
     type: String,

@@ -23,7 +23,7 @@
         :stammdaten-url="stammdatenUrl"
         :page-size="pageSize"
         :token="token"
-        class="flex-area"
+        class="full-area"
       />
     </div>
   </div>
@@ -67,7 +67,7 @@ defineProps({
   },
   pageSize: {
     type: Number,
-    default: 10,
+    default: 5,
   },
 });
 </script>
@@ -96,6 +96,12 @@ defineProps({
   margin-left: 1.5rem;
   margin-right: 1.5rem;
 }
+
+.full-area {
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+
 
 .bottom-area {
   width: 100%;

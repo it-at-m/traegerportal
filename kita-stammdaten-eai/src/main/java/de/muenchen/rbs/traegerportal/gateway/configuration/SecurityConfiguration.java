@@ -36,6 +36,8 @@ public class SecurityConfiguration {
                         authorizeExchangeSpec -> {
                             authorizeExchangeSpec
                                     .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                            authorizeExchangeSpec
+                                    .pathMatchers("/webcomponents/*").permitAll();
                             authorizeExchangeSpec.pathMatchers(
                                     "/api/*/actuator/info",
                                     "/actuator/health",
@@ -44,8 +46,7 @@ public class SecurityConfiguration {
                                     "/actuator/info",
                                     "/actuator/metrics",
                                     "/actuator/sbom",
-                                    "/actuator/sbom/application",
-                                    "/webcomponents/**")
+                                    "/actuator/sbom/application")
                                     .permitAll();
                             authorizeExchangeSpec.anyExchange().authenticated();
                         })
