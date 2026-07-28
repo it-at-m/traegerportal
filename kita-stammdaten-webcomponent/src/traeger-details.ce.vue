@@ -15,27 +15,51 @@
       </p>
     </template>
   </muc-callout>
-  <div v-else>
+  <div v-else style="width: 100%">
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
     <muc-card
       v-if="traeger"
-      id="traeger-card"
-      :title="traeger.name"
-      :href="hasLink ? traegerLink : undefined"
-      :disabled="!traeger"
+      id="traeger-card-allgemein"
+      title="Allgemeines"
+      :disabled="false"
     >
       <template #content>
-        <div><muc-icon icon="account" /><b>Träger-ID:</b> {{ traeger.id }}</div>
-        <div><muc-icon icon="home" /><b>Name:</b> {{ traeger.name }}</div>
-        <div><muc-icon icon="web" /><b>Form:</b> {{ traeger.form }}</div>
-        <div>
-          <muc-icon icon="map-pin" /><b>Adresse:</b>
-          {{ formatAdresse(traeger.adresse) }}
-        </div>
-        <div><muc-icon icon="user-group" /><b>Team:</b> {{ traeger.team }}</div>
+        <div><b>Träger-ID:</b> {{ traeger.id }}</div>
+        <div><b>Name:</b> {{ traeger.name }}</div>
+        <div><b>Form:</b> {{ traeger.form }}</div>
+        <div><b>Adresse:</b>{{ formatAdresse(traeger.adresse) }}</div>
+        <div><b>Team:</b> {{ traeger.team }}</div>
+      </template>
+    </muc-card>
+    <muc-card
+      v-if="traeger"
+      id="traeger-card-kontakt"
+      title="Kontaktdaten des Trägers"
+      :disabled="false"
+    >
+      <template #content>
+        <div><b>Telefon:</b> {{ traeger.telefon }}</div>
+        <div><b>Fax:</b> {{ traeger.fax }}</div>
+        <div><b>Email:</b> {{ traeger.email }}</div>
+        <div><b>Homepage:</b> {{ traeger.homepage }}</div>
+      </template>
+    </muc-card>
+    <muc-card
+      v-if="traeger"
+      id="traeger-card-ansprechpartner"
+      title="Ansprechpartner"
+      :disabled="false"
+    >
+      <template #content>
+        <div><b>Anrede:</b> {{ firstAnsprechpartner?.anrede }}</div>
+        <div><b>Vorname:</b> {{ firstAnsprechpartner?.vorname }}</div>
+        <div><b>Nachname:</b> {{ firstAnsprechpartner?.nachname }}</div>
+        <div><b>Telefon:</b> {{ firstAnsprechpartner?.telefon }}</div>
+        <div><b>E-Mail:</b> {{ firstAnsprechpartner?.email }}</div>
+        <div><b>Rolle(n):</b> {{ firstAnsprechpartner?.rollen }}</div>
       </template>
     </muc-card>
   </div>
@@ -45,7 +69,6 @@
 import {
   MucCallout,
   MucCard,
-  MucIcon,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
@@ -103,12 +126,8 @@ function loadTraeger() {
     });
 }
 
-const traegerLink = computed(() => {
-  return `${props.stammdatenUrl}/traegerAnzeigen/${traeger.value?.id}`;
-});
-
-const hasLink = computed(() => {
-  return props.stammdatenUrl && traeger.value;
+const firstAnsprechpartner = computed(() => {
+  return traeger.value?.ansprechpartner?.at(0);
 });
 
 watch(

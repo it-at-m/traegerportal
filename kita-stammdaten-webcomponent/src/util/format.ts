@@ -1,5 +1,6 @@
 import type AdresseDTO from "@/types/AdresseDTO";
 import type EinrichtungDTO from "@/types/EinrichtungDTO";
+import type { TeamDTO } from "@/types/TraegerDTO";
 import type { EinrichtungsstatusDTO } from "@/types/EinrichtungDTO";
 
 export function getPreceededStringOrEmptyString(stringParameter: string) {
@@ -42,4 +43,8 @@ export function formatEinrichtungsstatus(status: EinrichtungsstatusDTO) {
 
 export function formatEinrichtungTitle(einrichtung: EinrichtungDTO) {
   return `${formatStrasse(einrichtung.adresse)} / ${einrichtung.name}`;
+}
+
+export function formatTraegerTeam(team: TeamDTO) {
+  return `${team.name} (${team.postfach})`;
 }

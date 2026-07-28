@@ -6,11 +6,12 @@ export default class StammdatenService {
 
     return fetch(url, {
       method: "GET",
+      mode: "cors",
+      credentials: "include",
       headers: {
         Authorization: "Bearer " + token,
         "Content-Type": "application/json",
       },
-      credentials: "include",
     });
   }
 
@@ -20,11 +21,12 @@ export default class StammdatenService {
 
     return fetch(url, {
       method: "GET",
+      mode: "cors",
+      credentials: "include",
       headers: {
         Authorization: "Bearer " + token,
         "Content-Type": "application/json",
       },
-      credentials: "include",
     });
   }
 
@@ -33,11 +35,12 @@ export default class StammdatenService {
 
     return fetch(url, {
       method: "GET",
+      mode: "cors",
+      credentials: "include",
       headers: {
         Authorization: "Bearer " + token,
         "Content-Type": "application/json",
       },
-      credentials: "include",
     });
   }
 }

@@ -4,9 +4,9 @@
   <!-- eslint-disable-next-line vue/no-v-html -->
   <div v-html="customIconsSprite" />
   <div v-if="loggedIn || !loggedIn">
-    <div class="wide-container">
+    <div class="flex-container full-width">
       <traeger-overview-vue-component
-        class="flex-area"
+        class="flex-area full-width"
         :stammdaten-url="stammdatenUrl"
         :token="token"
       />
@@ -18,14 +18,12 @@
         ><template #content>TODO</template></muc-card
       >
     </div>
-    <div class="wide-container">
-      <einrichtung-overview-vue-component
-        :stammdaten-url="stammdatenUrl"
-        :page-size="pageSize"
-        :token="token"
-        class="full-area"
-      />
-    </div>
+    <einrichtung-overview-vue-component
+      :stammdaten-url="stammdatenUrl"
+      :page-size="pageSize"
+      :token="token"
+      class="bordered-area full-width"
+    />
   </div>
   <div v-else>
     <muc-callout type="info">
@@ -81,9 +79,12 @@ defineProps({
   padding-top: 1.5rem;
 }
 
-.wide-container {
+.flex-container {
   display: flex;
   margin-bottom: 1rem;
+}
+
+.full-width {
   width: 100%;
 }
 
@@ -97,7 +98,7 @@ defineProps({
   margin-right: 1.5rem;
 }
 
-.full-area {
+.bordered-area {
   margin-left: 1.5rem;
   margin-right: 1.5rem;
 }

@@ -26,16 +26,17 @@
       :title="traeger.name"
       :href="hasLink ? traegerLink : undefined"
       :disabled="!traeger"
+      style="width: 100%"
     >
       <template #content>
         <div><muc-icon icon="account" /><b>Träger-ID:</b> {{ traeger.id }}</div>
         <div><muc-icon icon="home" /><b>Name:</b> {{ traeger.name }}</div>
-        <div><muc-icon icon="web" /><b>Form:</b> {{ traeger.form }}</div>
+        <div><muc-icon icon="web" /><b>Form:</b> {{ traeger.traegerform }}</div>
         <div>
           <muc-icon icon="map-pin" /><b>Adresse:</b>
           {{ formatAdresse(traeger.adresse) }}
         </div>
-        <div><muc-icon icon="user-group" /><b>Team:</b> {{ traeger.team }}</div>
+        <div><muc-icon icon="user-group" /><b>Team:</b> {{ formatTraegerTeam(traeger.team) }}</div>
       </template>
     </muc-card>
   </div>
@@ -54,7 +55,7 @@ import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import TraegerDTO from "@/types/TraegerDTO";
-import { formatAdresse } from "./util/format";
+import { formatAdresse, formatTraegerTeam } from "./util/format";
 
 const traeger = ref<TraegerDTO>();
 

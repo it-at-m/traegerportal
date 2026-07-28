@@ -182,11 +182,14 @@ watch(
 
 .m-component-accordion {
   padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-right: 3rem !important;
 }
 
 .m-component-accordion .container {
   padding-left: 0;
   padding-right: 0;
+  max-width: 100%;
 }
 
 .m-accordion__section {
