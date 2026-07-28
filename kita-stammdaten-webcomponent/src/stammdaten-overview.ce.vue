@@ -18,11 +18,14 @@
         ><template #content>TODO</template></muc-card
       >
     </div>
-    <einrichtung-overview-vue-component
-      :stammdaten-url="stammdatenUrl"
-      :page-size="pageSize"
-      :token="token"
-    />
+    <div class="wide-container">
+      <einrichtung-overview-vue-component
+        :stammdaten-url="stammdatenUrl"
+        :page-size="pageSize"
+        :token="token"
+        class="flex-area"
+      />
+    </div>
   </div>
   <div v-else>
     <muc-callout type="info">

@@ -25,6 +25,9 @@ spring:
                 - GET
                 - POST
                 - OPTIONS
+                allowedHeaders:
+                - "*"
+                allowCredentials: true
   security:
     oauth2:
       resourceserver:

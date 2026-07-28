@@ -181,6 +181,11 @@ watch(
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
 
+.m-component-accordion .container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .m-accordion__section {
   border: solid 1px var(--color-neutrals-blue);
   border-bottom: solid 5px var(--color-brand-main-blue) !important;
