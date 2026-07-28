@@ -93,7 +93,7 @@ import {
 const traegerUkId = "dummy-Value-for-now";
 
 const props = defineProps({
-  stammdatenUrl: {
+  detailsUrl: {
     type: String,
     default: null,
   },
@@ -115,7 +115,7 @@ const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 
 function bearbeitenFormularUrl(einrichtungId: string): string {
-  return `${props.stammdatenUrl}/traegerAnzeigen/${einrichtungId}`;
+  return `${props.detailsUrl}/traegerAnzeigen/${einrichtungId}`;
 }
 
 const einrichtungen = ref<EinrichtungDTO[]>();
@@ -124,7 +124,7 @@ function loadEinrichtungen() {
   loading.value = true;
   const service = new StammdatenService();
   service
-    .searchEinrichtungen(traegerUkId)
+    .searchEinrichtungen(props.token)
     .then((resp) => {
       if (resp.ok) {
         resp.json().then((response) => {
@@ -179,6 +179,10 @@ watch(
 @import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
+
+.m-component-accordion {
+  padding-top: 0 !important;
+}
 
 .m-component-accordion .container {
   padding-left: 0;

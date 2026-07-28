@@ -32,6 +32,14 @@
       type="module"
     ></script>
     <script
+      src="src/traeger-details-webcomponent.ts"
+      type="module"
+    ></script>
+    <script
+      src="src/einrichtung-details-webcomponent.ts"
+      type="module"
+    ></script>
+    <script
       src="src/stammdaten-overview-webcomponent.ts"
       type="module"
     ></script>
@@ -64,9 +72,15 @@
       ></einrichtung-overview>
     </div-->
     <div class="component-display">
-      <stammdaten-overview
-        stammdaten-url="https://kita-einrichtung.muenchen.de"
-      ></stammdaten-overview>
+      <stammdaten-overview />
+    </div>
+
+    <div class="component-display">
+      <traeger-details />
+    </div>
+
+    <div class="component-display">
+      <einrichtung-details einrichtung-id="123" />
     </div>
   </body>
 </html>

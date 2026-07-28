@@ -38,6 +38,8 @@ export default defineConfig(({ mode }) => {
           "traeger-overview": "./src/traeger-overview-webcomponent.ts",
           "einrichtung-overview": "./src/einrichtung-overview-webcomponent.ts",
           "stammdaten-overview": "./src/stammdaten-overview-webcomponent.ts",
+          "traeger-details": "./src/traeger-details-webcomponent.ts",
+          "einrichtung-details": "./src/einrichtung-details-webcomponent.ts",
         },
         output: {
           entryFileNames: "entry-[name]-[hash].js",

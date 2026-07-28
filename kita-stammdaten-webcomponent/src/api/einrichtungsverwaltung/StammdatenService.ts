@@ -27,4 +27,17 @@ export default class StammdatenService {
       credentials: "include",
     });
   }
+
+  getEinrichtung(token: string, id: string): Promise<Response> {
+    const url = getAPIBaseURL() + "/meintraeger/einrichtungen/" + id;
+
+    return fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+  }
 }
