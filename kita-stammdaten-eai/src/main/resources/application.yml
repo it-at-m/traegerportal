@@ -19,8 +19,7 @@ spring:
             add-to-simple-url-handler-mapping: true
             cors-configurations:
               '[/**]':
-                allowedOrigins:
-                - https://stadt-i.muenchen.de
+                allowedOrigins: ${cors.allowedOrigins}
                 allowedMethods:
                 - GET
                 - POST
@@ -34,6 +33,9 @@ spring:
         jwt:
           issuer-uri: https://sso.muenchen.de/auth/realms/public
           jwk-set-uri: https://sso.muenchen.de/auth/realms/public/protocol/openid-connect/certs
+
+cors:
+  allowedOrigins: https://stadt-i.muenchen.de
 
 adapter:
   einrichtungsverwaltung:
