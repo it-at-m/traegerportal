@@ -33,7 +33,6 @@ public class SecurityConfiguration {
     @Bean
     @Order(1)
     public SecurityWebFilterChain webcomponentsFilterChain(final ServerHttpSecurity http) {
-        // security config
         http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/webcomponents/**"))
                 .authorizeExchange(
                         authorizeExchangeSpec -> {
@@ -46,6 +45,19 @@ public class SecurityConfiguration {
 
     @Bean
     @Order(2)
+    public SecurityWebFilterChain apiFilterChain(final ServerHttpSecurity http) {
+        http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/meintraeger/**"))
+                .authorizeExchange(
+                        authorizeExchangeSpec -> {
+                            authorizeExchangeSpec.anyExchange().permitAll();
+                        })
+                .cors(Customizer.withDefaults())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+        return http.build();
+    }
+
+    @Bean
+    @Order(3)
     public SecurityWebFilterChain clientAccessFilterChain(final ServerHttpSecurity http,
             @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") final String issuerUri,
             @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") final String jwkSetUri) {
@@ -67,10 +79,9 @@ public class SecurityConfiguration {
                                     "/actuator/sbom",
                                     "/actuator/sbom/application")
                                     .permitAll();
-                            authorizeExchangeSpec.anyExchange().authenticated();
                         })
-                .cors(Customizer.withDefaults())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .cors(ServerHttpSecurity.CorsSpec::disable);
         return http.build();
     }
 

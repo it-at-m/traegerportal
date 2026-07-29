@@ -35,7 +35,7 @@ spring:
           jwk-set-uri: https://sso.muenchen.de/auth/realms/public/protocol/openid-connect/certs
 
 cors:
-  allowedOrigins: "*"
+  allowedOrigins: https://stadt-i.muenchen.de
 
 adapter:
   einrichtungsverwaltung:
