@@ -132,7 +132,7 @@ const firstAnsprechpartner = computed(() => {
 watch(
   () => props.token,
   (newToken, oldToken) => {
-    if (newToken !== oldToken) {
+    if (newToken !== oldToken && !!newToken) {
       loadTraeger();
     }
   },

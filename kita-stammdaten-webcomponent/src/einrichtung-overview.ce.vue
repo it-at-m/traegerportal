@@ -63,7 +63,6 @@
       v-model="pageNumber"
       :total-items="einrichtungen.length"
       :items-per-page="pageSize"
-      :cookie-name="traegerUkId"
     />
   </div>
 </template>
@@ -89,8 +88,6 @@ import {
   formatEinrichtungsstatus,
   formatEinrichtungTitle,
 } from "./util/format";
-
-const traegerUkId = "dummy-Value-for-now";
 
 const props = defineProps({
   detailsUrl: {
@@ -167,7 +164,7 @@ const multiplePages = computed(() => {
 watch(
   () => props.token,
   (newToken, oldToken) => {
-    if (newToken !== oldToken) {
+    if (newToken !== oldToken && !!newToken) {
       loadEinrichtungen();
     }
   },
