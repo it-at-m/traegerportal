@@ -31,20 +31,22 @@ public class SecurityConfiguration {
 
     @Bean
     @Order(1)
-    public SecurityWebFilterChain webcomponentsFilterChain(final ServerHttpSecurity http) {
+    public SecurityWebFilterChain webcomponentsFilterChain(final ServerHttpSecurity http,
+            final CorsConfigurationSource corsConfigurationSource) {
         http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/webcomponents/**"))
                 .authorizeExchange(
                         authorizeExchangeSpec -> {
                             authorizeExchangeSpec.anyExchange().permitAll();
                         })
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .cors(ServerHttpSecurity.CorsSpec::disable);
+                .cors(cors -> cors.configurationSource(corsConfigurationSource));
         return http.build();
     }
 
     @Bean
     @Order(2)
-    public SecurityWebFilterChain apiFilterChain(final ServerHttpSecurity http) {
+    public SecurityWebFilterChain apiFilterChain(final ServerHttpSecurity http,
+            final CorsConfigurationSource corsConfigurationSource) {
         http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/meintraeger/**"))
                 .authorizeExchange(
                         authorizeExchangeSpec -> {
@@ -52,7 +54,7 @@ public class SecurityConfiguration {
                                     .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                             authorizeExchangeSpec.anyExchange().authenticated();
                         })
-                .cors(Customizer.withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
     }
@@ -61,8 +63,7 @@ public class SecurityConfiguration {
     @Order(3)
     public SecurityWebFilterChain clientAccessFilterChain(final ServerHttpSecurity http,
             @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") final String issuerUri,
-            @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") final String jwkSetUri,
-            final CorsConfigurationSource corsConfigurationSource) {
+            @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") final String jwkSetUri) {
         log.info("Initializing security with issuer URI {} and jwk set uri {}", issuerUri, jwkSetUri);
 
         // security config
@@ -81,7 +82,7 @@ public class SecurityConfiguration {
                                     .permitAll();
                         })
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource));
+                .cors(ServerHttpSecurity.CorsSpec::disable);
         return http.build();
     }
 
