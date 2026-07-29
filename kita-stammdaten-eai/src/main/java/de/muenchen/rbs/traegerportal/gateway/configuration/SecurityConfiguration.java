@@ -10,6 +10,7 @@ import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -25,6 +26,21 @@ public class SecurityConfiguration {
     private final SessionTimeout sessionTimeout;
 
     @Bean
+    @Order(1)
+    public SecurityWebFilterChain webcomponentsFilterChain(final ServerHttpSecurity http) {
+        // security config
+        http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/webcomponents/**"))
+                .authorizeExchange(
+                        authorizeExchangeSpec -> {
+                            authorizeExchangeSpec.anyExchange().permitAll();
+                        })
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .cors(ServerHttpSecurity.CorsSpec::disable);
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
     public SecurityWebFilterChain clientAccessFilterChain(final ServerHttpSecurity http,
             @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") final String issuerUri,
             @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") final String jwkSetUri) {
@@ -36,8 +52,6 @@ public class SecurityConfiguration {
                         authorizeExchangeSpec -> {
                             authorizeExchangeSpec
                                     .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-                            authorizeExchangeSpec
-                                    .pathMatchers("/webcomponents/**").permitAll();
                             authorizeExchangeSpec.pathMatchers(
                                     "/api/*/actuator/info",
                                     "/actuator/health",
