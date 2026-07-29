@@ -43,7 +43,7 @@ public class StammdatenSecurityGatewayFilterFactory extends AbstractGatewayFilte
                 .flatMap(jwt -> {
                     final String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
                     final String user = jwt.getClaimAsString("preferred_username");
-                    
+
                     log.debug("Extracted datenuebermittlerPseudonymId: {} and preferred_username: {}", ukId, user);
 
                     // Reject requests with missing claims
