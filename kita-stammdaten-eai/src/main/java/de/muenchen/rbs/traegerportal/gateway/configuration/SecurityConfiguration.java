@@ -69,7 +69,7 @@ public class SecurityConfiguration {
                                     .permitAll();
                             authorizeExchangeSpec.anyExchange().authenticated();
                         })
-                .cors(Customizer.withDefaults())
+                .cors(ServerHttpSecurity.CorsSpec::disable)
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
     }
