@@ -3,8 +3,6 @@ package de.muenchen.rbs.traegerportal.gateway.configuration;
 import java.time.Duration;
 import java.util.List;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.session.autoconfigure.SessionProperties;
 import org.springframework.boot.session.autoconfigure.SessionTimeout;
@@ -21,6 +19,9 @@ import org.springframework.security.web.server.util.matcher.ServerWebExchangeMat
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Configuration
@@ -62,7 +63,8 @@ public class SecurityConfiguration {
     @Order(3)
     public SecurityWebFilterChain clientAccessFilterChain(final ServerHttpSecurity http,
             @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") final String issuerUri,
-            @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") final String jwkSetUri) {
+            @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") final String jwkSetUri,
+            final CorsConfigurationSource corsConfigurationSource) {
         log.info("Initializing security with issuer URI {} and jwk set uri {}", issuerUri, jwkSetUri);
 
         // security config
@@ -81,7 +83,7 @@ public class SecurityConfiguration {
                                     .permitAll();
                         })
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .cors(ServerHttpSecurity.CorsSpec::disable);
+                .cors(cors -> cors.configurationSource(corsConfigurationSource));
         return http.build();
     }
 
