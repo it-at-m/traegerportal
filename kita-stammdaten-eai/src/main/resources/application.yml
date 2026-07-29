@@ -11,6 +11,22 @@ spring:
       include-message: always
       whitelabel:
         enabled: false
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            add-to-simple-url-handler-mapping: true
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: ${cors.allowedOrigins}
+                allowedMethods:
+                - GET
+                - POST
+                - OPTIONS
+                allowedHeaders:
+                - "*"
+                allowCredentials: true
   security:
     oauth2:
       resourceserver:
