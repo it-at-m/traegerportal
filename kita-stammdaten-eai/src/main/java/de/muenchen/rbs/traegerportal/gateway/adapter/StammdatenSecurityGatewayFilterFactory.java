@@ -30,7 +30,6 @@ public class StammdatenSecurityGatewayFilterFactory extends AbstractGatewayFilte
     @NullMarked
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> ReactiveSecurityContextHolder.getContext()
-
                 // Only JWT-based authentication is supported
                 .mapNotNull(SecurityContext::getAuthentication)
                 .filter(JwtAuthenticationToken.class::isInstance)
@@ -39,7 +38,6 @@ public class StammdatenSecurityGatewayFilterFactory extends AbstractGatewayFilte
                 // Reject unauthenticated requests
                 .switchIfEmpty(Mono.error(
                         new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing JWT authentication")))
-
                 .flatMap(jwt -> {
                     final String ukId = jwt.getClaimAsString("datenuebermittlerPseudonymId");
                     final String user = jwt.getClaimAsString("preferred_username");

@@ -99,6 +99,8 @@ const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 
 function loadTraeger() {
+  console.debug("Loading traeger data...");
+
   loading.value = true;
   const service = new StammdatenService();
   service

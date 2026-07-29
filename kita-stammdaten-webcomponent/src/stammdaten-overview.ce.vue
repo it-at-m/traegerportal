@@ -51,6 +51,8 @@ const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
 
 function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
   if (authEventDetails && authEventDetails.accessToken) {
+    console.debug("Receiving new authevent...");
+
     setAccessToken(authEventDetails.accessToken);
     token.value = authEventDetails.accessToken;
   }

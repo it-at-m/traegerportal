@@ -54,6 +54,7 @@ public class SecurityConfiguration {
                                     .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                             authorizeExchangeSpec.anyExchange().authenticated();
                         })
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();

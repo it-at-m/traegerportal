@@ -118,6 +118,8 @@ function bearbeitenFormularUrl(einrichtungId: string): string {
 const einrichtungen = ref<EinrichtungDTO[]>();
 
 function loadEinrichtungen() {
+  console.debug("Loading einrichtungen...");
+
   loading.value = true;
   const service = new StammdatenService();
   service
