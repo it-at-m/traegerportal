@@ -49,7 +49,9 @@ public class SecurityConfiguration {
         http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/meintraeger/**"))
                 .authorizeExchange(
                         authorizeExchangeSpec -> {
-                            authorizeExchangeSpec.anyExchange().permitAll();
+                            authorizeExchangeSpec
+                                    .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                            authorizeExchangeSpec.anyExchange().authenticated();
                         })
                 .cors(Customizer.withDefaults())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
@@ -67,8 +69,6 @@ public class SecurityConfiguration {
         http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/**"))
                 .authorizeExchange(
                         authorizeExchangeSpec -> {
-                            authorizeExchangeSpec
-                                    .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                             authorizeExchangeSpec.pathMatchers(
                                     "/api/*/actuator/info",
                                     "/actuator/health",
