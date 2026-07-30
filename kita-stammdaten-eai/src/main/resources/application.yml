@@ -86,6 +86,10 @@ management:
 logging:
   level:
     root: info
+    de:
+      muenchen:
+        rbs:
+          traegerportal: debug
   structured:
     format:
       console: logstash
