@@ -1,7 +1,6 @@
 package de.muenchen.rbs.traegerportal.gateway.configuration;
 
 import java.time.Duration;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,9 +16,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 @Slf4j
 @Configuration
@@ -39,7 +36,7 @@ public class SecurityConfiguration {
                             authorizeExchangeSpec.anyExchange().permitAll();
                         })
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource));
+                .cors(Customizer.withDefaults());
         return http.build();
     }
 
@@ -55,7 +52,7 @@ public class SecurityConfiguration {
                             authorizeExchangeSpec.anyExchange().authenticated();
                         })
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .cors(Customizer.withDefaults())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
     }
@@ -85,23 +82,6 @@ public class SecurityConfiguration {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(ServerHttpSecurity.CorsSpec::disable);
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource(
-            @Value("${cors.allowedOrigins}") final List<String> allowedOrigins) {
-        log.info("Initializing CORS with Origins {}", allowedOrigins);
-        final CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(allowedOrigins);
-        config.setAllowedMethods(List.of(HttpMethod.GET.name(), HttpMethod.OPTIONS.name(), HttpMethod.POST.name()));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
-
-        final UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();
-        configSource.registerCorsConfiguration("/**", config);
-
-        return configSource;
     }
 
     /**
