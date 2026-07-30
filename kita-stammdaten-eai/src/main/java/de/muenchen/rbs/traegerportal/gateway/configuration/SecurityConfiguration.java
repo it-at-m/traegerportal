@@ -16,7 +16,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
 
 @Slf4j
 @Configuration
@@ -28,8 +27,7 @@ public class SecurityConfiguration {
 
     @Bean
     @Order(1)
-    public SecurityWebFilterChain webcomponentsFilterChain(final ServerHttpSecurity http,
-            final CorsConfigurationSource corsConfigurationSource) {
+    public SecurityWebFilterChain webcomponentsFilterChain(final ServerHttpSecurity http) {
         http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/webcomponents/**"))
                 .authorizeExchange(
                         authorizeExchangeSpec -> {
@@ -42,8 +40,7 @@ public class SecurityConfiguration {
 
     @Bean
     @Order(2)
-    public SecurityWebFilterChain apiFilterChain(final ServerHttpSecurity http,
-            final CorsConfigurationSource corsConfigurationSource) {
+    public SecurityWebFilterChain apiFilterChain(final ServerHttpSecurity http) {
         http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/meintraeger/**"))
                 .authorizeExchange(
                         authorizeExchangeSpec -> {
