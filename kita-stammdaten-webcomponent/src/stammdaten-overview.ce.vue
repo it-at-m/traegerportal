@@ -3,7 +3,7 @@
   <div v-html="mucIconsSprite" />
   <!-- eslint-disable-next-line vue/no-v-html -->
   <div v-html="customIconsSprite" />
-  <div v-if="loggedIn || !loggedIn">
+  <div v-if="loggedIn">
     <div class="flex-container full-width">
       <traeger-overview-vue-component
         class="flex-area full-width"
