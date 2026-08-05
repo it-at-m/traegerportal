@@ -34,7 +34,7 @@
         <div><b>Name:</b> {{ traeger.name }}</div>
         <div><b>Form:</b> {{ traeger.traegerform }}</div>
         <div><b>Adresse:</b>{{ formatAdresse(traeger.adresse) }}</div>
-        <div><b>Team:</b> {{ traeger.team }}</div>
+        <div><b>Team:</b> {{ formatTraegerTeam(traeger.team) }}</div>
       </template>
     </muc-card>
     <muc-card
@@ -76,7 +76,7 @@ import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import TraegerDTO from "@/types/TraegerDTO";
-import { formatAdresse } from "./util/format";
+import { formatAdresse, formatTraegerTeam } from "./util/format";
 
 const traeger = ref<TraegerDTO>();
 
@@ -134,7 +134,7 @@ const firstAnsprechpartner = computed(() => {
 watch(
   () => props.token,
   (newToken, oldToken) => {
-    if (newToken !== oldToken && !!newToken) {
+    if (newToken !== oldToken) {
       loadTraeger();
     }
   },
@@ -146,4 +146,8 @@ watch(
 @import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
+
+.card {
+  margin-bottom: 1rem;
+}
 </style>
