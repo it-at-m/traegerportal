@@ -40,6 +40,7 @@ public class GatewayConfig {
                         .and().method(HttpMethod.GET)
                         .filters(f -> f
                                 .rewritePath("^/meintraeger", evTraegerBasePath)
+                                .removeRequestHeader("Origin")
                                 .filter(gatewayFilterFactory.apply(new StammdatenSecurityGatewayFilterFactory.Config())))
                         .uri(evUrl))
                 .route("webcomponents", r -> r.path("/webcomponents/**")
