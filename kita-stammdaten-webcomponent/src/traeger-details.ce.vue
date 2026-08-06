@@ -148,7 +148,7 @@ const firstAnsprechpartner = computed(() => {
 });
 
 watch(
-  () => token,
+  () => token.value,
   (newToken, oldToken) => {
     if (newToken !== oldToken) {
       loadTraeger();
