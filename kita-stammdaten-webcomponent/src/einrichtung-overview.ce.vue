@@ -31,7 +31,7 @@
         :header="formatEinrichtungTitle(einrichtung)"
       >
         <template #subtitle>
-          <a :href="bearbeitenFormularUrl(einrichtung.id)"
+          <a :href="getDetailsUrl(einrichtung.id)"
             ><muc-button variant="ghost"
               >Einrichtungsdetails<muc-icon icon="arrow-right" /></muc-button
           ></a>
@@ -111,8 +111,8 @@ const props = defineProps({
 const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 
-function bearbeitenFormularUrl(einrichtungId: string): string {
-  return `${props.detailsUrl}/${einrichtungId}`;
+function getDetailsUrl(einrichtungId: string): string {
+  return `${props.detailsUrl}?einrichtungId=${einrichtungId}`;
 }
 
 const einrichtungen = ref<EinrichtungDTO[]>();

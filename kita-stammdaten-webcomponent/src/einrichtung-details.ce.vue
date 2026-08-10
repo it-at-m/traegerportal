@@ -1,116 +1,155 @@
 <template>
-  <muc-spinner
-    v-if="loading"
-    size="200px"
-    text="Lade Träger ..."
-  />
-  <muc-callout
-    v-else-if="dataLoadingError"
-    type="error"
-  >
-    <template #content>
-      <p>
-        Die Schnittstelle ist nicht erreichbar. Bitte versuchen Sie es zu einem
-        späteren Zeitpunkt erneut.
-      </p>
-    </template>
-  </muc-callout>
-  <div v-else>
-    <!-- eslint-disable-next-line vue/no-v-html -->
-    <div v-html="mucIconsSprite" />
-    <!-- eslint-disable-next-line vue/no-v-html -->
-    <div v-html="customIconsSprite" />
-    <muc-card
-      v-if="einrichtung"
-      id="traeger-card"
-      :title="einrichtung.name"
-      :disabled="true"
+  <div v-if="loggedIn">
+    <muc-spinner
+      v-if="loading"
+      size="200px"
+      text="Lade Einrichtung ..."
+    />
+    <muc-callout
+      v-else-if="dataLoadingError"
+      type="error"
     >
       <template #content>
-        <div>
-          <muc-icon icon="account" /><b>Einrichtungs-ID:</b>
-          {{ einrichtung.id }}
-        </div>
-        <div><muc-icon icon="home" /><b>Name:</b> {{ einrichtung.name }}</div>
-        <div>
-          <muc-icon icon="web" /><b>Status:</b>
-          {{ formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus) }}
-        </div>
-        <div>
-          <muc-icon icon="map-pin" /><b>Adresse:</b>
-          {{ formatAdresse(einrichtung.adresse) }}
-        </div>
-        <div>
-          <muc-icon icon="user-group" /><b>Kibigwebid:</b>
-          {{ einrichtung.merkmale.kibigWebId }}
-        </div>
+        <p>
+          Die Einrichtungsdaten können derzeit nicht geladen werden. Bitte
+          versuchen Sie es zu einem späteren Zeitpunkt erneut.
+        </p>
       </template>
-    </muc-card>
+    </muc-callout>
+    <div
+      v-else
+      style="width: 100%"
+    >
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <div v-html="mucIconsSprite" />
+      <!-- eslint-disable-next-line vue/no-v-html -->
+      <div v-html="customIconsSprite" />
+      <muc-card
+        v-if="einrichtung"
+        id="einrichtung-card-allgemein"
+        title="Allgemeines"
+        :disabled="false"
+      >
+        <template #content>
+          <div><b>Einrichtung-ID:</b> {{ textOrFallback(einrichtung.id) }}</div>
+          <div><b>Name:</b> {{ textOrFallback(einrichtung.name) }}</div>
+          <div><b>Adresse: </b>{{ formatAdresse(einrichtung.adresse) }}</div>
+        </template>
+      </muc-card>
+      <muc-card
+        v-if="einrichtung"
+        id="einrichtung-card-kontakt"
+        title="Kontaktdaten der Einrichtung"
+        :disabled="false"
+      >
+        <template #content>
+          <div>
+            <b>Telefon:</b>
+            {{ textOrFallback(einrichtung.kontaktdaten?.telefon) }}
+          </div>
+          <div>
+            <b>Fax:</b> {{ textOrFallback(einrichtung.kontaktdaten?.fax) }}
+          </div>
+          <div>
+            <b>Email:</b> {{ textOrFallback(einrichtung.kontaktdaten?.email) }}
+          </div>
+          <div>
+            <b>Homepage:</b>
+            {{ textOrFallback(einrichtung.kontaktdaten?.homepageUrl) }}
+          </div>
+        </template>
+      </muc-card>
+    </div>
+  </div>
+  <div v-else>
+    <muc-callout type="info">
+      <template #content>
+        <p>Um diese Inhalte anzuzeigen, müssen Sie sich anmelden.</p>
+      </template>
+    </muc-callout>
   </div>
 </template>
 
 <script setup lang="ts">
-import { MucCallout, MucIcon, MucSpinner } from "@muenchen/muc-patternlab-vue";
+import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts";
+
+import { MucCallout, MucCard, MucSpinner } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { ref, watch } from "vue";
 
-import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
+import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
+import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
-import { formatAdresse, formatEinrichtungsstatus } from "./util/format";
+import { setAccessToken } from "@/util/constants";
+import { formatAdresse, textOrFallback } from "./util/format";
 
-const props = defineProps({
-  token: {
-    type: String,
-    default: null,
-  },
-  authLoading: {
-    type: Boolean,
-    default: false,
-  },
-  einrichtungId: {
-    type: String,
-    default: null,
-  },
-});
+const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
+
+function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
+  if (authEventDetails && authEventDetails.accessToken) {
+    console.debug("Receiving new authevent...");
+
+    setAccessToken(authEventDetails.accessToken);
+    token.value = authEventDetails.accessToken;
+  }
+}
+
+const token = ref<string>();
+
+const einrichtung = ref<EinrichtungDTO>();
 
 const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 
-const einrichtung = ref<EinrichtungDTO>();
+function loadEinrichtung(einrichtungId: string | null) {
+  console.debug("Loading Einrichtung data...");
 
-function loadEinrichtung() {
-  loading.value = true;
-  const service = new StammdatenService();
-  service
-    .getEinrichtung(props.token, props.einrichtungId)
-    .then((resp) => {
-      if (resp.ok) {
-        resp.json().then((response) => {
-          einrichtung.value = response as EinrichtungDTO;
-          dataLoadingError.value = false;
-        });
-      } else {
-        resp.text().then((errBody) => {
-          dataLoadingError.value = true;
-          throw Error(errBody);
-        });
-      }
-    })
-    .catch((error) => {
-      console.debug(error);
-      dataLoadingError.value = true;
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+  if (!token.value) {
+    console.debug("Skipping, because no token is known yet.");
+    return;
+  } else if (!einrichtungId) {
+    console.debug("Skipping, because no einrichtungId is specified.");
+    return;
+  } else {
+    loading.value = true;
+    const service = new StammdatenService();
+    service
+      .getEinrichtung(token.value, einrichtungId)
+      .then((resp) => {
+        if (resp.ok) {
+          resp.json().then((response: EinrichtungDTO) => {
+            einrichtung.value = response;
+            dataLoadingError.value = false;
+          });
+        } else {
+          resp.text().then((errBody) => {
+            dataLoadingError.value = true;
+            throw Error(errBody);
+          });
+        }
+      })
+      .catch((error) => {
+        dataLoadingError.value = true;
+        console.debug(error);
+      })
+      .finally(() => {
+        loading.value = false;
+      });
+  }
 }
 
 watch(
-  () => props.token,
+  () => token.value,
   (newToken, oldToken) => {
     if (newToken !== oldToken) {
-      loadEinrichtung();
+      // get query param for einrichtungId
+
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const einrichtungId = urlParams.get("einrichtungId");
+
+      loadEinrichtung(einrichtungId);
     }
   },
   { immediate: true }
@@ -122,33 +161,7 @@ watch(
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
 
-.m-component-accordion {
-  padding-top: 0 !important;
-}
-
-.m-component-accordion .container {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.m-accordion__section {
-  border: solid 1px var(--color-neutrals-blue);
-  border-bottom: solid 5px var(--color-brand-main-blue) !important;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  margin-bottom: 16px;
-}
-
-.m-accordion__section-button {
-  padding-top: 16px;
-  padding-bottom: 16px;
-}
-
-.einrichtung-attribute {
-  padding-right: 1rem;
-}
-
-.content-width {
-  width: 100% !important;
+.card {
+  margin-bottom: 1rem;
 }
 </style>

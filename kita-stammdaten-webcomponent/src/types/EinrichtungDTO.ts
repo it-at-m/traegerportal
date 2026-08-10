@@ -16,11 +16,31 @@ export class EinrichtungsstatusDTO {
   }
 }
 
+export class KontaktdatenDTO {
+  telefon: string;
+  fax: string;
+  homepageUrl: string;
+  email: string;
+
+  constructor(
+    telefon: string,
+    fax: string,
+    homepageUrl: string,
+    email: string
+  ) {
+    this.telefon = telefon;
+    this.fax = fax;
+    this.homepageUrl = homepageUrl;
+    this.email = email;
+  }
+}
+
 export default class EinrichtungDTO {
   id: string;
   name: string;
   adresse: AdresseDTO;
   merkmale: MerkmaleDTO;
+  kontaktdaten: KontaktdatenDTO;
   aktuellGueltigerStatus: EinrichtungsstatusDTO;
 
   constructor(
@@ -28,12 +48,14 @@ export default class EinrichtungDTO {
     name: string,
     adresse: AdresseDTO,
     merkmale: MerkmaleDTO,
+    kontaktdaten: KontaktdatenDTO,
     aktuellGueltigerStatus: EinrichtungsstatusDTO
   ) {
     this.id = id;
     this.name = name;
     this.adresse = adresse;
     this.merkmale = merkmale;
+    this.kontaktdaten = kontaktdaten;
     this.aktuellGueltigerStatus = aktuellGueltigerStatus;
   }
 }
