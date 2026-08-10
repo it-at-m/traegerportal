@@ -11,8 +11,8 @@
     >
       <template #content>
         <p>
-          Die Schnittstelle ist nicht erreichbar. Bitte versuchen Sie es zu
-          einem späteren Zeitpunkt erneut.
+          Die Trägerdaten können derzeit nicht geladen werden. Bitte versuchen
+          Sie es zu einem späteren Zeitpunkt erneut.
         </p>
       </template>
     </muc-callout>
@@ -31,10 +31,10 @@
         :disabled="false"
       >
         <template #content>
-          <div><b>Träger-ID:</b> {{ traeger.id }}</div>
-          <div><b>Name:</b> {{ traeger.name }}</div>
-          <div><b>Form:</b> {{ traeger.traegerform }}</div>
-          <div><b>Adresse:</b>{{ formatAdresse(traeger.adresse) }}</div>
+          <div><b>Träger-ID:</b> {{ textOrFallback(traeger.id) }}</div>
+          <div><b>Name:</b> {{ textOrFallback(traeger.name) }}</div>
+          <div><b>Form:</b> {{ textOrFallback(traeger.traegerform) }}</div>
+          <div><b>Adresse: </b>{{ formatAdresse(traeger.adresse) }}</div>
           <div><b>Team:</b> {{ formatTraegerTeam(traeger.team) }}</div>
         </template>
       </muc-card>
@@ -45,10 +45,10 @@
         :disabled="false"
       >
         <template #content>
-          <div><b>Telefon:</b> {{ traeger.telefon }}</div>
-          <div><b>Fax:</b> {{ traeger.fax }}</div>
-          <div><b>Email:</b> {{ traeger.email }}</div>
-          <div><b>Homepage:</b> {{ traeger.homepage }}</div>
+          <div><b>Telefon:</b> {{ textOrFallback(traeger.telefon) }}</div>
+          <div><b>Fax:</b> {{ textOrFallback(traeger.fax) }}</div>
+          <div><b>Email:</b> {{ textOrFallback(traeger.email) }}</div>
+          <div><b>Homepage:</b> {{ textOrFallback(traeger.homepage) }}</div>
         </template>
       </muc-card>
       <muc-card
@@ -58,12 +58,25 @@
         :disabled="false"
       >
         <template #content>
-          <div><b>Anrede:</b> {{ firstAnsprechpartner?.anrede }}</div>
-          <div><b>Vorname:</b> {{ firstAnsprechpartner?.vorname }}</div>
-          <div><b>Nachname:</b> {{ firstAnsprechpartner?.nachname }}</div>
-          <div><b>Telefon:</b> {{ firstAnsprechpartner?.telefon }}</div>
-          <div><b>E-Mail:</b> {{ firstAnsprechpartner?.email }}</div>
-          <div><b>Rolle(n):</b> {{ firstAnsprechpartner?.rollen }}</div>
+          <div>
+            <b>Anrede:</b> {{ textOrFallback(firstAnsprechpartner?.anrede) }}
+          </div>
+          <div>
+            <b>Vorname:</b> {{ textOrFallback(firstAnsprechpartner?.vorname) }}
+          </div>
+          <div>
+            <b>Nachname:</b>
+            {{ textOrFallback(firstAnsprechpartner?.nachname) }}
+          </div>
+          <div>
+            <b>Telefon:</b> {{ textOrFallback(firstAnsprechpartner?.telefon) }}
+          </div>
+          <div>
+            <b>E-Mail:</b> {{ textOrFallback(firstAnsprechpartner?.email) }}
+          </div>
+          <div>
+            <b>Rolle(n):</b> {{ formatTraegerRollen(firstAnsprechpartner) }}
+          </div>
         </template>
       </muc-card>
     </div>
@@ -89,7 +102,12 @@ import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts
 import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
 import TraegerDTO from "@/types/TraegerDTO";
 import { setAccessToken } from "@/util/constants";
-import { formatAdresse, formatTraegerTeam } from "./util/format";
+import {
+  formatAdresse,
+  formatTraegerRollen,
+  formatTraegerTeam,
+  textOrFallback,
+} from "./util/format";
 
 const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
 

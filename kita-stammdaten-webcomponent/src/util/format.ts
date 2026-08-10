@@ -1,7 +1,9 @@
 import type AdresseDTO from "@/types/AdresseDTO";
 import type EinrichtungDTO from "@/types/EinrichtungDTO";
 import type { EinrichtungsstatusDTO } from "@/types/EinrichtungDTO";
-import type { TeamDTO } from "@/types/TraegerDTO";
+import type { AnsprechpartnerDTO, TeamDTO } from "@/types/TraegerDTO";
+
+export const noValueFallback = "Keine Daten hinterlegt";
 
 export function getPreceededStringOrEmptyString(stringParameter: string) {
   return stringParameter ? " " + stringParameter : "";
@@ -9,7 +11,7 @@ export function getPreceededStringOrEmptyString(stringParameter: string) {
 
 export function formatStrasse(adresse: AdresseDTO): string {
   if (!adresse) {
-    return "-";
+    return noValueFallback;
   } else {
     const strasse = adresse.strasse ? adresse.strasse : "";
     const hausnummer = getPreceededStringOrEmptyString(adresse.hausnummer);
@@ -23,7 +25,7 @@ export function formatStrasse(adresse: AdresseDTO): string {
 
 export function formatAdresse(adresse: AdresseDTO): string {
   if (!adresse) {
-    return "-";
+    return noValueFallback;
   } else {
     const formattedStrasse = formatStrasse(adresse);
     const plz = "," + getPreceededStringOrEmptyString(adresse.plz);
@@ -46,5 +48,25 @@ export function formatEinrichtungTitle(einrichtung: EinrichtungDTO) {
 }
 
 export function formatTraegerTeam(team: TeamDTO) {
+  if (!team) {
+    return noValueFallback;
+  }
   return `${team.name} (${team.postfach})`;
+}
+
+export function formatTraegerRollen(
+  ansprechpartner: AnsprechpartnerDTO | undefined
+) {
+  if (
+    !ansprechpartner ||
+    !ansprechpartner.rollen ||
+    ansprechpartner.rollen.length == 0
+  ) {
+    return noValueFallback;
+  }
+  return ansprechpartner.rollen.join(", ");
+}
+
+export function textOrFallback(text: string | undefined | null) {
+  return text ? text : noValueFallback;
 }
