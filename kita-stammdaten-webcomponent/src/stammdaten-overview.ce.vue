@@ -7,7 +7,7 @@
     <div class="flex-container full-width">
       <traeger-overview-vue-component
         class="flex-area full-width"
-        :stammdaten-url="stammdatenUrl"
+        :details-url="detailsUrl"
         :token="token"
       />
       <muc-card
@@ -19,7 +19,7 @@
       >
     </div>
     <einrichtung-overview-vue-component
-      :stammdaten-url="stammdatenUrl"
+      :details-url="detailsUrl"
       :page-size="pageSize"
       :token="token"
       class="bordered-area full-width"
@@ -61,7 +61,7 @@ function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
 const token = ref<string | undefined>();
 
 defineProps({
-  stammdatenUrl: {
+  detailsUrl: {
     type: String,
     default: null,
   },

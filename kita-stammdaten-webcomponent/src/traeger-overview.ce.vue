@@ -63,7 +63,7 @@ import { formatAdresse, formatTraegerTeam } from "./util/format";
 const traeger = ref<TraegerDTO>();
 
 const props = defineProps({
-  stammdatenUrl: {
+  detailsUrl: {
     type: String,
     default: null,
   },
@@ -108,11 +108,11 @@ function loadTraeger() {
 }
 
 const traegerLink = computed(() => {
-  return `${props.stammdatenUrl}/traegerAnzeigen/${traeger.value?.id}`;
+  return `${props.detailsUrl}/traegerAnzeigen/${traeger.value?.id}`;
 });
 
 const hasLink = computed(() => {
-  return props.stammdatenUrl && traeger.value;
+  return props.detailsUrl && traeger.value;
 });
 
 watch(
