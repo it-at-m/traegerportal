@@ -61,7 +61,11 @@ function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
 const token = ref<string | undefined>();
 
 defineProps({
-  detailsUrl: {
+  traegerDetailsUrl: {
+    type: String,
+    default: null,
+  },
+  einrichtungDetailsUrl: {
     type: String,
     default: null,
   },
