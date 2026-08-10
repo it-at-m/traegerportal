@@ -7,7 +7,7 @@
     <div class="flex-container full-width">
       <traeger-overview-vue-component
         class="flex-area full-width"
-        :details-url="detailsUrl"
+        :details-url="traegerDetailsUrl"
         :token="token"
       />
       <muc-card
@@ -19,7 +19,7 @@
       >
     </div>
     <einrichtung-overview-vue-component
-      :details-url="detailsUrl"
+      :details-url="einrichtungDetailsUrl"
       :page-size="pageSize"
       :token="token"
       class="bordered-area full-width"

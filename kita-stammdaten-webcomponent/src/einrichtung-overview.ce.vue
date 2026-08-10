@@ -112,7 +112,7 @@ const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 
 function bearbeitenFormularUrl(einrichtungId: string): string {
-  return `${props.detailsUrl}/traegerAnzeigen/${einrichtungId}`;
+  return `${props.detailsUrl}/${einrichtungId}`;
 }
 
 const einrichtungen = ref<EinrichtungDTO[]>();

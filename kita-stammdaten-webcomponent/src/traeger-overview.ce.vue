@@ -108,7 +108,7 @@ function loadTraeger() {
 }
 
 const traegerLink = computed(() => {
-  return `${props.detailsUrl}/traegerAnzeigen/${traeger.value?.id}`;
+  return `${props.detailsUrl}`;
 });
 
 const hasLink = computed(() => {
