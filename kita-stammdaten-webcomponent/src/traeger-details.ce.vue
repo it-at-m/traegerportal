@@ -167,10 +167,6 @@ function loadTraeger() {
   }
 }
 
-const firstAnsprechpartner = computed(() => {
-  return traeger.value?.ansprechpartner?.at(0);
-});
-
 watch(
   () => token.value,
   (newToken, oldToken) => {
