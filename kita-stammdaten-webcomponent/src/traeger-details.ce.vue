@@ -58,25 +58,31 @@
         :disabled="false"
       >
         <template #content>
-          <div>
-            <b>Anrede:</b> {{ textOrFallback(firstAnsprechpartner?.anrede) }}
-          </div>
-          <div>
-            <b>Vorname:</b> {{ textOrFallback(firstAnsprechpartner?.vorname) }}
-          </div>
-          <div>
-            <b>Nachname:</b>
-            {{ textOrFallback(firstAnsprechpartner?.nachname) }}
-          </div>
-          <div>
-            <b>Telefon:</b> {{ textOrFallback(firstAnsprechpartner?.telefon) }}
-          </div>
-          <div>
-            <b>E-Mail:</b> {{ textOrFallback(firstAnsprechpartner?.email) }}
-          </div>
-          <div>
-            <b>Rolle(n):</b> {{ formatTraegerRollen(firstAnsprechpartner) }}
-          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Anrede</th>
+                <th>Vorname</th>
+                <th>Nachname</th>
+                <th>Telefon</th>
+                <th>E-Mail</th>
+                <th>Rolle(n)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="ansprechpartner in traeger.ansprechpartner"
+                :key="ansprechpartner.id"
+              >
+                <td>{{ textOrFallback(ansprechpartner.anrede) }}</td>
+                <td>{{ textOrFallback(ansprechpartner.vorname) }}</td>
+                <td>{{ textOrFallback(ansprechpartner.nachname) }}</td>
+                <td>{{ textOrFallback(ansprechpartner.telefon) }}</td>
+                <td>{{ textOrFallback(ansprechpartner.email) }}</td>
+                <td>{{ formatTraegerRollen(ansprechpartner) }}</td>
+              </tr>
+            </tbody>
+          </table>
         </template>
       </muc-card>
     </div>

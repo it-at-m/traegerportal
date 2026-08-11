@@ -102,8 +102,16 @@ const einrichtung = ref<EinrichtungDTO>();
 const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 
+function getEinrichtungId() {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const einrichtungId = urlParams.get("einrichtungId");
+
+  return einrichtungId;
+}
+
 function loadEinrichtung(einrichtungId: string | null) {
-  console.debug("Loading Einrichtung data...");
+  console.debug("Loading Einrichtung data for id " + einrichtungId + " ...");
 
   if (!token.value) {
     console.debug("Skipping, because no token is known yet.");
@@ -143,13 +151,7 @@ watch(
   () => token.value,
   (newToken, oldToken) => {
     if (newToken !== oldToken) {
-      // get query param for einrichtungId
-
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      const einrichtungId = urlParams.get("einrichtungId");
-
-      loadEinrichtung(einrichtungId);
+      loadEinrichtung(getEinrichtungId());
     }
   },
   { immediate: true }

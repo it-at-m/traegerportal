@@ -11,6 +11,7 @@ export class TeamDTO {
 }
 
 export class AnsprechpartnerDTO {
+  id: number;
   anrede: string;
   vorname: string;
   nachname: string;
@@ -19,6 +20,7 @@ export class AnsprechpartnerDTO {
   rollen: string[];
 
   constructor(
+    id: number,
     anrede: string,
     vorname: string,
     nachname: string,
@@ -26,6 +28,7 @@ export class AnsprechpartnerDTO {
     email: string,
     rollen: string[]
   ) {
+    this.id = id;
     this.anrede = anrede;
     this.vorname = vorname;
     this.nachname = nachname;
