@@ -41,7 +41,8 @@
         <template #content>
           <div><b>Name:</b> {{ textOrFallback(einrichtung.name) }}</div>
           <div>
-            <b>KIGIB.web-Nummer:</b> {{ textOrFallback(einrichtung.merkmale?.kibigWebId) }}
+            <b>KIGIB.web-Nummer:</b>
+            {{ textOrFallback(einrichtung.merkmale?.kibigWebId) }}
           </div>
           <div><b>Adresse: </b>{{ formatAdresse(einrichtung.adresse) }}</div>
           <div>
