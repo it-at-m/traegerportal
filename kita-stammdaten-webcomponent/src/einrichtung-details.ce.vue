@@ -56,7 +56,7 @@
         title="Kontaktdaten der Einrichtung"
         :disabled="false"
       >
-        <template #content>
+        <template #default>
           <div>
             <b>Telefon:</b>
             {{ textOrFallback(einrichtung.kontaktdaten?.telefon) }}

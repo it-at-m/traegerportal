@@ -29,7 +29,7 @@
         variant="overview"
         :title="textOrFallback(traeger.name)"
       >
-        <template #content>
+        <template #default>
           <muc-link
             label="Trägerdaten ändern"
             href="https://test81-k2.muenchen.de/intelliform/forms/integration/05/05/2277/index?eid=2"
