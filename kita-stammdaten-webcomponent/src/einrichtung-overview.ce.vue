@@ -129,6 +129,7 @@ function loadEinrichtungen() {
       if (resp.ok) {
         resp.json().then((response) => {
           einrichtungen.value = response.content as EinrichtungDTO[];
+          einrichtungen.value.sort((a, b) => a.name.localeCompare(b.name));
           dataLoadingError.value = false;
         });
       } else {
