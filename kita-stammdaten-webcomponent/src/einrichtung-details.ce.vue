@@ -41,7 +41,7 @@
         <template #content>
           <div><b>Name:</b> {{ textOrFallback(einrichtung.name) }}</div>
           <div>
-            <b>KIGIB.web-Nummer:</b> {{ textOrFallback(einrichtung.id) }}
+            <b>KIGIB.web-Nummer:</b> {{ textOrFallback(einrichtung.merkmale?.kibigWebId) }}
           </div>
           <div><b>Adresse: </b>{{ formatAdresse(einrichtung.adresse) }}</div>
           <div>
@@ -60,7 +60,7 @@
         title="Kontaktdaten der Einrichtung"
         :disabled="false"
       >
-        <template #default>
+        <template #content>
           <div>
             <b>Telefon:</b>
             {{ textOrFallback(einrichtung.kontaktdaten?.telefon) }}
@@ -83,7 +83,7 @@
         title="Platzstruktur der Einrichtung"
         :disabled="true"
       >
-        <template #default>
+        <template #content>
           <div>
             <b>Gesamt: </b>
             {{
