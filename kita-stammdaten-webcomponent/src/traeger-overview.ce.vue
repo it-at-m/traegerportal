@@ -54,7 +54,7 @@ import {
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import { computed, ref, watch } from "vue";
+import { computed, defineEmits, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import TraegerDTO from "@/types/TraegerDTO";
@@ -79,6 +79,7 @@ const props = defineProps({
 
 const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
+const emit = defineEmits(["loadingError", "unknownTraeger"]);
 
 function loadTraeger() {
   loading.value = true;
@@ -94,7 +95,16 @@ function loadTraeger() {
       } else {
         resp.text().then((errBody) => {
           dataLoadingError.value = true;
-          throw Error(errBody);
+
+          if (
+            resp.status == 422 &&
+            errBody.includes("Unternehmenskonto-ID wurde nicht gefunden")
+          ) {
+            emit("unknownTraeger");
+          } else {
+            emit("loadingError");
+            throw Error(errBody);
+          }
         });
       }
     })

@@ -4,11 +4,38 @@
   <!-- eslint-disable-next-line vue/no-v-html -->
   <div v-html="customIconsSprite" />
   <div v-if="loggedIn">
-    <div class="flex-container full-width">
+    <muc-callout
+      v-if="unknownTraeger"
+      type="info"
+    >
+      <template #content>
+        <p>
+          Ihr Träger ist bei der Landeshauptstadt München noch nicht gemeldet.
+          Bitte registrieren Sie sich mit diesem Unternehmenskonto.
+        </p>
+      </template>
+    </muc-callout>
+    <muc-callout
+      v-if="loadingError"
+      type="error"
+    >
+      <template #content>
+        <p>
+          Die Daten Ihres Trägers konnten nicht geladen werden. Bitte versuchen
+          Sie es später erneut.
+        </p>
+      </template>
+    </muc-callout>
+    <div
+      v-else
+      class="flex-container full-width"
+    >
       <traeger-overview-vue-component
         class="flex-area full-width"
         :details-url="traegerDetailsUrl"
         :token="token"
+        @unknown-traeger="unknownTraeger = true"
+        @loading-error="loadingError = true"
       />
       <muc-card
         id="vorgang-anzeige"
@@ -59,6 +86,8 @@ function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
 }
 
 const token = ref<string | undefined>();
+const unknownTraeger = ref<boolean>(false);
+const loadingError = ref<boolean>(false);
 
 defineProps({
   traegerDetailsUrl: {
