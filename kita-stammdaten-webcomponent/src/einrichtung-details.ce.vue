@@ -24,10 +24,7 @@
       v-else
       style="width: 100%"
     >
-      <h2
-        v-if="einrichtung"
-        :title="textOrFallback(einrichtung.name)"
-      >
+      <h2 v-if="einrichtung">
         {{ textOrFallback(einrichtung.name) }}
       </h2>
       <muc-link
@@ -42,9 +39,19 @@
         :disabled="false"
       >
         <template #content>
-          <div><b>Einrichtung-ID:</b> {{ textOrFallback(einrichtung.id) }}</div>
           <div><b>Name:</b> {{ textOrFallback(einrichtung.name) }}</div>
+          <div>
+            <b>KIGIB.web-Nummer:</b> {{ textOrFallback(einrichtung.id) }}
+          </div>
           <div><b>Adresse: </b>{{ formatAdresse(einrichtung.adresse) }}</div>
+          <div>
+            <b>Stadtbezirk: </b
+            >{{ textOrFallback(einrichtung.stadtbezirk?.name) }}
+          </div>
+          <div>
+            <b>Schulsprengel: </b
+            >{{ textOrFallback(einrichtung.schulsprengel?.schule) }}
+          </div>
         </template>
       </muc-card>
       <muc-card
@@ -67,6 +74,51 @@
           <div>
             <b>Homepage:</b>
             {{ textOrFallback(einrichtung.kontaktdaten?.homepageUrl) }}
+          </div>
+        </template>
+      </muc-card>
+      <muc-card
+        v-if="einrichtung"
+        id="einrichtung-card-plaetze"
+        title="Platzstruktur der Einrichtung"
+        :disabled="true"
+      >
+        <template #default>
+          <div>
+            <b>Gesamt: </b>
+            {{
+              textOrFallback(
+                einrichtung.aktuellGueltigeBetriebserlaubnis
+                  ?.aktuellGueltigeSollbelegung?.plaetzeGesamt
+              )
+            }}
+          </div>
+          <div>
+            <b>Kinderkrippe: </b>
+            {{
+              textOrFallback(
+                einrichtung.aktuellGueltigeBetriebserlaubnis
+                  ?.aktuellGueltigeSollbelegung?.plaetzeKinderkrippe
+              )
+            }}
+          </div>
+          <div>
+            <b>kindergarten: </b>
+            {{
+              textOrFallback(
+                einrichtung.aktuellGueltigeBetriebserlaubnis
+                  ?.aktuellGueltigeSollbelegung?.plaetzeKindergarten
+              )
+            }}
+          </div>
+          <div>
+            <b>Hort: </b>
+            {{
+              textOrFallback(
+                einrichtung.aktuellGueltigeBetriebserlaubnis
+                  ?.aktuellGueltigeSollbelegung?.plaetzeHort
+              )
+            }}
           </div>
         </template>
       </muc-card>

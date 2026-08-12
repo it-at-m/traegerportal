@@ -24,10 +24,7 @@
       v-else
       style="width: 100%"
     >
-      <h2
-        v-if="traeger"
-        :title="textOrFallback(traeger.name)"
-      >
+      <h2 v-if="traeger">
         {{ textOrFallback(traeger.name) }}
       </h2>
       <muc-link
