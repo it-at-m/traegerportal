@@ -24,19 +24,17 @@
       v-else
       style="width: 100%"
     >
-      <muc-intro
+      <h2
         v-if="traeger"
-        variant="overview"
         :title="textOrFallback(traeger.name)"
       >
-        <template #default>
-          <muc-link
-            label="Trägerdaten ändern"
-            href="https://test81-k2.muenchen.de/intelliform/forms/integration/05/05/2277/index?eid=2"
-            prepend-icon="pencil"
-          />
-        </template>
-      </muc-intro>
+        {{ textOrFallback(traeger.name) }}
+      </h2>
+      <muc-link
+        label="Trägerdaten ändern"
+        href="https://test81-k2.muenchen.de/intelliform/forms/integration/05/05/2277/index?eid=2"
+        prepend-icon="pencil"
+      />
       <muc-card
         v-if="traeger"
         id="traeger-card-allgemein"
@@ -115,7 +113,6 @@ import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts
 import {
   MucCallout,
   MucCard,
-  MucIntro,
   MucLink,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
