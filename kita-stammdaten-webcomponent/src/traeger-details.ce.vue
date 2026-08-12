@@ -41,9 +41,13 @@
         <template #content>
           <div><b>Träger-ID:</b> {{ textOrFallback(traeger.id) }}</div>
           <div><b>Name:</b> {{ textOrFallback(traeger.name) }}</div>
-          <div><b>Form:</b> {{ textOrFallback(traeger.traegerform) }}</div>
+          <div>
+            <b>Rechtsform:</b> {{ textOrFallback(traeger.traegerform) }}
+          </div>
           <div><b>Adresse: </b>{{ formatAdresse(traeger.adresse) }}</div>
-          <div><b>Team:</b> {{ formatTraegerTeam(traeger.team) }}</div>
+          <div>
+            <b>Zugeordnetes Team:</b> {{ formatTraegerTeam(traeger.team) }}
+          </div>
         </template>
       </muc-card>
       <muc-card
@@ -53,9 +57,9 @@
         :disabled="false"
       >
         <template #content>
-          <div><b>Telefon:</b> {{ textOrFallback(traeger.telefon) }}</div>
-          <div><b>Fax:</b> {{ textOrFallback(traeger.fax) }}</div>
-          <div><b>Email:</b> {{ textOrFallback(traeger.email) }}</div>
+          <div><b>Telefonnummer:</b> {{ textOrFallback(traeger.telefon) }}</div>
+          <div><b>Faxnummer:</b> {{ textOrFallback(traeger.fax) }}</div>
+          <div><b>E-Mail-Adresse:</b> {{ textOrFallback(traeger.email) }}</div>
           <div><b>Homepage:</b> {{ textOrFallback(traeger.homepage) }}</div>
         </template>
       </muc-card>
@@ -72,9 +76,9 @@
                 <th>Anrede</th>
                 <th>Vorname</th>
                 <th>Nachname</th>
-                <th>Telefon</th>
-                <th>E-Mail</th>
-                <th>Rolle(n)</th>
+                <th>Telefonnummer</th>
+                <th>E-Mail-Adresse</th>
+                <th>Rolle</th>
               </tr>
             </thead>
             <tbody>

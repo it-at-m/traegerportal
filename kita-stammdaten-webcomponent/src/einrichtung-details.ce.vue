@@ -71,14 +71,16 @@
       >
         <template #content>
           <div>
-            <b>Telefon:</b>
+            <b>Telefonnummer:</b>
             {{ textOrFallback(einrichtung.kontaktdaten?.telefon) }}
           </div>
           <div>
-            <b>Fax:</b> {{ textOrFallback(einrichtung.kontaktdaten?.fax) }}
+            <b>Faxnummer:</b>
+            {{ textOrFallback(einrichtung.kontaktdaten?.fax) }}
           </div>
           <div>
-            <b>Email:</b> {{ textOrFallback(einrichtung.kontaktdaten?.email) }}
+            <b>E-Mail-Adresse:</b>
+            {{ textOrFallback(einrichtung.kontaktdaten?.email) }}
           </div>
           <div>
             <b>Homepage:</b>
