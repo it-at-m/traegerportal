@@ -35,7 +35,6 @@
             href="https://test81-k2.muenchen.de/intelliform/forms/integration/05/05/2277/index?eid=2"
             prepend-icon="pencil"
           />
-          <i>Name, Adresse und Kontakt bearbeiten</i>
         </template>
       </muc-intro>
       <muc-card
@@ -90,6 +89,7 @@ import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts
 import {
   MucCallout,
   MucCard,
+  MucLink,
   MucIntro,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
