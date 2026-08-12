@@ -39,7 +39,8 @@
         <template #content>
           <div>
             <span class="einrichtung-attribute"
-              ><b>Kibigweb-ID:</b> {{ einrichtung.merkmale.kibigWebId }}</span
+              ><b>KIGIB.web-Nummer:</b>
+              {{ einrichtung.merkmale.kibigWebId }}</span
             >
           </div>
           <div>

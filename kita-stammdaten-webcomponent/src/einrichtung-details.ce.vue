@@ -42,6 +42,10 @@
         <template #content>
           <div><b>Name:</b> {{ textOrFallback(einrichtung.name) }}</div>
           <div>
+            <b>Status:</b>
+            {{ formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus) }}
+          </div>
+          <div>
             <muc-icon icon="lock" /><b>KIGIB.web-Nummer:</b>
             {{ textOrFallback(einrichtung.merkmale?.kibigWebId) }}
           </div>

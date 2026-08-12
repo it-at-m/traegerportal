@@ -82,7 +82,9 @@
                 v-for="ansprechpartner in traeger.ansprechpartner"
                 :key="ansprechpartner.id"
               >
-                <td>{{ textOrFallback(ansprechpartner.anrede) }}</td>
+                <td>
+                  {{ textOrFallback(anrede.get(ansprechpartner.anrede)) }}
+                </td>
                 <td>{{ textOrFallback(ansprechpartner.vorname) }}</td>
                 <td>{{ textOrFallback(ansprechpartner.nachname) }}</td>
                 <td>{{ textOrFallback(ansprechpartner.telefon) }}</td>
@@ -121,6 +123,7 @@ import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts
 import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
 import TraegerDTO from "@/types/TraegerDTO";
 import { setAccessToken } from "@/util/constants";
+import { anrede } from "@/util/enums";
 import {
   formatAdresse,
   formatTraegerRollen,
