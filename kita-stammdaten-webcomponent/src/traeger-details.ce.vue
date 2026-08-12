@@ -1,4 +1,8 @@
 <template>
+  <!-- eslint-disable-next-line vue/no-v-html -->
+  <div v-html="mucIconsSprite" />
+  <!-- eslint-disable-next-line vue/no-v-html -->
+  <div v-html="customIconsSprite" />
   <div v-if="loggedIn">
     <muc-spinner
       v-if="loading"
@@ -20,10 +24,20 @@
       v-else
       style="width: 100%"
     >
-      <!-- eslint-disable-next-line vue/no-v-html -->
-      <div v-html="mucIconsSprite" />
-      <!-- eslint-disable-next-line vue/no-v-html -->
-      <div v-html="customIconsSprite" />
+      <muc-intro
+        v-if="traeger"
+        variant="overview"
+        :title="textOrFallback(traeger.name)"
+      >
+        <template #content>
+          <muc-link
+            label="Trägerdaten ändern"
+            href="https://test81-k2.muenchen.de/intelliform/forms/integration/05/05/2277/index?eid=2"
+            prepend-icon="pencil"
+          />
+          <i>Name, Adresse und Kontakt bearbeiten</i>
+        </template>
+      </muc-intro>
       <muc-card
         v-if="traeger"
         id="traeger-card-allgemein"
@@ -99,7 +113,12 @@
 <script setup lang="ts">
 import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts";
 
-import { MucCallout, MucCard, MucSpinner } from "@muenchen/muc-patternlab-vue";
+import {
+  MucCallout,
+  MucCard,
+  MucIntro,
+  MucSpinner,
+} from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { ref, watch } from "vue";
