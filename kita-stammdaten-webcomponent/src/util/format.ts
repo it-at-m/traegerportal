@@ -67,6 +67,6 @@ export function formatTraegerRollen(
   return ansprechpartner.rollen.join(", ");
 }
 
-export function textOrFallback(text: string | undefined | null) {
+export function textOrFallback(text: string | undefined | null | number) {
   return text ? text : noValueFallback;
 }

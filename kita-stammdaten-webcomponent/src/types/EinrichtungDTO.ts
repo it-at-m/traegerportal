@@ -99,7 +99,10 @@ export default class EinrichtungDTO {
     adresse: AdresseDTO,
     merkmale: MerkmaleDTO,
     kontaktdaten: KontaktdatenDTO,
-    aktuellGueltigerStatus: EinrichtungsstatusDTO
+    aktuellGueltigerStatus: EinrichtungsstatusDTO,
+    aktuellGueltigeBetriebserlaubnis: BetriebserlaubnisDTO,
+    schulsprengel: SchulsprengelDTO,
+    stadtbezirk: StadtbezirkDTO
   ) {
     this.id = id;
     this.name = name;
@@ -107,5 +110,8 @@ export default class EinrichtungDTO {
     this.merkmale = merkmale;
     this.kontaktdaten = kontaktdaten;
     this.aktuellGueltigerStatus = aktuellGueltigerStatus;
+    this.aktuellGueltigeBetriebserlaubnis = aktuellGueltigeBetriebserlaubnis;
+    this.schulsprengel = schulsprengel;
+    this.stadtbezirk = stadtbezirk;
   }
 }
