@@ -25,7 +25,8 @@
       style="width: 100%"
     >
       <h2 v-if="einrichtung">
-        {{ textOrFallback(einrichtung.name) }}
+        {{ formatEinrichtungTitle(einrichtung) }} -
+        {{ formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus) }}
       </h2>
       <muc-link
         label="Einrichtungsdaten ändern"
@@ -41,16 +42,19 @@
         <template #content>
           <div><b>Name:</b> {{ textOrFallback(einrichtung.name) }}</div>
           <div>
-            <b>KIGIB.web-Nummer:</b>
+            <muc-icon icon="lock" /><b>KIGIB.web-Nummer:</b>
             {{ textOrFallback(einrichtung.merkmale?.kibigWebId) }}
           </div>
-          <div><b>Adresse: </b>{{ formatAdresse(einrichtung.adresse) }}</div>
           <div>
-            <b>Stadtbezirk: </b
+            <muc-icon icon="lock" /><b>Adresse: </b
+            >{{ formatAdresse(einrichtung.adresse) }}
+          </div>
+          <div>
+            <muc-icon icon="lock" /><b>Stadtbezirk: </b
             >{{ textOrFallback(einrichtung.stadtbezirk?.name) }}
           </div>
           <div>
-            <b>Schulsprengel: </b
+            <muc-icon icon="lock" /><b>Schulsprengel: </b
             >{{ textOrFallback(einrichtung.schulsprengel?.schule) }}
           </div>
         </template>
@@ -87,7 +91,7 @@
       >
         <template #content>
           <div>
-            <b>Gesamt: </b>
+            <muc-icon icon="lock" /><b>Gesamt: </b>
             {{
               textOrFallback(
                 einrichtung.aktuellGueltigeBetriebserlaubnis
@@ -96,7 +100,7 @@
             }}
           </div>
           <div>
-            <b>Kinderkrippe: </b>
+            <muc-icon icon="lock" /><b>Kinderkrippe: </b>
             {{
               textOrFallback(
                 einrichtung.aktuellGueltigeBetriebserlaubnis
@@ -105,7 +109,7 @@
             }}
           </div>
           <div>
-            <b>kindergarten: </b>
+            <muc-icon icon="lock" /><b>kindergarten: </b>
             {{
               textOrFallback(
                 einrichtung.aktuellGueltigeBetriebserlaubnis
@@ -114,7 +118,7 @@
             }}
           </div>
           <div>
-            <b>Hort: </b>
+            <muc-icon icon="lock" /><b>Hort: </b>
             {{
               textOrFallback(
                 einrichtung.aktuellGueltigeBetriebserlaubnis
@@ -141,6 +145,7 @@ import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts
 import {
   MucCallout,
   MucCard,
+  MucIcon,
   MucLink,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
@@ -152,7 +157,12 @@ import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts
 import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
 import { setAccessToken } from "@/util/constants";
-import { formatAdresse, textOrFallback } from "./util/format";
+import {
+  formatAdresse,
+  formatEinrichtungsstatus,
+  formatEinrichtungTitle,
+  textOrFallback,
+} from "./util/format";
 
 const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
 
