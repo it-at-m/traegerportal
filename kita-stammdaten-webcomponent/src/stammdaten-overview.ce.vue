@@ -16,7 +16,7 @@
       </template>
     </muc-callout>
     <muc-callout
-      v-if="loadingError"
+      v-else-if="loadingError"
       type="error"
     >
       <template #content>
