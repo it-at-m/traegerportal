@@ -52,6 +52,7 @@
     <muc-callout
       v-else
       type="info"
+      class="no-einrichtungen-callout"
     >
       <template #content>
         <p>Keine Einrichtungen hinterlegt</p>
@@ -220,5 +221,10 @@ watch(
 
 .content-width {
   width: 100% !important;
+}
+
+.no-einrichtungen-callout {
+  padding-left: 0;
+  padding-top: 3rem;
 }
 </style>
