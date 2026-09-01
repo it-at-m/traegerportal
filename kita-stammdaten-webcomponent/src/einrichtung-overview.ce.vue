@@ -4,18 +4,7 @@
     size="200px"
     text="Lade Einrichtungen ..."
   />
-  <muc-callout
-    v-else-if="dataLoadingError"
-    type="error"
-  >
-    <template #content>
-      <p>
-        Die Schnittstelle ist nicht erreichbar. Bitte versuchen Sie es zu einem
-        späteren Zeitpunkt erneut.
-      </p>
-    </template>
-  </muc-callout>
-  <div v-else>
+  <div v-else-if="!dataLoadingError">
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
@@ -73,7 +62,6 @@ import {
   MucAccordion,
   MucAccordionItem,
   MucButton,
-  MucCallout,
   MucIcon,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";

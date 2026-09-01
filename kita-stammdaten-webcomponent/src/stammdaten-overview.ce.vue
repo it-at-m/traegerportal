@@ -21,8 +21,8 @@
     >
       <template #content>
         <p>
-          Die Daten Ihres Trägers konnten nicht geladen werden. Bitte versuchen
-          Sie es später erneut.
+          Die Schnittstelle ist nicht erreichbar. Bitte versuchen Sie es zu
+          einem späteren Zeitpunkt erneut.
         </p>
       </template>
     </muc-callout>

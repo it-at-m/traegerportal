@@ -4,18 +4,7 @@
     size="200px"
     text="Lade Träger ..."
   />
-  <muc-callout
-    v-else-if="dataLoadingError"
-    type="error"
-  >
-    <template #content>
-      <p>
-        Die Schnittstelle ist nicht erreichbar. Bitte versuchen Sie es zu einem
-        späteren Zeitpunkt erneut.
-      </p>
-    </template>
-  </muc-callout>
-  <div v-else>
+  <div v-else-if="!dataLoadingError">
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
@@ -46,12 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  MucCallout,
-  MucCard,
-  MucIcon,
-  MucSpinner,
-} from "@muenchen/muc-patternlab-vue";
+import { MucCard, MucIcon, MucSpinner } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref, watch } from "vue";
