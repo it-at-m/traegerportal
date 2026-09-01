@@ -10,6 +10,7 @@
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
     <muc-accordion
+      v-if="einrichtungenVorhanden"
       id="einrichtung-accordion"
       multiple
     >
@@ -48,6 +49,14 @@
         </template>
       </muc-accordion-item>
     </muc-accordion>
+    <muc-callout
+      v-else
+      type="info"
+    >
+      <template #content>
+        <p>Keine Einrichtungen hinterlegt</p>
+      </template>
+    </muc-callout>
     <simple-pagination
       v-if="!!einrichtungen && multiplePages"
       v-model="pageNumber"
@@ -62,6 +71,7 @@ import {
   MucAccordion,
   MucAccordionItem,
   MucButton,
+  MucCallout,
   MucIcon,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
@@ -101,7 +111,7 @@ const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 
 function getDetailsUrl(einrichtungId: string): string {
-  return `${props.detailsUrl}?einrichtungId=${einrichtungId}`;
+  return `${props.detailsUrl}?einrichtungId=${einrichtungId}&lg-idphint=ELSTER_NEZO`;
 }
 
 const einrichtungen = ref<EinrichtungDTO[]>();
@@ -150,6 +160,14 @@ const currentPage = computed(() => {
 const multiplePages = computed(() => {
   if (einrichtungen.value) {
     return props.pageSize < einrichtungen.value.length;
+  } else {
+    return false;
+  }
+});
+
+const einrichtungenVorhanden = computed(() => {
+  if (einrichtungen.value) {
+    return einrichtungen.value.length > 0;
   } else {
     return false;
   }

@@ -102,7 +102,7 @@ function loadTraeger() {
 }
 
 const traegerLink = computed(() => {
-  return `${props.detailsUrl}`;
+  return `${props.detailsUrl}?&lg-idphint=ELSTER_NEZO`;
 });
 
 const hasLink = computed(() => {
