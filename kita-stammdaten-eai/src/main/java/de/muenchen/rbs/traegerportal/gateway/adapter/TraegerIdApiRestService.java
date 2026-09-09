@@ -28,10 +28,10 @@ public class TraegerIdApiRestService {
     private final ClientCredentialsAccessTokenProvider clientCredentialsAccessTokenProvider;
 
     /**
-     * Erstellt einen ClientCredentialsAccessTokenProvider
+     * Creates a TraegerIdApiRestService
      *
-     * @param webClientBuilder zum Initialisieren des WebClient
-     * @param evUrl URL der Einrichtungsverwaltung
+     * @param webClientBuilder to initialize the RestClient
+     * @param evUrl URL for making calls to Kita-Einrichtungsverwaltung
      */
     public TraegerIdApiRestService(final WebClient.Builder webClientBuilder, @Value("${adapter.einrichtungsverwaltung.base-url}") final String evUrl,
             final ClientCredentialsAccessTokenProvider tokenProvider) {
@@ -41,8 +41,11 @@ public class TraegerIdApiRestService {
     }
 
     /**
+     * Returns the corresponding internal id given a unternehmenskonto id.
+     * This is needed to ensure each traeger can only access his own data and we can query for it in all related systems.
+     * 
      * @param unternehmenskontoId unternehmenskontoId to query for
-     * @return retrieves an id for a traeger given its unternehmenskontoid
+     * @return retrieves an id for a traeger given its unternehmenskonto id
      */
     public final Mono<Long> getTraegerIdByUnternehmenskontoId(final String unternehmenskontoId) {
         final Mono<Long> responseBody = this.clientCredentialsAccessTokenProvider.getAccessToken().flatMap(accessToken -> {
