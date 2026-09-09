@@ -20,10 +20,13 @@ import reactor.core.publisher.Mono;
 public class StammdatenSecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<StammdatenSecurityGatewayFilterFactory.Config> {
 
     private final ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider;
+    private final TraegerIdApiRestService traegerIdApiRestService;
 
-    public StammdatenSecurityGatewayFilterFactory(final ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider) {
+    public StammdatenSecurityGatewayFilterFactory(final ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider,
+            final TraegerIdApiRestService traegerIdApiRestService) {
         super(Config.class);
         this.stammdatenAccessTokenProvider = stammdatenAccessTokenProvider;
+        this.traegerIdApiRestService = traegerIdApiRestService;
     }
 
     @Override
@@ -49,29 +52,33 @@ public class StammdatenSecurityGatewayFilterFactory extends AbstractGatewayFilte
                         return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing claim"));
                     }
 
-                    final String path = exchange.getRequest().getPath().value();
-                    final String pathWithUkId = path.replace("(ukId)", ukId);
-
                     return stammdatenAccessTokenProvider.getAccessToken()
                             .doOnError(ex -> log.warn("Failed to obtain access token for backend.", ex))
-
                             .flatMap(accessTokenForBackend -> {
-                                final ServerHttpRequest requestToBackend = exchange.getRequest()
-                                        .mutate()
-                                        .path(pathWithUkId)
-                                        .headers(headers -> {
-                                            headers.setBearerAuth(accessTokenForBackend);
-                                            headers.set(
-                                                    "Original-Authorization",
-                                                    exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
-                                            headers.set("Original-Username", user);
-                                        })
-                                        .build();
+                                return traegerIdApiRestService.getTraegerIdByUnternehmenskontoId(ukId)
+                                        .doOnError(ex -> log.warn("Failed to obtain traeger id from backend.", ex))
+                                        .flatMap(traegerId -> {
+                                            final String path = exchange.getRequest().getPath().value();
+                                            final String pathWithUkId = path.replace("(id)", traegerId.toString());
 
-                                return chain.filter(
-                                        exchange.mutate()
-                                                .request(requestToBackend)
-                                                .build());
+                                            final ServerHttpRequest requestToBackend = exchange.getRequest()
+                                                    .mutate()
+                                                    .path(pathWithUkId)
+                                                    .headers(headers -> {
+                                                        headers.setBearerAuth(accessTokenForBackend);
+                                                        headers.set(
+                                                                "Original-Authorization",
+                                                                exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+                                                        headers.set("Original-Username", user);
+                                                    })
+                                                    .build();
+
+                                            return chain.filter(
+                                                    exchange.mutate()
+                                                            .request(requestToBackend)
+                                                            .build());
+                                        })
+                                        .onErrorMap(ex -> new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Call to backend failed", ex));
                             })
                             .onErrorMap(ex -> new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Call to backend failed", ex));
                 });

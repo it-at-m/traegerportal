@@ -20,4 +20,5 @@ public class EinrichtungsverwaltungAdapterConfiguration {
             @Value("${adapter.einrichtungsverwaltung.security.cache-seconds}") final int tokenCacheInSeconds) {
         return new ClientCredentialsAccessTokenProvider(webClientBuilder, tokenUrl, clientId, clientSecret, scope, tokenCacheInSeconds);
     }
+    
 }
