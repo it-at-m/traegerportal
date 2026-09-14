@@ -1,13 +1,17 @@
 /*
-
  * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2022
+ * der Landeshauptstadt München, 2026
  */
 package de.muenchen.rbs.traegerportal.gateway.adapter;
+
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -27,6 +31,9 @@ public class TraegerIdApiRestService {
     private final WebClient webClient;
     private final ClientCredentialsAccessTokenProvider clientCredentialsAccessTokenProvider;
 
+    private final static int ID_CACHE_IN_SECONDS = 600;
+    private final Cache<String, Long> idCache;
+
     /**
      * Creates a TraegerIdApiRestService
      *
@@ -37,30 +44,49 @@ public class TraegerIdApiRestService {
             final ClientCredentialsAccessTokenProvider tokenProvider) {
         this.webClient = webClientBuilder.baseUrl(evUrl).build();
         this.clientCredentialsAccessTokenProvider = tokenProvider;
+        this.idCache = CacheBuilder.newBuilder().maximumSize(1)
+                .expireAfterWrite(ID_CACHE_IN_SECONDS, TimeUnit.SECONDS)
+                .build();
         log.info("Initialized with evUrl='{}'", evUrl);
     }
 
     /**
      * Returns the corresponding internal id given a unternehmenskonto id.
-     * This is needed to ensure each traeger can only access his own data and we can query for it in all related systems.
+     * This is needed to ensure each traeger can only access his own data and we can query for it in
+     * all related systems.
      * 
      * @param unternehmenskontoId unternehmenskontoId to query for
      * @return retrieves an id for a traeger given its unternehmenskonto id
      */
     public final Mono<Long> getTraegerIdByUnternehmenskontoId(final String unternehmenskontoId) {
-        final Mono<Long> responseBody = this.clientCredentialsAccessTokenProvider.getAccessToken().flatMap(accessToken -> {
-            return this.webClient.get()
-                    .uri("/external/traeger/by-unternehmenskontoid/" + unternehmenskontoId + "/id")
-                    .header("Authorization", "Bearer " + accessToken)
-                    .exchangeToMono(response -> {
-                        if (response.statusCode().is2xxSuccessful()) {
-                            return response.bodyToMono(Long.class);
-                        } else {
-                            log.warn("Request for traeger id did not return 2XX successful status code, but returned status {}.", response.statusCode());
-                            throw new RuntimeException("Request for traeger id did not return 2XX successful status code.");
-                        }
+        final Long idFromCache = idCache.getIfPresent(unternehmenskontoId);
+        if (idFromCache != null) {
+            log.debug("Id found in cache.");
+            return Mono.just(idFromCache);
+        }
+
+        log.debug("Requesting id for unternehmenskonto from ke+ {}...", unternehmenskontoId);
+        final Mono<Long> responseBody = this.clientCredentialsAccessTokenProvider.getAccessToken()
+                .flatMap(accessToken -> {
+                    Mono<Long> idResponse = this.webClient.get()
+                            .uri("/external/traeger/by-unternehmenskontoid/" + unternehmenskontoId + "/id")
+                            .header("Authorization", "Bearer " + accessToken)
+                            .exchangeToMono(response -> {
+                                if (response.statusCode().is2xxSuccessful()) {
+                                    return response.bodyToMono(Long.class);
+                                } else {
+                                    log.error("Request for traeger id did not return 2XX successful status code, but returned status {}.",
+                                            response.statusCode());
+                                    throw new RuntimeException("Request for traeger id did not return 2XX successful status code.");
+                                }
+                            });
+                    
+                    return idResponse.flatMap(id -> {
+                        log.debug("Aquired Id for unternehmenskonto {}.", unternehmenskontoId);
+                        idCache.put(unternehmenskontoId, id);
+                        return Mono.just(id);
                     });
-        });
+                });
 
         return responseBody;
     }

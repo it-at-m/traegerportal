@@ -5,17 +5,20 @@
  */
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
@@ -74,6 +77,7 @@ public class ClientCredentialsAccessTokenProvider {
     public final Mono<String> getAccessToken() {
         final String token = tokenCache.getIfPresent(this.clientId);
         if (token != null) {
+            log.debug("Token found in cache.");
             return Mono.just(token);
         }
 
@@ -83,6 +87,7 @@ public class ClientCredentialsAccessTokenProvider {
         params.add("client_secret", this.clientSecret);
         params.add("scope", this.scope);
 
+        log.debug("Requesting new access token...");
         final Mono<HashMap<String, String>> responseBody = this.webClient.post()
                 .uri("/")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -92,6 +97,7 @@ public class ClientCredentialsAccessTokenProvider {
                         return response.bodyToMono(new ParameterizedTypeReference<>() {
                         });
                     } else {
+                        log.error("Request for access token did not return 2XX successful status code, but returned status {}.", response.statusCode());
                         throw new RuntimeException(
                                 "Request for aquiring access token did not return 2XX successful status code.");
                     }
@@ -100,7 +106,7 @@ public class ClientCredentialsAccessTokenProvider {
         return responseBody.flatMap(response -> {
             final String accessToken = response.get("access_token");
             final int expiresInSeconds = Integer.parseInt(response.get("expires_in"));
-            log.info("Aquired access token (expires in: {} s)", expiresInSeconds);
+            log.debug("Aquired access token (expires in: {} s)", expiresInSeconds);
             if (expiresInSeconds <= this.tokenCacheInSeconds) {
                 log.error(
                         "New access token expires in {} seconds, but it will be cached and used for the next {} seconds!" +
@@ -109,6 +115,6 @@ public class ClientCredentialsAccessTokenProvider {
             }
             tokenCache.put(this.clientId, accessToken);
             return Mono.just(accessToken);
-        }).switchIfEmpty(Mono.just("default"));
+        });
     }
 }
