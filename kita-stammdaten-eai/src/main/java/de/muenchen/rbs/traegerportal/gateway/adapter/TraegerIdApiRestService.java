@@ -28,7 +28,7 @@ public class TraegerIdApiRestService {
     private final WebClient webClient;
     private final ClientCredentialsAccessTokenProvider clientCredentialsAccessTokenProvider;
 
-    private final static int ID_CACHE_IN_SECONDS = 600;
+    private static final int ID_CACHE_IN_SECONDS = 600;
     private final Cache<String, Long> idCache;
 
     /**
@@ -63,9 +63,9 @@ public class TraegerIdApiRestService {
         }
 
         log.debug("Requesting id for unternehmenskonto from ke+ {}...", unternehmenskontoId);
-        final Mono<Long> responseBody = this.clientCredentialsAccessTokenProvider.getAccessToken()
+        return this.clientCredentialsAccessTokenProvider.getAccessToken()
                 .flatMap(accessToken -> {
-                    Mono<Long> idResponse = this.webClient.get()
+                    final Mono<Long> idResponse = this.webClient.get()
                             .uri("/external/traeger/by-unternehmenskontoid/" + unternehmenskontoId + "/id")
                             .header("Authorization", "Bearer " + accessToken)
                             .exchangeToMono(response -> {
@@ -84,7 +84,5 @@ public class TraegerIdApiRestService {
                         return Mono.just(id);
                     });
                 });
-
-        return responseBody;
     }
 }
