@@ -9,6 +9,9 @@ changes:
       enabled: true
       emailVerified: true
       email: none@none.com
+      attributes:
+          datenuebermittlerPseudonymId:
+          - du-d9a1187406b2f14145ebafd9e0bea10000100005
   - updateUserPassword:
       name: none
       password: "none"
@@ -19,6 +22,9 @@ changes:
       enabled: true
       emailVerified: true
       email: reader@reader.com
+      attributes:
+          datenuebermittlerPseudonymId:
+          - du-d9a1187406b2f14145ebafd9e0bea10000100005
   - updateUserPassword:
       name: reader
       password: "reader"
@@ -29,6 +35,9 @@ changes:
       enabled: true
       emailVerified: true
       email: writer@writer.com
+      attributes:
+          datenuebermittlerPseudonymId:
+          - du-d9a1187406b2f14145ebafd9e0bea10000100005
   - updateUserPassword:
       name: writer
       password: "writer"
