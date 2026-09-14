@@ -4,16 +4,13 @@
  */
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import java.util.concurrent.TimeUnit;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 /**
@@ -54,7 +51,7 @@ public class TraegerIdApiRestService {
      * Returns the corresponding internal id given a unternehmenskonto id.
      * This is needed to ensure each traeger can only access his own data and we can query for it in
      * all related systems.
-     * 
+     *
      * @param unternehmenskontoId unternehmenskontoId to query for
      * @return retrieves an id for a traeger given its unternehmenskonto id
      */
@@ -80,7 +77,7 @@ public class TraegerIdApiRestService {
                                     throw new RuntimeException("Request for traeger id did not return 2XX successful status code.");
                                 }
                             });
-                    
+
                     return idResponse.flatMap(id -> {
                         log.debug("Aquired Id for unternehmenskonto {}.", unternehmenskontoId);
                         idCache.put(unternehmenskontoId, id);

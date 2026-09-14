@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.reactive.function.client.WebClient;
-
 import reactor.core.publisher.Mono;
 
 @SpringBootTest
@@ -73,7 +72,7 @@ public class TraegerIdApiRestServiceTest {
         Mockito.verify(tokenProvider, times(1)).getAccessToken();
         Mockito.verify(webClient.get().uri(""), times(1)).header(Mockito.eq("Authorization"), Mockito.contains(testToken));
         Mockito.verify(webClient.get(), times(1)).uri("/external/traeger/by-unternehmenskontoid/" + ukId + "/id");
-        
+
         result = sut.getTraegerIdByUnternehmenskontoId(ukId).block();
 
         // still 1 of each call after second service call
