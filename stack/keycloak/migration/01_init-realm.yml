@@ -4,6 +4,21 @@ changes:
   - addRealm:
       name: local_realm
 
+  - addRealmProfileAttribute:
+      realm: local_realm
+      name: datenuebermittlerPseudonymId
+      displayName: datenuebermittlerPseudonymId
+      permissions:
+        view:
+          - admin
+          - user
+        edit:
+          - admin
+      required:
+        roles:
+          - admin
+          - user
+
   - addClientScope:
       realm: local_realm
       name: openid
