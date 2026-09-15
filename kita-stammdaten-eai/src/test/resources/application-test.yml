@@ -13,3 +13,4 @@ adapter:
   einrichtungsverwaltung:
     base-url: http://localhost:${wiremock.server.port}/
     base-path: /external/traeger/(id)
+    id-path: /external/traeger/by-unternehmenskontoid/{ukid}/id
