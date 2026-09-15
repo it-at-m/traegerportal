@@ -40,15 +40,16 @@ class TraegerIdApiRestServiceTest {
         final WebClient.RequestHeadersSpec requestHeadersSpec = mock(WebClient.RequestHeadersSpec.class);
 
         when(webClient.get()).thenReturn(requestHeadersUriSpec);
-        when(requestHeadersUriSpec.uri(anyString())).thenReturn(requestHeadersSpec);
+        when(requestHeadersUriSpec.uri(anyString(), any(Object[].class))).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.header(anyString(), any())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.exchangeToMono(any())).thenReturn(Mono.just(TEST_TRAEGER_ID));
-
+        
         when(webClientBuilder.baseUrl(any())).thenReturn(webClientBuilder);
         when(webClientBuilder.build()).thenReturn(webClient);
+        
         when(tokenProvider.getAccessToken()).thenReturn(Mono.just(TEST_TOKEN));
 
-        sut = new TraegerIdApiRestService(webClientBuilder, TEST_EV_URL, tokenProvider);
+        sut = new TraegerIdApiRestService(webClientBuilder, TEST_EV_URL, "/external/traeger/by-unternehmenskontoid/{ukId}/id", tokenProvider);
     }
 
     @Test
@@ -59,7 +60,7 @@ class TraegerIdApiRestServiceTest {
         assertThat(result).isEqualTo(TEST_TRAEGER_ID);
         Mockito.verify(tokenProvider, times(1)).getAccessToken();
         Mockito.verify(webClient.get().uri(""), times(1)).header(Mockito.eq("Authorization"), Mockito.contains(TEST_TOKEN));
-        Mockito.verify(webClient.get(), times(1)).uri("/external/traeger/by-unternehmenskontoid/" + ukId + "/id");
+        Mockito.verify(webClient.get(), times(1)).uri("/external/traeger/by-unternehmenskontoid/{ukId}/id", ukId);
     }
 
     @Test
@@ -70,7 +71,7 @@ class TraegerIdApiRestServiceTest {
         assertThat(result).isEqualTo(TEST_TRAEGER_ID);
         Mockito.verify(tokenProvider, times(1)).getAccessToken();
         Mockito.verify(webClient.get().uri(""), times(1)).header(Mockito.eq("Authorization"), Mockito.contains(TEST_TOKEN));
-        Mockito.verify(webClient.get(), times(1)).uri("/external/traeger/by-unternehmenskontoid/" + ukId + "/id");
+        Mockito.verify(webClient.get(), times(1)).uri("/external/traeger/by-unternehmenskontoid/{ukId}/id", ukId);
 
         result = sut.getTraegerIdByUnternehmenskontoId(ukId).block();
 
@@ -78,6 +79,6 @@ class TraegerIdApiRestServiceTest {
         assertThat(result).isEqualTo(TEST_TRAEGER_ID);
         Mockito.verify(tokenProvider, times(1)).getAccessToken();
         Mockito.verify(webClient.get().uri(""), times(1)).header(Mockito.eq("Authorization"), Mockito.contains(TEST_TOKEN));
-        Mockito.verify(webClient.get(), times(1)).uri("/external/traeger/by-unternehmenskontoid/" + ukId + "/id");
+        Mockito.verify(webClient.get(), times(1)).uri("/external/traeger/by-unternehmenskontoid/{ukId}/id", ukId);
     }
 }
