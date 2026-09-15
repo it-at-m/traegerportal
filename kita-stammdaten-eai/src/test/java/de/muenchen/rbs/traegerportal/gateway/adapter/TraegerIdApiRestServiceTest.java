@@ -43,10 +43,10 @@ class TraegerIdApiRestServiceTest {
         when(requestHeadersUriSpec.uri(anyString(), any(Object[].class))).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.header(anyString(), any())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.exchangeToMono(any())).thenReturn(Mono.just(TEST_TRAEGER_ID));
-        
+
         when(webClientBuilder.baseUrl(any())).thenReturn(webClientBuilder);
         when(webClientBuilder.build()).thenReturn(webClient);
-        
+
         when(tokenProvider.getAccessToken()).thenReturn(Mono.just(TEST_TOKEN));
 
         sut = new TraegerIdApiRestService(webClientBuilder, TEST_EV_URL, "/external/traeger/by-unternehmenskontoid/{ukId}/id", tokenProvider);
