@@ -74,7 +74,8 @@ public class TraegerIdApiRestService {
                                 } else {
                                     log.error("Request for traeger id did not return 2XX successful status code, but returned status {}.",
                                             response.statusCode());
-                                    throw new RuntimeException("Request for traeger id did not return 2XX successful status code.");
+                                    return response.bodyToMono(String.class).flatMap(body -> Mono
+                                            .error(new RuntimeException("Request for traeger id did not return 2XX successful status code. Body: " + body)));
                                 }
                             });
 
