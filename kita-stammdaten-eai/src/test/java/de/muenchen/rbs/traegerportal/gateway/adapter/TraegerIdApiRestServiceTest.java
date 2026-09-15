@@ -29,6 +29,7 @@ class TraegerIdApiRestServiceTest {
     private static final Long TEST_TRAEGER_ID = 123L;
     private static final String TEST_TOKEN = "testToken";
     private static final String TEST_EV_URL = "testEvUrl";
+    private static final String EV_ID_PATH = "/external/traeger/by-unternehmenskontoid/{ukId}/id";
 
     @BeforeEach
     void setUp() {
@@ -49,7 +50,7 @@ class TraegerIdApiRestServiceTest {
 
         when(tokenProvider.getAccessToken()).thenReturn(Mono.just(TEST_TOKEN));
 
-        sut = new TraegerIdApiRestService(webClientBuilder, TEST_EV_URL, "/external/traeger/by-unternehmenskontoid/{ukId}/id", tokenProvider);
+        sut = new TraegerIdApiRestService(webClientBuilder, TEST_EV_URL, EV_ID_PATH, tokenProvider);
     }
 
     @Test
@@ -60,7 +61,7 @@ class TraegerIdApiRestServiceTest {
         assertThat(result).isEqualTo(TEST_TRAEGER_ID);
         Mockito.verify(tokenProvider, times(1)).getAccessToken();
         Mockito.verify(webClient.get().uri(""), times(1)).header(Mockito.eq("Authorization"), Mockito.contains(TEST_TOKEN));
-        Mockito.verify(webClient.get(), times(1)).uri("/external/traeger/by-unternehmenskontoid/{ukId}/id", ukId);
+        Mockito.verify(webClient.get(), times(1)).uri(EV_ID_PATH, ukId);
     }
 
     @Test
@@ -71,7 +72,7 @@ class TraegerIdApiRestServiceTest {
         assertThat(result).isEqualTo(TEST_TRAEGER_ID);
         Mockito.verify(tokenProvider, times(1)).getAccessToken();
         Mockito.verify(webClient.get().uri(""), times(1)).header(Mockito.eq("Authorization"), Mockito.contains(TEST_TOKEN));
-        Mockito.verify(webClient.get(), times(1)).uri("/external/traeger/by-unternehmenskontoid/{ukId}/id", ukId);
+        Mockito.verify(webClient.get(), times(1)).uri(EV_ID_PATH, ukId);
 
         result = sut.getTraegerIdByUnternehmenskontoId(ukId).block();
 
@@ -79,6 +80,6 @@ class TraegerIdApiRestServiceTest {
         assertThat(result).isEqualTo(TEST_TRAEGER_ID);
         Mockito.verify(tokenProvider, times(1)).getAccessToken();
         Mockito.verify(webClient.get().uri(""), times(1)).header(Mockito.eq("Authorization"), Mockito.contains(TEST_TOKEN));
-        Mockito.verify(webClient.get(), times(1)).uri("/external/traeger/by-unternehmenskontoid/{ukId}/id", ukId);
+        Mockito.verify(webClient.get(), times(1)).uri(EV_ID_PATH, ukId);
     }
 }
