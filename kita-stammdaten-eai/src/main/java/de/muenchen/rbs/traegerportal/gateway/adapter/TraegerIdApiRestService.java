@@ -70,7 +70,13 @@ public class TraegerIdApiRestService {
                             .header("Authorization", "Bearer " + accessToken)
                             .exchangeToMono(response -> {
                                 if (response.statusCode().is2xxSuccessful()) {
-                                    return response.bodyToMono(Long.class);
+                                    try {
+                                        return response.bodyToMono(Long.class);
+                                    } catch (Exception e) {
+                                        return response.bodyToMono(String.class).flatMap(body -> Mono
+                                                .error(new RuntimeException(
+                                                        "Request for traeger id couldn't be parsed to a long. Body: " + body)));
+                                    }
                                 } else {
                                     log.error("Request for traeger id did not return 2XX successful status code, but returned status {}.",
                                             response.statusCode());
