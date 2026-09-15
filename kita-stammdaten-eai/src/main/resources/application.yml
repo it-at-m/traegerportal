@@ -42,6 +42,7 @@ adapter:
   einrichtungsverwaltung:
     base-url: https://kita-einrichtung.muenchen.de/
     base-path: /api/einrichtungsverwaltung-backend/external/traeger/(id)
+    id-path: /api/einrichtungsverwaltung-backend/external/traeger/by-unternehmenskontoid/{ukid}/id
     security:
       token-url: https://sso.muenchen.de/auth/realms/muenchen.de/protocol/openid-connect/token
       client-id: rbseinr-traegerportal

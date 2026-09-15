@@ -27,6 +27,7 @@ public class TraegerIdApiRestService {
 
     private final WebClient webClient;
     private final ClientCredentialsAccessTokenProvider clientCredentialsAccessTokenProvider;
+    private final String idPath;
 
     private static final int ID_CACHE_IN_SECONDS = 600;
     private final Cache<String, Long> idCache;
@@ -38,13 +39,15 @@ public class TraegerIdApiRestService {
      * @param evUrl URL for making calls to Kita-Einrichtungsverwaltung
      */
     public TraegerIdApiRestService(final WebClient.Builder webClientBuilder, @Value("${adapter.einrichtungsverwaltung.base-url}") final String evUrl,
+            @Value("${adapter.einrichtungsverwaltung.id-path}") final String idPath,
             final ClientCredentialsAccessTokenProvider tokenProvider) {
         this.webClient = webClientBuilder.baseUrl(evUrl).build();
         this.clientCredentialsAccessTokenProvider = tokenProvider;
+        this.idPath = idPath;
         this.idCache = CacheBuilder.newBuilder().maximumSize(1)
                 .expireAfterWrite(ID_CACHE_IN_SECONDS, TimeUnit.SECONDS)
                 .build();
-        log.info("Initialized with evUrl='{}'", evUrl);
+        log.info("Initialized with evUrl='{}' and idPath='{}'", evUrl, idPath);
     }
 
     /**
@@ -66,17 +69,11 @@ public class TraegerIdApiRestService {
         return this.clientCredentialsAccessTokenProvider.getAccessToken()
                 .flatMap(accessToken -> {
                     final Mono<Long> idResponse = this.webClient.get()
-                            .uri("/external/traeger/by-unternehmenskontoid/" + unternehmenskontoId + "/id")
+                            .uri(idPath, unternehmenskontoId)
                             .header("Authorization", "Bearer " + accessToken)
                             .exchangeToMono(response -> {
                                 if (response.statusCode().is2xxSuccessful()) {
-                                    try {
-                                        return response.bodyToMono(Long.class);
-                                    } catch (Exception e) {
-                                        return response.bodyToMono(String.class).flatMap(body -> Mono
-                                                .error(new RuntimeException(
-                                                        "Request for traeger id couldn't be parsed to a long. Body: " + body)));
-                                    }
+                                    return response.bodyToMono(Long.class);
                                 } else {
                                     log.error("Request for traeger id did not return 2XX successful status code, but returned status {}.",
                                             response.statusCode());
@@ -84,7 +81,6 @@ public class TraegerIdApiRestService {
                                             .error(new RuntimeException("Request for traeger id did not return 2XX successful status code. Body: " + body)));
                                 }
                             });
-
                     return idResponse.flatMap(id -> {
                         log.debug("Aquired Id for unternehmenskonto {}.", unternehmenskontoId);
                         idCache.put(unternehmenskontoId, id);
