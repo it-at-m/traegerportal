@@ -95,6 +95,14 @@
                 <td>{{ textOrFallback(ansprechpartner.email) }}</td>
                 <td>{{ formatTraegerRollen(ansprechpartner) }}</td>
               </tr>
+              <tr
+                v-if="
+                  !traeger.ansprechpartner ||
+                  traeger.ansprechpartner.length == 0
+                "
+              >
+                <td colspan="6">{{ noValueFallback }}</td>
+              </tr>
             </tbody>
           </table>
         </template>
@@ -132,6 +140,7 @@ import {
   formatAdresse,
   formatTraegerRollen,
   formatTraegerTeam,
+  noValueFallback,
   textOrFallback,
 } from "./util/format";
 

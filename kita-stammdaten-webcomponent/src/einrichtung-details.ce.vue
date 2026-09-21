@@ -86,7 +86,10 @@
             <b>Homepage:</b>
             {{ textOrFallback(einrichtung.kontaktdaten?.homepageUrl) }}
           </div>
-          <div><b>Notfall-Telefonnummer:</b> TODO</div>
+          <div>
+            <b>Notfall-Telefonnummer:</b>
+            {{ textOrFallback(einrichtung.kontaktdaten?.notfallTelefon) }}
+          </div>
         </template>
       </muc-card>
       <muc-card

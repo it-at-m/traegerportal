@@ -68,17 +68,20 @@ export class KontaktdatenDTO {
   fax: string;
   homepageUrl: string;
   email: string;
+  notfallTelefon: string;
 
   constructor(
     telefon: string,
     fax: string,
     homepageUrl: string,
-    email: string
+    email: string,
+    notfallTelefon: string
   ) {
     this.telefon = telefon;
     this.fax = fax;
     this.homepageUrl = homepageUrl;
     this.email = email;
+    this.notfallTelefon = notfallTelefon;
   }
 }
 
