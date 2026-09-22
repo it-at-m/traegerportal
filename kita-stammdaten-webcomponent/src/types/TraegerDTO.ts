@@ -1,4 +1,5 @@
 import type AdresseDTO from "./AdresseDTO";
+import type KontaktdatenDTO from "./KontaktdatenDTO";
 
 export class TeamDTO {
   name: string;
@@ -44,10 +45,7 @@ export default class TraegerDTO {
   traegerform: string;
   adresse: AdresseDTO;
   team: TeamDTO;
-  telefon: string;
-  fax: string;
-  email: string;
-  homepage: string;
+  kontaktdaten: KontaktdatenDTO;
   ansprechpartner: AnsprechpartnerDTO[];
 
   constructor(
@@ -56,10 +54,7 @@ export default class TraegerDTO {
     traegerform: string,
     adresse: AdresseDTO,
     team: TeamDTO,
-    telefon: string,
-    fax: string,
-    email: string,
-    homepage: string,
+    kontaktdaten: KontaktdatenDTO,
     ansprechpartner: AnsprechpartnerDTO[]
   ) {
     this.id = id;
@@ -67,10 +62,7 @@ export default class TraegerDTO {
     this.traegerform = traegerform;
     this.adresse = adresse;
     this.team = team;
-    this.telefon = telefon;
-    this.fax = fax;
-    this.email = email;
-    this.homepage = homepage;
+    this.kontaktdaten = kontaktdaten;
     this.ansprechpartner = ansprechpartner;
   }
 }

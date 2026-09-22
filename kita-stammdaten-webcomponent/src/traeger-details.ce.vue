@@ -57,10 +57,24 @@
         :disabled="false"
       >
         <template #content>
-          <div><b>Telefonnummer:</b> {{ textOrFallback(traeger.telefon) }}</div>
-          <div><b>Faxnummer:</b> {{ textOrFallback(traeger.fax) }}</div>
-          <div><b>E-Mail-Adresse:</b> {{ textOrFallback(traeger.email) }}</div>
-          <div><b>Homepage:</b> {{ textOrFallback(traeger.homepage) }}</div>
+          <div>
+            <b>Telefonnummer:</b>
+            {{ textOrFallback(traeger.kontaktdaten.telefon) }}
+          </div>
+          <div>
+            <b>Faxnummer:</b> {{ textOrFallback(traeger.kontaktdaten.fax) }}
+          </div>
+          <div>
+            <b>E-Mail-Adresse:</b>
+            {{ textOrFallback(traeger.kontaktdaten.email) }}
+          </div>
+          <div>
+            <b>Homepage:</b> {{ textOrFallback(traeger.kontaktdaten.homepage) }}
+          </div>
+          <div>
+            <b>Notfall-Telefonnummer:</b>
+            {{ textOrFallback(traeger.kontaktdaten.notfallTelefon) }}
+          </div>
         </template>
       </muc-card>
       <muc-card
