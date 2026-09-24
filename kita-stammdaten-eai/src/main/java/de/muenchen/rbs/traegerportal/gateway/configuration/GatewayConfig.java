@@ -36,10 +36,10 @@ public class GatewayConfig {
         log.info("Configuring routes...");
 
         return builder.routes()
-                .route("meintraeger", r -> r.path("/meintraeger", "/meintraeger/**")
+                .route("api/meintraeger", r -> r.path("/api/meintraeger", "/api/meintraeger/**")
                         .and().method(HttpMethod.GET)
                         .filters(f -> f
-                                .rewritePath("^/meintraeger", evTraegerBasePath)
+                                .rewritePath("^/api/meintraeger", evTraegerBasePath)
                                 .removeRequestHeader("Origin")
                                 .filter(gatewayFilterFactory.apply(new StammdatenSecurityGatewayFilterFactory.Config())))
                         .uri(evUrl))

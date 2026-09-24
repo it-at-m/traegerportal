@@ -9,48 +9,59 @@
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
-    <muc-accordion
-      v-if="einrichtungenVorhanden"
-      id="einrichtung-accordion"
-      multiple
-    >
-      <muc-accordion-item
+    <div class="traegerportal-einrichtungen-list">
+      <h3>Einrichtungen Ihres Trägers</h3>
+      <table style="width: 100%;">
+        <tr>
+          <th>Name</th>
+          <th>Adresse</th>
+          <th>Status</th>
+          <th>Kibigwebid</th>
+        </tr>
+        <tr
+          v-for="einrichtung in currentPage"
+          :id="`einrichtung-row-${einrichtung.id}`"
+          :key="einrichtung.id"
+          :href="getDetailsUrl(einrichtung.id)"
+        >
+          <td>{{ einrichtung.name }}</td>
+          <td>{{ formatAdresse(einrichtung.adresse) }}</td>
+          <td>{{ formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus) }}</td>
+          <td>{{ einrichtung.merkmale?.kibigWebId }}</td>
+        </tr>
+      </table>
+      <!--a
         v-for="einrichtung in currentPage"
-        :id="'einrichtung-accordion-item-' + einrichtung.id"
+        :id="`einrichtung-display-${einrichtung.id}`"
         :key="einrichtung.id"
-        :header="formatEinrichtungTitle(einrichtung)"
+        :title="`KIGIB.web-Nummer: ${einrichtung.merkmale.kibigWebId}`"
+        style="width: 100%"
+        class="einrichtung-element nolink"
+        :href="getDetailsUrl(einrichtung.id)"
       >
-        <template #subtitle>
-          <a :href="getDetailsUrl(einrichtung.id)"
-            ><muc-button variant="ghost"
-              >Einrichtungsdetails<muc-icon icon="arrow-right" /></muc-button
-          ></a>
-        </template>
-        <template #content>
-          <div>
-            <span class="einrichtung-attribute"
-              ><b>KIGIB.web-Nummer:</b>
-              {{ einrichtung.merkmale.kibigWebId }}</span
-            >
+        <div class="traegerportal-row">
+          <h3>{{ formatEinrichtungTitle(einrichtung) }}</h3>
+          <div class="chip" :class="`status-${einrichtung.aktuellGueltigerStatus?.status}`">
+            {{ formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus) }}
           </div>
-          <div>
-            <span class="einrichtung-attribute"
-              ><b>Status:</b>
-              {{
-                formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus)
-              }}</span
-            >
-          </div>
-          <div>
-            <span class="einrichtung-attribute"
-              ><b>Adresse:</b> {{ formatAdresse(einrichtung.adresse) }}</span
-            >
-          </div>
-        </template>
-      </muc-accordion-item>
-    </muc-accordion>
+        </div>
+        <div class="traegerportal-row">
+          <b>KIGIB.web-Nummer:</b><div>{{ einrichtung.merkmale.kibigWebId }}</div>
+          <b>Adresse:</b><div>{{ formatAdresse(einrichtung.adresse) }}</div>
+        </div>
+      </a-->
+      <div style="display: flex; justify-content: center;">
+        <simple-pagination
+          v-if="!!einrichtungen && multiplePages"
+          v-model="pageNumber"
+          class="traegerportal-paging"
+          :total-items="einrichtungen.length"
+          :items-per-page="pageSize"
+        />
+      </div>
+    </div>
     <muc-callout
-      v-else
+      v-if="!einrichtungenVorhanden"
       type="info"
       class="no-einrichtungen-callout"
     >
@@ -58,24 +69,11 @@
         <p>Keine Einrichtungen hinterlegt</p>
       </template>
     </muc-callout>
-    <simple-pagination
-      v-if="!!einrichtungen && multiplePages"
-      v-model="pageNumber"
-      :total-items="einrichtungen.length"
-      :items-per-page="pageSize"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-import {
-  MucAccordion,
-  MucAccordionItem,
-  MucButton,
-  MucCallout,
-  MucIcon,
-  MucSpinner,
-} from "@muenchen/muc-patternlab-vue";
+import { MucCallout, MucSpinner, MucCard } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref, watch } from "vue";
@@ -190,41 +188,72 @@ watch(
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
 
-.m-component-accordion {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  padding-right: 3rem !important;
+table,
+th,
+td {
+  border: 1px solid var(--color-neutrals-blue);
+  border-collapse: collapse;
 }
 
-.m-component-accordion .container {
-  padding-left: 0;
-  padding-right: 0;
-  max-width: 100%;
+th,
+td {
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
 }
 
-.m-accordion__section {
+.traegerportal-einrichtungen-list {
   border: solid 1px var(--color-neutrals-blue);
   border-bottom: solid 5px var(--color-brand-main-blue) !important;
+  padding: 1rem;
+}
+
+.traegerportal-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.chip {
+  display: inline-block;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 16px;
+  transition: background-color 0.3s ease-in-out;
+  user-select: none;
+  cursor: default;
+}
+
+.status-IN_BETRIEB {
+  background-color: #bdf09c;
+}
+
+.nolink {
+  text-decoration: none;
+  color: var(--mde-color-neutral-grey);
+}
+
+.einrichtung-element {
+  border: solid 1px var(--color-neutrals-blue);
   padding-left: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   padding-right: 1rem;
-  margin-bottom: 16px;
+  cursor: pointer;
+  transition: background-color ease-in 0.15s;
+  display: block;
 }
 
-.m-accordion__section-button {
-  padding-top: 16px;
-  padding-bottom: 16px;
-}
-
-.einrichtung-attribute {
-  padding-right: 1rem;
-}
-
-.content-width {
-  width: 100% !important;
+.einrichtung-element:hover {
+  background-color: var(--mde-color-neutral-beau-blue-x-light);
 }
 
 .no-einrichtungen-callout {
   padding-left: 0;
   padding-top: 3rem;
+}
+
+.traegerportal-paging {
+  margin-top: 1rem;
 }
 </style>

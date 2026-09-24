@@ -22,7 +22,7 @@ spring:
 
 adapter:
   einrichtungsverwaltung:
-    base-url: http://localhost:8080
+    base-url: http://localhost:8083
     base-path: /external/traeger/(id)
     id-path: /external/traeger/by-unternehmenskontoid/{ukid}/id
     security:

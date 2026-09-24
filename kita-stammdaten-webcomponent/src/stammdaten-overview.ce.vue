@@ -3,7 +3,7 @@
   <div v-html="mucIconsSprite" />
   <!-- eslint-disable-next-line vue/no-v-html -->
   <div v-html="customIconsSprite" />
-  <div v-if="loggedIn">
+  <div v-if="!loggedIn">
     <muc-callout
       v-if="unknownTraeger"
       type="info"
@@ -85,7 +85,9 @@ function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
   }
 }
 
-const token = ref<string | undefined>();
+const token = ref<string | undefined>(
+  "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJFMEgxUTRVUXpNdHR1WmF2eDRwdG9OcWZ3VFdCWDRfeVBVVC1lS2d3RkhNIn0.eyJleHAiOjE3OTAyNjY5ODgsImlhdCI6MTc5MDIzMDk4OCwianRpIjoib25ydHJvOjRhNzU1M2YxLWI3N2QtNDU1Ny04NDAwLWFjMDFjOGM5YzNjZCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODEwMC9hdXRoL3JlYWxtcy9sb2NhbF9yZWFsbSIsImF1ZCI6WyJsb2NhbCIsImFjY291bnQiXSwic3ViIjoiOTBiYWU1ZDgtZTQ5MS00NTBkLThiMDctYmIzNDA0ZjkwODY3IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoibG9jYWwiLCJzaWQiOiIwNzFkMWExZC1hMTYwLTRiZmUtOTA5Yi01MDBiMWMzZGY4ZGYiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly8qIiwiaHR0cHM6Ly8qIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLWxvY2FsX3JlYWxtIiwib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfSwibG9jYWwiOnsicm9sZXMiOlsicmVhZGVyIl19fSwic2NvcGUiOiJsb2NhbF9hdWRpZW5jZSBvcGVuaWQgZW1haWwgcHJvZmlsZSIsImRhdGVudWViZXJtaXR0bGVyUHNldWRvbnltSWQiOiJkdS1kOWExMTg3NDA2YjJmMTQxNDVlYmFmZDllMGJlYTEwMDAwMTAwMDA1IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJyZWFkZXIgcmVhZGVyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoicmVhZGVyIiwiZ2l2ZW5fbmFtZSI6InJlYWRlciIsImZhbWlseV9uYW1lIjoicmVhZGVyIiwiZW1haWwiOiJyZWFkZXJAcmVhZGVyLmNvbSIsImF1dGhvcml0aWVzIjpbIlJPTEVfcmVhZGVyIl19.LKPoe39hHOdcCBNrj5ynjqpPRpEC3uyH8kpIjJstL8nOT_5y_zHnj6LtCYdZSoKLMHzaWh03_Qk8NArXMY7Ipu8xYUjlAEtr9RAAvQwZnnMnhlxTzwfmU384hQ0in6nVgxuFh9nKF4d8H2nQRNUhAJvNOEyZXEPGYgjy1GzmDfzPEmd2kOw5-K9bnjPozNj1Y33LGzsBrC_S3qNdNx9n4S2TflzyNrdQFu5qf9UWc4HoemT67x_bl7CTSmAAttCpIsze9iQUvPAmw964B7kBfYPUJy5x0alUnSrJEfWCBilWiwyG2XswZHqELTBMoAtv_PCGDiqhePH0q_mEm5WwdQ"
+);
 const unknownTraeger = ref<boolean>(false);
 const loadingError = ref<boolean>(false);
 
@@ -100,7 +102,7 @@ defineProps({
   },
   pageSize: {
     type: Number,
-    default: 5,
+    default: 10,
   },
 });
 </script>
@@ -117,6 +119,9 @@ defineProps({
 .flex-container {
   display: flex;
   margin-bottom: 1rem;
+  gap: 1rem;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
 }
 
 .full-width {
@@ -129,8 +134,6 @@ defineProps({
   display: flex;
   align-items: center;
   justify-content: left;
-  margin-left: 1.5rem;
-  margin-right: 1.5rem;
 }
 
 .bordered-area {

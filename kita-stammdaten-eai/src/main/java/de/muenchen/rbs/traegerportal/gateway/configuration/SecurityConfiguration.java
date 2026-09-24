@@ -41,7 +41,7 @@ public class SecurityConfiguration {
     @Bean
     @Order(2)
     public SecurityWebFilterChain apiFilterChain(final ServerHttpSecurity http) {
-        http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/meintraeger/**"))
+        http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/api/meintraeger/**"))
                 .authorizeExchange(
                         authorizeExchangeSpec -> {
                             authorizeExchangeSpec

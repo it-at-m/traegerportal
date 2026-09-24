@@ -20,9 +20,9 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 8082,
       proxy: {
-        "/api": "http://localhost:8083",
-        "/actuator": "http://localhost:8083",
-        "/clients": "http://localhost:8083",
+        "/api": "http://localhost:8084",
+        "/actuator": "http://localhost:8084",
+        "/clients": "http://localhost:8084",
       },
     },
     resolve: {

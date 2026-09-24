@@ -61,6 +61,20 @@
         be activated.
       </strong>
     </noscript>
+
+    <script
+      type="text/javascript"
+      src="https://dbs-login-webcomponent-integration.muenchen.de/loader.js"
+      async
+    ></script>
+
+    <!--div style="text-align: right;">
+        <dbs-login
+        kc-url="https://ssodev.muenchen.de/auth"
+        kc-realm="A61"
+        kc-client-id="kita-traegerportal-eval" >
+        </dbs-login>
+    </div-->
     <!--div class="component-display">
       <traeger-overview
         stammdaten-url="https://kita-einrichtung.muenchen.de"
@@ -72,15 +86,19 @@
       ></einrichtung-overview>
     </div-->
     <div class="component-display">
-      <stammdaten-overview style="width: 80%" />
+      <stammdaten-overview
+        style="width: 80%"
+        einrichtung-details-url=""
+        traeger-details-url=""
+      />
     </div>
 
-    <div class="component-display">
+    <!--div class="component-display">
       <traeger-details />
     </div>
 
     <div class="component-display">
       <einrichtung-details einrichtung-id="123" />
-    </div>
+    </div-->
   </body>
 </html>

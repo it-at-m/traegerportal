@@ -11,9 +11,9 @@ let ACCESS_TOKEN: string | undefined = undefined;
 
 export function getAPIBaseURL(): string {
   if (import.meta.env.VITE_VUE_APP_API_URL) {
-    return import.meta.env.VITE_VUE_APP_API_URL;
+    return import.meta.env.VITE_VUE_APP_API_URL + "/api";
   } else {
-    return new URL(import.meta.url).origin;
+    return new URL(import.meta.url).origin + "/api";
   }
 }
 
