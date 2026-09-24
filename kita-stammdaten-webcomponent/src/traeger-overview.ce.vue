@@ -124,4 +124,8 @@ watch(
 @import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
+
+.card-content {
+  padding: 1rem !important;
+}
 </style>

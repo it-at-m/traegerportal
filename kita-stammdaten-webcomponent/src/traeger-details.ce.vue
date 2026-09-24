@@ -230,4 +230,17 @@ watch(
 .card {
   margin-bottom: 1rem;
 }
+
+table,
+th,
+td {
+  border: 1px solid var(--color-neutrals-blue);
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+}
 </style>
