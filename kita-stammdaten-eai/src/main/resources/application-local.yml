@@ -23,7 +23,7 @@ spring:
 adapter:
   fallbearbeitung:
     base-url: http://localhost:8080
-    base-path: /external/vorgaenge/by-traegerid/(id)
+    base-path: /external/traeger/(id)/vorgaenge
     # uses einrichtungsverwaltung security
   einrichtungsverwaltung:
     base-url: http://localhost:8083

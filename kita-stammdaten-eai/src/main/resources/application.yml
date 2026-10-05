@@ -41,7 +41,7 @@ cors:
 adapter:
   fallbearbeitung:
     base-url: https://kita-fallbearbeitung.muenchen.de/
-    base-path: /api/fallbearbeitung-backend/external/vorgaenge/by-traegerid/(id)
+    base-path: /api/fallbearbeitung-backend/external/traeger/(id)/vorgaenge
     # uses einrichtungsverwaltung security
   einrichtungsverwaltung:
     base-url: https://kita-einrichtung.muenchen.de/

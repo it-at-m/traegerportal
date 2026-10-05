@@ -225,6 +225,6 @@ watch(
 
 .no-einrichtungen-callout {
   padding-left: 0;
-  padding-top: 3rem;
+  margin-top: 2.5rem !important;
 }
 </style>
