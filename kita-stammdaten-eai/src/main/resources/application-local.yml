@@ -21,8 +21,12 @@ spring:
           jwk-set-uri: http://localhost:8100/auth/realms/local_realm/protocol/openid-connect/certs
 
 adapter:
-  einrichtungsverwaltung:
+  fallbearbeitung:
     base-url: http://localhost:8080
+    base-path: /external/vorgaenge/by-traegerid/(id)
+    # uses einrichtungsverwaltung security
+  einrichtungsverwaltung:
+    base-url: http://localhost:8083
     base-path: /external/traeger/(id)
     id-path: /external/traeger/by-unternehmenskontoid/{ukid}/id
     security:

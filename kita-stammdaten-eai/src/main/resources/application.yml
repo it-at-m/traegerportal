@@ -39,6 +39,10 @@ cors:
   allowedOrigins: https://stadt-i.muenchen.de
 
 adapter:
+  fallbearbeitung:
+    base-url: https://kita-fallbearbeitung.muenchen.de/
+    base-path: /api/fallbearbeitung-backend/external/vorgaenge/by-traegerid/(id)
+    # uses einrichtungsverwaltung security
   einrichtungsverwaltung:
     base-url: https://kita-einrichtung.muenchen.de/
     base-path: /api/einrichtungsverwaltung-backend/external/traeger/(id)
