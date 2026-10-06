@@ -43,6 +43,16 @@
       src="src/stammdaten-overview-webcomponent.ts"
       type="module"
     ></script>
+
+    <!-- Enable automatic Keycloak login for local development when configured -->
+    <script type="module">
+      if (
+          import.meta.env.DEV &&
+          import.meta.env.VITE_KEYCLOAK_AUTOLOGIN === "true"
+      ) {
+          import("/src/dev/local-dev-auto-login.ts");
+      }
+    </script>
     <style>
       .component-display {
         width: 90%;
