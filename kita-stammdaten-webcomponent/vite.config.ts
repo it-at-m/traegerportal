@@ -20,7 +20,8 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 8082,
       proxy: {
-        "/api": "http://localhost:8083",
+        "/meintraeger": "http://localhost:8083",
+        "/meinevorgaenge": "http://localhost:8083",
         "/actuator": "http://localhost:8083",
         "/clients": "http://localhost:8083",
       },
