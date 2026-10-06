@@ -32,12 +32,12 @@
           <muc-callout
             v-if="loadingErrorTraeger"
             type="error"
-            style="width: 50%;"
+            style="width: 50%"
           >
             <template #content>
               <p>
-                Die Trägerdaten können derzeit nicht geladen werden. Bitte versuchen Sie es zu
-                einem späteren Zeitpunkt erneut.
+                Die Trägerdaten können derzeit nicht geladen werden. Bitte
+                versuchen Sie es zu einem späteren Zeitpunkt erneut.
               </p>
             </template>
           </muc-callout>
@@ -52,12 +52,12 @@
           <muc-callout
             v-if="loadingErrorVorgaenge"
             type="error"
-            style="width: 50%;"
+            style="width: 50%"
           >
             <template #content>
               <p>
-                Die Vorgänge können derzeit nicht geladen werden. Bitte versuchen Sie es zu
-                einem späteren Zeitpunkt erneut.
+                Die Vorgänge können derzeit nicht geladen werden. Bitte
+                versuchen Sie es zu einem späteren Zeitpunkt erneut.
               </p>
             </template>
           </muc-callout>
@@ -72,12 +72,12 @@
         <muc-callout
           v-if="loadingErrorEinrichtungen"
           type="error"
-          style="margin-top: 2.5rem;"
+          style="margin-top: 2.5rem"
         >
           <template #content>
             <p>
-              Die Einrichtungen können derzeit nicht geladen werden. Bitte versuchen Sie es zu
-              einem späteren Zeitpunkt erneut.
+              Die Einrichtungen können derzeit nicht geladen werden. Bitte
+              versuchen Sie es zu einem späteren Zeitpunkt erneut.
             </p>
           </template>
         </muc-callout>
@@ -112,8 +112,8 @@ import { computed, ref } from "vue";
 import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
 import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
 import TraegerOverviewVueComponent from "@/traeger-overview.ce.vue";
-import VorgaengeOverviewVueComponent from "@/vorgaenge-overview.ce.vue";
 import { setAccessToken } from "@/util/constants";
+import VorgaengeOverviewVueComponent from "@/vorgaenge-overview.ce.vue";
 
 const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
 
@@ -133,7 +133,11 @@ const loadingErrorEinrichtungen = ref<boolean>(false);
 const loadingErrorVorgaenge = ref<boolean>(false);
 
 const loadingErrorAll = computed(() => {
-  return loadingErrorTraeger.value && loadingErrorEinrichtungen.value && loadingErrorVorgaenge.value
+  return (
+    loadingErrorTraeger.value &&
+    loadingErrorEinrichtungen.value &&
+    loadingErrorVorgaenge.value
+  );
 });
 
 defineProps({

@@ -18,9 +18,18 @@
       style="width: 100%"
     >
       <template #content>
-        <div><muc-icon icon="account" /><b>Träger-ID:</b> {{ textOrFallback(traeger?.id) }}</div>
-        <div><muc-icon icon="home" /><b>Name:</b> {{ textOrFallback(traeger?.name) }}</div>
-        <div><muc-icon icon="web" /><b>Form:</b> {{ textOrFallback(traeger?.traegerform) }}</div>
+        <div>
+          <muc-icon icon="account" /><b>Träger-ID:</b>
+          {{ textOrFallback(traeger?.id) }}
+        </div>
+        <div>
+          <muc-icon icon="home" /><b>Name:</b>
+          {{ textOrFallback(traeger?.name) }}
+        </div>
+        <div>
+          <muc-icon icon="web" /><b>Form:</b>
+          {{ textOrFallback(traeger?.traegerform) }}
+        </div>
         <div>
           <muc-icon icon="map-pin" /><b>Adresse:</b>
           {{ formatAdresse(traeger.adresse) }}
@@ -29,8 +38,11 @@
           <muc-icon icon="user-group" /><b>Team:</b>
           {{ formatTraegerTeam(traeger.team) }}
         </div>
-        <muc-button variant="ghost" class="card-action-button">
-          Trägerdetails<muc-icon icon="arrow-right"/>
+        <muc-button
+          variant="ghost"
+          class="card-action-button"
+        >
+          Trägerdetails<muc-icon icon="arrow-right" />
         </muc-button>
       </template>
     </muc-card>
@@ -38,14 +50,23 @@
 </template>
 
 <script setup lang="ts">
-import { MucButton, MucCard, MucIcon, MucSpinner } from "@muenchen/muc-patternlab-vue";
+import {
+  MucButton,
+  MucCard,
+  MucIcon,
+  MucSpinner,
+} from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import TraegerDTO from "@/types/TraegerDTO";
-import { formatAdresse, formatTraegerTeam, textOrFallback } from "./util/format";
+import {
+  formatAdresse,
+  formatTraegerTeam,
+  textOrFallback,
+} from "./util/format";
 
 const traeger = ref<TraegerDTO>();
 

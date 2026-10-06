@@ -27,7 +27,8 @@ public class GatewayConfig {
             @Value("${adapter.webcomponents.base-url}") final String webcomponentsUrl,
             @Value("${adapter.einrichtungsverwaltung.base-path}") final String evTraegerBasePath,
             @Value("${adapter.fallbearbeitung.base-path}") final String fbBasePath) {
-        log.info("Initializing Gateway with einrichtungsverwaltung-url {}, path {}, fallbearbeitung-url {}, path {} and webcomponents-url {}...", evUrl, evTraegerBasePath, fbUrl, fbBasePath, webcomponentsUrl);
+        log.info("Initializing Gateway with einrichtungsverwaltung-url {}, path {}, fallbearbeitung-url {}, path {} and webcomponents-url {}...", evUrl,
+                evTraegerBasePath, fbUrl, fbBasePath, webcomponentsUrl);
 
         this.evUrl = evUrl;
         this.fbUrl = fbUrl;

@@ -21,14 +21,23 @@
           <muc-icon icon="file" />
           <b>{{ vorgangCount }} Vorgänge mit neuen Änderungen</b>
         </div>
-        <muc-button variant="ghost" class="card-action-button">Alle Vorgänge<muc-icon icon="arrow-right" /></muc-button>
+        <muc-button
+          variant="ghost"
+          class="card-action-button"
+          >Alle Vorgänge<muc-icon icon="arrow-right"
+        /></muc-button>
       </template>
     </muc-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { MucButton, MucCard, MucSpinner, MucIcon } from "@muenchen/muc-patternlab-vue";
+import {
+  MucButton,
+  MucCard,
+  MucIcon,
+  MucSpinner,
+} from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref, watch } from "vue";
