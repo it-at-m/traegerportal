@@ -17,7 +17,7 @@
         </template>
       </muc-callout>
       <muc-callout
-        v-if="loadingError"
+        v-if="loadingErrorAll"
         type="error"
       >
         <template #content>
@@ -29,25 +29,65 @@
       </muc-callout>
       <div v-else>
         <div class="flex-container full-width">
+          <muc-callout
+            v-if="loadingErrorTraeger"
+            type="error"
+            style="width: 50%;"
+          >
+            <template #content>
+              <p>
+                Die Trägerdaten können derzeit nicht geladen werden. Bitte versuchen Sie es zu
+                einem späteren Zeitpunkt erneut.
+              </p>
+            </template>
+          </muc-callout>
           <traeger-overview-vue-component
+            v-else
             class="flex-area full-width"
             :details-url="traegerDetailsUrl"
             :token="token"
             @unknown-traeger="unknownTraeger = true"
-            @loading-error="loadingError = true"
+            @loading-error="loadingErrorTraeger = true"
           />
+          <muc-callout
+            v-if="loadingErrorVorgaenge"
+            type="error"
+            style="width: 50%;"
+          >
+            <template #content>
+              <p>
+                Die Vorgänge können derzeit nicht geladen werden. Bitte versuchen Sie es zu
+                einem späteren Zeitpunkt erneut.
+              </p>
+            </template>
+          </muc-callout>
           <vorgaenge-overview-vue-component
+            v-else
             class="flex-area full-width"
             details-url="todo"
             :token="token"
-            @loading-error="loadingError = true"
+            @loading-error="loadingErrorVorgaenge = true"
           />
         </div>
+        <muc-callout
+          v-if="loadingErrorEinrichtungen"
+          type="error"
+          style="margin-top: 2.5rem;"
+        >
+          <template #content>
+            <p>
+              Die Einrichtungen können derzeit nicht geladen werden. Bitte versuchen Sie es zu
+              einem späteren Zeitpunkt erneut.
+            </p>
+          </template>
+        </muc-callout>
         <einrichtung-overview-vue-component
+          v-else
           :details-url="einrichtungDetailsUrl"
           :page-size="pageSize"
           :token="token"
           class="full-width"
+          @loading-error="loadingErrorEinrichtungen = true"
         />
       </div>
     </div>
@@ -67,7 +107,7 @@ import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts
 import { MucCallout } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
 import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
@@ -88,7 +128,13 @@ function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
 
 const token = ref<string | undefined>();
 const unknownTraeger = ref<boolean>(false);
-const loadingError = ref<boolean>(false);
+const loadingErrorTraeger = ref<boolean>(false);
+const loadingErrorEinrichtungen = ref<boolean>(false);
+const loadingErrorVorgaenge = ref<boolean>(false);
+
+const loadingErrorAll = computed(() => {
+  return loadingErrorTraeger.value && loadingErrorEinrichtungen.value && loadingErrorVorgaenge.value
+});
 
 defineProps({
   traegerDetailsUrl: {

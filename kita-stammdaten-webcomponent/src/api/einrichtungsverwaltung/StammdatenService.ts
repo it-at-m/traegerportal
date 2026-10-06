@@ -44,7 +44,7 @@ export default class StammdatenService {
     });
   }
   getVorgangCount(token: string): Promise<Response> {
-    const url = getAPIBaseURL() + "/meinevorgaenge/vorgangCount";
+    const url = getAPIBaseURL() + "/meinevorgaenge/changedCount";
 
     return fetch(url, {
       method: "GET",

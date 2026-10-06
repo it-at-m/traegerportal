@@ -117,6 +117,8 @@ function getDetailsUrl(einrichtungId: string): string {
 
 const einrichtungen = ref<EinrichtungDTO[]>();
 
+const emit = defineEmits(["loadingError"]);
+
 function loadEinrichtungen() {
   console.debug("Loading einrichtungen...");
 
@@ -136,6 +138,7 @@ function loadEinrichtungen() {
       } else {
         resp.text().then((errBody) => {
           dataLoadingError.value = true;
+          emit("loadingError");
           throw Error(errBody);
         });
       }
@@ -143,6 +146,7 @@ function loadEinrichtungen() {
     .catch((error) => {
       console.debug(error);
       dataLoadingError.value = true;
+      emit("loadingError");
     })
     .finally(() => {
       loading.value = false;
@@ -193,7 +197,7 @@ watch(
 .m-component-accordion {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
-  padding-right: 3rem !important;
+  padding-right: 0 !important;
 }
 
 .m-component-accordion .container {

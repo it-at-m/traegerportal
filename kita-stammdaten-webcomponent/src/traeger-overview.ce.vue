@@ -97,6 +97,7 @@ function loadTraeger() {
     })
     .catch((error) => {
       dataLoadingError.value = true;
+      emit("loadingError");
       console.debug(error);
     })
     .finally(() => {
