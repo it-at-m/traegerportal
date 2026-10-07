@@ -6,7 +6,7 @@ import AuthorizationEventDetails from "@/types/AuthorizationEventDetails";
  * Event from the Login-Webcomponent which notifies when the
  * oauth2-token changes.
  */
-const AUTH_REFRESH_EVENT_NAME = "authorization-event";
+export const AUTH_REFRESH_EVENT_NAME = "authorization-event";
 
 /**
  * Plugin to use for webcomponents which rely on the `dbs-login`-Webcomponent

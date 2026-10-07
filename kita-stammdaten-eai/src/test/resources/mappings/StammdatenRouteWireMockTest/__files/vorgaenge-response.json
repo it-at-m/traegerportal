@@ -1,0 +1,81 @@
+{
+  "content": [
+    {
+      "aktenzeichen": "EA-0000001",
+      "einrichtung": {
+        "id": 9728,
+        "name": "Kinderkrippe Vielfalt",
+        "adresse": {
+          "strasse": "Bertholdstr.",
+          "hausnummer": "12",
+          "adresszusatz": null,
+          "adresszusatz2": null,
+          "plz": "80809",
+          "ort": "München"
+        },
+        "stadtbezirk": null,
+        "stadtquartier": null,
+        "kibigWebId": "1620025152",
+        "einrichtungsartLhm": "KINDERKRIPPE"
+      },
+      "vorgangsart": "EINRICHTUNGSDATEN_AENDERN",
+      "status": {
+        "status": "ANTRAG_OFFEN",
+        "bemerkung": null,
+        "gruende": []
+      },
+      "letzteAenderung": "2026-10-07T14:14:40.119401"
+    },
+    {
+      "aktenzeichen": "EA-0000002",
+      "einrichtung": {
+        "id": 9728,
+        "name": "Kinderkrippe Vielfalt",
+        "adresse": {
+          "strasse": "Bertholdstr.",
+          "hausnummer": "12",
+          "adresszusatz": null,
+          "adresszusatz2": null,
+          "plz": "80809",
+          "ort": "München"
+        },
+        "stadtbezirk": null,
+        "stadtquartier": null,
+        "kibigWebId": "1620025152",
+        "einrichtungsartLhm": "KINDERKRIPPE"
+      },
+      "vorgangsart": "EINRICHTUNGSDATEN_AENDERN",
+      "status": {
+        "status": "ANTRAG_OFFEN",
+        "bemerkung": null,
+        "gruende": []
+      },
+      "letzteAenderung": "2026-10-07T14:14:40.119401"
+    },
+    {
+      "aktenzeichen": "TA-0000001",
+      "einrichtung": null,
+      "vorgangsart": "TRAEGERDATEN_AENDERN",
+      "status": {
+        "status": "ANTRAG_OFFEN",
+        "bemerkung": null,
+        "gruende": []
+      },
+      "letzteAenderung": "2026-10-07T14:14:40.119401"
+    }
+  ],
+  "pageable": "INSTANCE",
+  "last": true,
+  "totalElements": 3,
+  "totalPages": 1,
+  "size": 3,
+  "number": 0,
+  "sort": {
+    "empty": true,
+    "sorted": false,
+    "unsorted": true
+  },
+  "first": true,
+  "numberOfElements": 3,
+  "empty": false
+}

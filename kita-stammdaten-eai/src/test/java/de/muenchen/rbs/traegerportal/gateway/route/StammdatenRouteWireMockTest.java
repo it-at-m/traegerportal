@@ -28,6 +28,7 @@ class StammdatenRouteWireMockTest {
 
     public static final String PATH_MEIN_TRAEGER = "/meintraeger";
     public static final String PATH_EINRICHTUNGEN_FOR_MEIN_TRAEGER = "/meintraeger/einrichtungen";
+    public static final String PATH_MEINE_VORGAENGE = "/meinevorgaenge";
 
     @Autowired
     private OAuthSecurityMockConfiguration oauthSecurityMockConfiguration;
@@ -65,5 +66,19 @@ class StammdatenRouteWireMockTest {
                 .get().uri(PATH_MEIN_TRAEGER)
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void stammdaten_vorgaenge_get_success() {
+        webTestClient
+                .get().uri(PATH_MEINE_VORGAENGE)
+                .headers(oauthSecurityMockConfiguration::addFrontendBearerAuth)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.OK)
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.content").isArray()
+                .jsonPath("$.content[*].aktenzeichen").value(ids -> assertThat(ids).asInstanceOf(InstanceOfAssertFactories.LIST)
+                        .containsExactlyInAnyOrder("EA-0000001", "EA-0000002", "TA-0000001"));
     }
 }

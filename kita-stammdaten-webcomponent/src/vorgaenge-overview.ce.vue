@@ -2,7 +2,7 @@
   <muc-spinner
     v-if="loading"
     size="200px"
-    text="Lade Träger ..."
+    text="Lade Vorgänge ..."
   />
   <div v-else-if="!dataLoadingError">
     <!-- eslint-disable-next-line vue/no-v-html -->
@@ -10,40 +10,22 @@
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
     <muc-card
-      v-if="traeger"
-      id="traeger-card"
-      :title="textOrFallback(traeger.name)"
-      :href="hasLink ? traegerLink : undefined"
-      :disabled="!traeger"
+      id="vorgaenge-card"
+      title="Vorgänge"
+      :href="traegerLink"
+      :disabled="!traegerLink"
       style="width: 100%"
     >
       <template #content>
         <div>
-          <muc-icon icon="account" /><b>Träger-ID:</b>
-          {{ textOrFallback(traeger?.id) }}
-        </div>
-        <div>
-          <muc-icon icon="home" /><b>Name:</b>
-          {{ textOrFallback(traeger?.name) }}
-        </div>
-        <div>
-          <muc-icon icon="web" /><b>Form:</b>
-          {{ textOrFallback(traeger?.traegerform) }}
-        </div>
-        <div>
-          <muc-icon icon="map-pin" /><b>Adresse:</b>
-          {{ formatAdresse(traeger.adresse) }}
-        </div>
-        <div>
-          <muc-icon icon="user-group" /><b>Team:</b>
-          {{ formatTraegerTeam(traeger.team) }}
+          <muc-icon icon="file" />
+          <b>{{ vorgangCount }} Vorgänge mit neuen Änderungen</b>
         </div>
         <muc-button
           variant="ghost"
           class="card-action-button"
-        >
-          Trägerdetails<muc-icon icon="arrow-right" />
-        </muc-button>
+          >Alle Vorgänge<muc-icon icon="arrow-right"
+        /></muc-button>
       </template>
     </muc-card>
   </div>
@@ -61,14 +43,8 @@ import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.
 import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
-import TraegerDTO from "@/types/TraegerDTO";
-import {
-  formatAdresse,
-  formatTraegerTeam,
-  textOrFallback,
-} from "./util/format";
 
-const traeger = ref<TraegerDTO>();
+const vorgangCount = ref<number>(0);
 
 const props = defineProps({
   detailsUrl: {
@@ -89,36 +65,27 @@ const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 const emit = defineEmits(["loadingError", "unknownTraeger"]);
 
-function loadTraeger() {
+function loadVorgangCount() {
   loading.value = true;
   const service = new StammdatenService();
   service
-    .getTraeger(props.token)
+    .getVorgangCount(props.token)
     .then((resp) => {
       if (resp.ok) {
-        resp.json().then((response: TraegerDTO) => {
-          traeger.value = response;
+        resp.json().then((response: number) => {
+          vorgangCount.value = response;
           dataLoadingError.value = false;
         });
       } else {
         resp.text().then((errBody) => {
           dataLoadingError.value = true;
-
-          if (
-            resp.status == 422 &&
-            errBody.includes("Unternehmenskonto-ID wurde nicht gefunden")
-          ) {
-            emit("unknownTraeger");
-          } else {
-            emit("loadingError");
-            throw Error(errBody);
-          }
+          emit("loadingError");
+          throw Error(errBody);
         });
       }
     })
     .catch((error) => {
       dataLoadingError.value = true;
-      emit("loadingError");
       console.debug(error);
     })
     .finally(() => {
@@ -130,15 +97,11 @@ const traegerLink = computed(() => {
   return `${props.detailsUrl}?&lg-idphint=ELSTER_NEZO`;
 });
 
-const hasLink = computed(() => {
-  return props.detailsUrl && traeger.value;
-});
-
 watch(
   () => props.token,
   (newToken, oldToken) => {
     if (newToken !== oldToken) {
-      loadTraeger();
+      loadVorgangCount();
     }
   },
   { immediate: true }
@@ -160,7 +123,7 @@ watch(
   right: 1rem;
 }
 
-#traeger-card {
+#vorgaenge-card {
   position: relative;
 }
 </style>
