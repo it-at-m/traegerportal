@@ -64,7 +64,7 @@
           <vorgaenge-overview-vue-component
             v-else
             class="flex-area full-width"
-            details-url="todo"
+            :details-url="vorgangDetailsUrl"
             :token="token"
             @loading-error="loadingErrorVorgaenge = true"
           />
@@ -146,6 +146,10 @@ defineProps({
     default: null,
   },
   einrichtungDetailsUrl: {
+    type: String,
+    default: null,
+  },
+  vorgangDetailsUrl: {
     type: String,
     default: null,
   },
