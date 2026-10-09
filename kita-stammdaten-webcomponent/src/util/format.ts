@@ -2,6 +2,14 @@ import type AdresseDTO from "@/types/AdresseDTO";
 import type EinrichtungDTO from "@/types/EinrichtungDTO";
 import type { EinrichtungsstatusDTO } from "@/types/EinrichtungDTO";
 import type { AnsprechpartnerDTO, TeamDTO } from "@/types/TraegerDTO";
+import type VorgaengeDTO from "@/types/VorgaengeDTO.ts";
+import type { VorgangsstatusDTO } from "@/types/VorgaengeDTO.ts";
+
+import {
+  einrichtungsstatus,
+  vorgangsart,
+  vorgangsstatus,
+} from "@/util/enums.ts";
 
 export const noValueFallback = "Keine Daten hinterlegt";
 
@@ -34,13 +42,16 @@ export function formatAdresse(adresse: AdresseDTO): string {
   }
 }
 
-export function formatEinrichtungsstatus(status: EinrichtungsstatusDTO) {
-  const values = new Map<string, string>([
-    ["VORPLANUNG", "Vorplanung"],
-    ["VOR_BETRIEB", "Vor Betrieb"],
-    ["IN_BETRIEB", "In Betrieb"],
-  ]);
-  return values.get(status.status);
+export function formatVorgangsart(dto: VorgaengeDTO) {
+  return vorgangsart.get(dto.vorgangsart);
+}
+
+export function formatVorgangsstatus(dto: VorgangsstatusDTO) {
+  return vorgangsstatus.get(dto.status);
+}
+
+export function formatEinrichtungsstatus(dto: EinrichtungsstatusDTO) {
+  return einrichtungsstatus.get(dto.status);
 }
 
 export function formatEinrichtungTitle(einrichtung: EinrichtungDTO) {
@@ -69,4 +80,13 @@ export function formatTraegerRollen(
 
 export function textOrFallback(text: string | undefined | null | number) {
   return text ? text.toString() : noValueFallback;
+}
+
+export function formatDate(value?: string | number | Date | null) {
+  if (!value) return noValueFallback;
+
+  const date = new Date(value);
+  return isNaN(date.getTime())
+    ? noValueFallback
+    : date.toLocaleDateString("de-DE");
 }

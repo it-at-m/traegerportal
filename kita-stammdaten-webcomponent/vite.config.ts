@@ -42,6 +42,7 @@ export default defineConfig(({ mode }) => {
           "traeger-details": "./src/traeger-details-webcomponent.ts",
           "einrichtung-details": "./src/einrichtung-details-webcomponent.ts",
           "vorgaenge-overview": "./src/vorgaenge-overview-webcomponent.ts",
+          "vorgaenge-details": "./src/vorgaenge-details-webcomponent.ts",
         },
         output: {
           entryFileNames: "entry-[name]-[hash].js",

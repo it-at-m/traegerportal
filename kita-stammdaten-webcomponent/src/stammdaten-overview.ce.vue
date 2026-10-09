@@ -89,6 +89,13 @@
           class="full-width"
           @loading-error="loadingErrorEinrichtungen = true"
         />
+        <!-- only for development on branch vorgaenge-detail - remove later-->
+        <vorgaenge-details-vue-component
+          :details-url="vorgangDetailsUrl"
+          :page-size="pageSize"
+          :token="token"
+          class="full-width"
+        />
       </div>
     </div>
     <div v-else>
@@ -110,9 +117,10 @@ import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.
 import { computed, ref } from "vue";
 
 import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
+import { setAccessToken } from "@/util/constants";
 import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
 import TraegerOverviewVueComponent from "@/traeger-overview.ce.vue";
-import { setAccessToken } from "@/util/constants";
+import VorgaengeDetailsVueComponent from "@/vorgaenge-details.ce.vue";
 import VorgaengeOverviewVueComponent from "@/vorgaenge-overview.ce.vue";
 
 const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
