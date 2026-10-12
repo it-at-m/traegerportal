@@ -120,7 +120,7 @@ watch(
 .card-action-button {
   position: absolute;
   bottom: 1rem;
-  right: 2rem;
+  right: 1.5rem;
 }
 
 #vorgaenge-card {
