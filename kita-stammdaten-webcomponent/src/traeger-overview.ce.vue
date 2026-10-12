@@ -36,7 +36,7 @@
         </div>
         <div>
           <muc-icon icon="user-group" /><b>Team:</b>
-          {{ formatTraegerTeam(traeger.team) }}
+          {{ formatTraegerTeam(traeger.team) }}TEAMTEQAMMTEMTAEGLÖKASJDHÖLKJL
         </div>
         <muc-button
           variant="ghost"
@@ -145,7 +145,7 @@ watch(
 );
 </script>
 
-<style>
+<style scoped>
 @import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
@@ -155,9 +155,7 @@ watch(
 }
 
 .card-action-button {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
+  float: right;
 }
 
 #traeger-card {
