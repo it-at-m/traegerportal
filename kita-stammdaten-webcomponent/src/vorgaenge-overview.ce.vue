@@ -119,7 +119,7 @@ watch(
 
 .card-action-button {
   position: absolute;
-  bottom: 0;
+  bottom: 1rem;
   right: 2rem;
 }
 

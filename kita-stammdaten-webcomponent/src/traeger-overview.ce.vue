@@ -36,7 +36,7 @@
         </div>
         <div>
           <muc-icon icon="user-group" /><b>Team:</b>
-          {{ formatTraegerTeam(traeger.team) }}TEAMTEQAMMTEMTAEGLÖKASJDHÖLKJL
+          {{ formatTraegerTeam(traeger.team) }}
         </div>
         <muc-button
           variant="ghost"
@@ -156,6 +156,7 @@ watch(
 
 .card-action-button {
   float: right;
+  margin-bottom: 1rem;
 }
 
 #traeger-card {
