@@ -68,5 +68,5 @@ export function formatTraegerRollen(
 }
 
 export function textOrFallback(text: string | undefined | null | number) {
-  return text ? text : noValueFallback;
+  return text ? text.toString() : noValueFallback;
 }

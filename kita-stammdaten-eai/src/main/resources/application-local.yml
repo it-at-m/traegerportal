@@ -7,7 +7,7 @@ spring:
         webflux:
           routes:
             - id: sso
-              uri: http://keycloak:8100/
+              uri: http://localhost:8100/
               predicates:
                 - "Path=/api/sso/userinfo"
               filters:
@@ -21,16 +21,19 @@ spring:
           jwk-set-uri: http://localhost:8100/auth/realms/local_realm/protocol/openid-connect/certs
 
 adapter:
+  fallbearbeitung:
+    base-url: http://localhost:8084
+    base-path: /external/traeger/(id)/vorgaenge
   einrichtungsverwaltung:
     base-url: http://localhost:8080
     base-path: /external/traeger/(id)
     id-path: /external/traeger/by-unternehmenskontoid/{ukid}/id
-    security:
-      token-url: https://ssodev.muenchen.de/auth/realms/A23/protocol/openid-connect/token
-      client-id: traegerportal-eai
-      client-secret: # add when running
-      scope: lhm-core openid
-      cache-seconds: 280
+  security:
+    token-url: https://ssodev.muenchen.de/auth/realms/A23/protocol/openid-connect/token
+    client-id: traegerportal-eai
+    client-secret: # add when running
+    scope: lhm-core openid
+    cache-seconds: 280
   webcomponents:
     base-url: http://localhost:8443
 

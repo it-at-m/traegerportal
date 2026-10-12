@@ -75,14 +75,15 @@ public class TraegerIdApiRestService {
                                 if (response.statusCode().is2xxSuccessful()) {
                                     return response.bodyToMono(Long.class);
                                 } else {
-                                    log.error("Request for traeger id did not return 2XX successful status code, but returned status {}.",
+                                    log.error("Request for traeger id ({}) did not return 2XX successful status code, but returned status {}.",
+                                            response.request().getURI().toString(),
                                             response.statusCode());
                                     return response.bodyToMono(String.class).flatMap(body -> Mono
                                             .error(new RuntimeException("Request for traeger id did not return 2XX successful status code. Body: " + body)));
                                 }
                             });
                     return idResponse.flatMap(id -> {
-                        log.debug("Aquired Id for unternehmenskonto {}.", unternehmenskontoId);
+                        log.debug("Aquired Id {} for unternehmenskonto {}.", id, unternehmenskontoId);
                         idCache.put(unternehmenskontoId, id);
                         return Mono.just(id);
                     });

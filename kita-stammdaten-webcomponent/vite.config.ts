@@ -20,7 +20,8 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 8082,
       proxy: {
-        "/api": "http://localhost:8083",
+        "/meintraeger": "http://localhost:8083",
+        "/meinevorgaenge": "http://localhost:8083",
         "/actuator": "http://localhost:8083",
         "/clients": "http://localhost:8083",
       },
@@ -40,6 +41,7 @@ export default defineConfig(({ mode }) => {
           "stammdaten-overview": "./src/stammdaten-overview-webcomponent.ts",
           "traeger-details": "./src/traeger-details-webcomponent.ts",
           "einrichtung-details": "./src/einrichtung-details-webcomponent.ts",
+          "vorgaenge-overview": "./src/vorgaenge-overview-webcomponent.ts",
         },
         output: {
           entryFileNames: "entry-[name]-[hash].js",

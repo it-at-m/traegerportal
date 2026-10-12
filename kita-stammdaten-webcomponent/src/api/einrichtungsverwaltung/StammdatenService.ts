@@ -43,4 +43,17 @@ export default class StammdatenService {
       },
     });
   }
+  getVorgangCount(token: string): Promise<Response> {
+    const url = getAPIBaseURL() + "/meinevorgaenge/changedCount";
+
+    return fetch(url, {
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+    });
+  }
 }

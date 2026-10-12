@@ -10,6 +10,13 @@ changes:
         - http://*
         - https://*
 
+  # Used for automatic login in local development; see local-dev-auto-login.ts
+  - updateClient:
+      clientId: local
+      directAccessGrantEnabled: true
+      webOrigins:
+        - "http://localhost:8082"
+
   # Maps user client roles of current client into a claim "authorities"
   - addClientMapper:
       clientId: local

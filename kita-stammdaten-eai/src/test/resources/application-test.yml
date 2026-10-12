@@ -10,6 +10,9 @@ wiremock:
     https-port: -1
 
 adapter:
+  fallbearbeitung:
+    base-url: http://localhost:${wiremock.server.port}/
+    base-path: /external/traeger/(id)/vorgaenge
   einrichtungsverwaltung:
     base-url: http://localhost:${wiremock.server.port}/
     base-path: /external/traeger/(id)
