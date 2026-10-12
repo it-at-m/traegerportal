@@ -13,11 +13,11 @@ public class EinrichtungsverwaltungAdapterConfiguration {
     @Bean
     @SuppressWarnings("PMD.UseObjectForClearerAPI")
     public ClientCredentialsAccessTokenProvider tokenProvider(final WebClient.Builder webClientBuilder,
-            @Value("${adapter.einrichtungsverwaltung.security.token-url}") final String tokenUrl,
-            @Value("${adapter.einrichtungsverwaltung.security.client-id}") final String clientId,
-            @Value("${adapter.einrichtungsverwaltung.security.client-secret}") final String clientSecret,
-            @Value("${adapter.einrichtungsverwaltung.security.scope}") final String scope,
-            @Value("${adapter.einrichtungsverwaltung.security.cache-seconds}") final int tokenCacheInSeconds) {
+            @Value("${adapter.security.token-url}") final String tokenUrl,
+            @Value("${adapter.security.client-id}") final String clientId,
+            @Value("${adapter.security.client-secret}") final String clientSecret,
+            @Value("${adapter.security.scope}") final String scope,
+            @Value("${adapter.security.cache-seconds}") final int tokenCacheInSeconds) {
         return new ClientCredentialsAccessTokenProvider(webClientBuilder, tokenUrl, clientId, clientSecret, scope, tokenCacheInSeconds);
     }
 
