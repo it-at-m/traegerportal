@@ -192,7 +192,7 @@ function loadVorgaenge() {
     .getVorgaenge(token.value)
     .then((resp) => {
       if (resp.ok) {
-        resp.json().then((response) => {
+        return resp.json().then((response) => {
           vorgaenge.value = response.content as VorgaengeDTO[];
           dataLoadingError.value = false;
         });
