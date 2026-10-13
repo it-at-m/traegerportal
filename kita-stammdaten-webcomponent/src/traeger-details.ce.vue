@@ -163,6 +163,7 @@ const columns = computed<TableColumn<AnsprechpartnerDTO>[]>(() => [
     key: "rollen",
     label: "Rollen",
     value: (ansprechperson) => formatTraegerRollen(ansprechperson),
+    sortable: false,
   },
 ]);
 

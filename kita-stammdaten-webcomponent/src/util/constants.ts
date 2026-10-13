@@ -77,7 +77,7 @@ export function getUrlWithOriginAsBaseAndDefaultParams(url: string, params: Reco
   const _url = new URL(url, globalThis.location.origin);
   
   // Set default parameters
-  _url.searchParams.append("lg-idphint", "ELSTER_NEZO");
+  _url.searchParams.set("lg-idphint", "ELSTER_NEZO");
   
   // Set custom parameters (override defaults if present)
   Object.entries(params).forEach(([key, value]) => {

@@ -180,6 +180,7 @@ const props = withDefaults(
     emptyMessage?: string;
   }>(),
   {
+    rowKey: undefined,
     caption: "",
     pagination: true,
     pageSize: 10,

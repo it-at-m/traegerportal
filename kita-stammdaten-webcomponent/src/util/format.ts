@@ -73,6 +73,13 @@ export function formatTraegerRollen(
   }
   return [...ansprechpartner.rollen]
     .sort((a, b) => a.localeCompare(b))
+    .map((role) => {
+      if (role == "SONSTIGE" && ansprechpartner.bemerkung) {
+        return role + " (" + ansprechpartner.bemerkung + ")";
+      } else {
+        return role;
+      }
+    })
     .join(", ");
 }
 
