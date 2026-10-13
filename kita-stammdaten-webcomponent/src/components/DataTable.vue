@@ -38,7 +38,7 @@
 
                 <span
                   v-if="sort?.key === column.key"
-                  class="sort-icon sort-icon--active"
+                  class="sort-icon"
                   :class="{ 'sort-icon--desc': sort.direction === 'desc' }"
                   aria-hidden="true"
                 >
@@ -53,7 +53,7 @@
                 <span>{{ column.label }}</span>
                 <span
                   v-if="sort?.key === column.key"
-                  class="sort-icon sort-icon--active"
+                  class="sort-icon"
                   :class="{ 'sort-icon--desc': sort.direction === 'desc' }"
                   aria-hidden="true"
                 >
@@ -305,11 +305,7 @@ function onSort(key: string): void {
   flex: 0 0 1em;
   width: 1em;
   height: 1em;
-
-  /* Vuetify high-emphasis surface color. */
   color: inherit;
-  color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
-  opacity: 0;
   transition: transform 0.2s ease;
 }
 
@@ -319,12 +315,6 @@ function onSort(key: string): void {
   height: 1em !important;
   max-width: 1em;
   max-height: 1em;
-}
-
-/* Show active icons only, including on hover. */
-
-.sort-icon--active {
-  opacity: 1;
 }
 
 /* Descending sort */
