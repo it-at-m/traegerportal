@@ -32,7 +32,7 @@
                 type="button"
                 class="sort-button"
                 :aria-label="getSortLabel(column)"
-                @click="toggleSort(column.key)"
+                @click="onSort(column.key)"
               >
                 <span>{{ column.label }}</span>
 
@@ -66,8 +66,8 @@
 
         <tbody>
           <tr
-            v-for="row in visibleRows"
-            :key="String(row[rowKey])"
+            v-for="entry in visibleRows"
+            :key="entry.key"
           >
             <td
               v-for="column in columns"
@@ -75,18 +75,18 @@
             >
               <slot
                 :name="`cell-${column.key}`"
-                :row="row"
+                :row="entry.item"
                 :column="column"
-                :value="getValue(row, column)"
+                :value="getValue(entry.item, column)"
               >
-                {{ displayValue(getValue(row, column)) }}
+                {{ displayValue(getValue(entry.item, column)) }}
               </slot>
             </td>
           </tr>
 
           <tr v-if="visibleRows.length === 0">
             <td :colspan="Math.max(1, columns.length)">
-              Keine Einträge vorhanden.
+              {{ emptyMessage }}
             </td>
           </tr>
         </tbody>
@@ -150,31 +150,26 @@
 </template>
 
 <script lang="ts">
-export type TableCellValue =
-  | string
-  | number
-  | boolean
-  | Date
-  | null
-  | undefined;
-
-export interface TableColumn<T> {
-  key: string;
-  label: string;
-  sortable?: boolean;
-  value?: (row: T) => TableCellValue;
-}
+// Preserve type imports previously exposed by DataTable.vue.
+export type { TableCellValue, TableColumn } from "./data-table/types";
 </script>
 
 <script setup lang="ts" generic="T extends object">
 import { MucButton, MucIcon } from "@muenchen/muc-patternlab-vue";
-import { computed, ref, watch } from "vue";
+
+import type { TableCellValue, TableColumn } from "./data-table/types";
+
+import { displayValue, getValue } from "./data-table/tableValues";
+import { useTablePagination } from "./data-table/useTablePagination";
+import { useTableRows } from "./data-table/useTableRows";
+import { useTableSorting } from "./data-table/useTableSorting";
 
 const props = withDefaults(
   defineProps<{
     items: T[];
     columns: TableColumn<T>[];
-    rowKey: keyof T;
+    /** Optional. Without a valid key, use the original item index. */
+    rowKey?: keyof T;
     caption?: string;
     pagination?: boolean;
     pageSize?: number;
@@ -182,6 +177,7 @@ const props = withDefaults(
     defaultSort?: (a: T, b: T) => number;
     defaultSortKey?: string;
     defaultSortDirection?: "asc" | "desc";
+    emptyMessage?: string;
   }>(),
   {
     caption: "",
@@ -191,6 +187,7 @@ const props = withDefaults(
     defaultSort: undefined,
     defaultSortKey: undefined,
     defaultSortDirection: "asc",
+    emptyMessage: "Keine Einträge vorhanden.",
   }
 );
 
@@ -205,270 +202,25 @@ defineSlots<
   >
 >();
 
-type SortDirection = "asc" | "desc";
+const { rows } = useTableRows(props);
+const { sort, toggleSort, getAriaSort, getSortLabel, sortedRows } =
+  useTableSorting(props, rows);
+const {
+  selectedPageSize,
+  availablePageSizes,
+  currentPageIndex,
+  pageCount,
+  firstItem,
+  lastItem,
+  visibleRows,
+  goToPage,
+  resetPage,
+} = useTablePagination(props, sortedRows);
 
-interface SortState {
-  key: string;
-  direction: SortDirection;
+function onSort(key: string): void {
+  toggleSort(key);
+  resetPage();
 }
-
-// Default to rowKey DESC, even if the column is hidden.
-const useRowKeyFallback = computed(
-  () => props.defaultSort === undefined && props.defaultSortKey === undefined
-);
-
-// A custom comparator defaults to the first sortable column (ASC).
-const defaultSortState = computed<SortState | null>(() => {
-  if (useRowKeyFallback.value) {
-    return { key: String(props.rowKey), direction: "desc" };
-  }
-
-  const key =
-    props.defaultSortKey ??
-    props.columns.find((column) => column.sortable !== false)?.key;
-
-  const column = props.columns.find(
-    (column) => column.key === key && column.sortable !== false
-  );
-
-  return column
-    ? { key: column.key, direction: props.defaultSortDirection }
-    : null;
-});
-
-// undefined: default sort; null: unsorted.
-const sortOverride = ref<SortState | null | undefined>(undefined);
-const sort = computed<SortState | null>(() =>
-  sortOverride.value === undefined ? defaultSortState.value : sortOverride.value
-);
-const page = ref(0);
-
-const collator = new Intl.Collator("de", {
-  numeric: true,
-  sensitivity: "base",
-});
-
-// Cell values
-
-function getValue(row: T, column: TableColumn<T>): TableCellValue {
-  if (column.value) {
-    return column.value(row);
-  }
-
-  const value = (row as Record<string, unknown>)[column.key];
-
-  if (
-    typeof value === "string" ||
-    typeof value === "number" ||
-    typeof value === "boolean" ||
-    value instanceof Date
-  ) {
-    return value;
-  }
-
-  return null;
-}
-
-function getRowKeyValue(row: T): TableCellValue {
-  const value: unknown = row[props.rowKey];
-
-  if (
-    typeof value === "string" ||
-    typeof value === "number" ||
-    typeof value === "boolean" ||
-    value instanceof Date
-  ) {
-    return value;
-  }
-
-  return null;
-}
-
-function displayValue(value: TableCellValue): string {
-  if (value == null) return "";
-
-  return value instanceof Date
-    ? value.toLocaleDateString("de-DE")
-    : String(value);
-}
-
-// Sorting
-
-function toggleSort(key: string): void {
-  if (sort.value?.key !== key) {
-    sortOverride.value = { key, direction: "asc" };
-  } else if (sort.value.direction === "asc") {
-    sortOverride.value = { key, direction: "desc" };
-  } else if (useRowKeyFallback.value) {
-    // Restore rowKey DESC; toggle rowKey to ASC to avoid a no-op.
-    sortOverride.value =
-      key === String(props.rowKey) ? { key, direction: "asc" } : undefined;
-  } else {
-    sortOverride.value = null;
-  }
-
-  page.value = 0;
-}
-
-function getAriaSort(column: TableColumn<T>) {
-  if (sort.value?.key !== column.key) return undefined;
-
-  return sort.value.direction === "asc" ? "ascending" : "descending";
-}
-
-function getSortLabel(column: TableColumn<T>): string {
-  if (sort.value?.key !== column.key) {
-    return `${column.label} aufsteigend sortieren`;
-  }
-
-  if (sort.value.direction === "asc") {
-    return `${column.label} absteigend sortieren`;
-  }
-
-  if (useRowKeyFallback.value) {
-    return column.key === String(props.rowKey)
-      ? `${column.label} aufsteigend sortieren`
-      : `${column.label} auf Standardsortierung zurücksetzen`;
-  }
-
-  return `${column.label} Sortierung zurücksetzen`;
-}
-
-function isEmpty(value: TableCellValue): boolean {
-  return (
-    value == null ||
-    value === "" ||
-    (value instanceof Date && Number.isNaN(value.getTime()))
-  );
-}
-
-function compareValues(a: TableCellValue, b: TableCellValue): number {
-  if (a instanceof Date && b instanceof Date) {
-    return a.getTime() - b.getTime();
-  }
-
-  if (typeof a === "number" && typeof b === "number") {
-    return a - b;
-  }
-
-  return collator.compare(String(a), String(b));
-}
-
-const sortedItems = computed<T[]>(() => {
-  const result = [...props.items];
-  const activeSort = sort.value;
-
-  // Keep the original order when sorting is cleared.
-  if (!activeSort) return result;
-
-  const column = props.columns.find((col) => col.key === activeSort.key);
-  const isRowKeySort = activeSort.key === String(props.rowKey);
-
-  // Allow rowKey sorting even if its column is hidden or not sortable.
-  if ((!column || column.sortable === false) && !isRowKeySort) {
-    return result;
-  }
-
-  // Reuse the default comparator when its column is selected again.
-  const comparator = props.defaultSort;
-  const defaultState = defaultSortState.value;
-
-  if (comparator && defaultState?.key === activeSort.key) {
-    const factor = activeSort.direction === defaultState.direction ? 1 : -1;
-    return result.sort((a, b) => comparator(a, b) * factor);
-  }
-
-  const direction = activeSort.direction === "asc" ? 1 : -1;
-
-  return result.sort((a, b) => {
-    const valueA = column ? getValue(a, column) : getRowKeyValue(a);
-    const valueB = column ? getValue(b, column) : getRowKeyValue(b);
-
-    if (isEmpty(valueA) && isEmpty(valueB)) return 0;
-    if (isEmpty(valueA)) return 1;
-    if (isEmpty(valueB)) return -1;
-
-    return compareValues(valueA, valueB) * direction;
-  });
-});
-
-// Client-side pagination
-
-function validPageSize(value: number): boolean {
-  return Number.isSafeInteger(value) && value > 0;
-}
-
-const selectedPageSize = ref(
-  validPageSize(props.pageSize) ? props.pageSize : 10
-);
-
-const availablePageSizes = computed(() =>
-  [
-    ...new Set(
-      [...props.pageSizeOptions, selectedPageSize.value].filter(validPageSize)
-    ),
-  ].sort((a, b) => a - b)
-);
-
-const pageCount = computed(() =>
-  Math.max(1, Math.ceil(sortedItems.value.length / selectedPageSize.value))
-);
-
-const currentPageIndex = computed(() =>
-  Math.min(page.value, pageCount.value - 1)
-);
-
-const firstItem = computed(() =>
-  props.items.length === 0
-    ? 0
-    : currentPageIndex.value * selectedPageSize.value + 1
-);
-
-const lastItem = computed(() =>
-  Math.min(
-    (currentPageIndex.value + 1) * selectedPageSize.value,
-    props.items.length
-  )
-);
-
-const visibleRows = computed(() => {
-  if (!props.pagination) return sortedItems.value;
-
-  const start = currentPageIndex.value * selectedPageSize.value;
-
-  return sortedItems.value.slice(start, start + selectedPageSize.value);
-});
-
-function goToPage(index: number): void {
-  page.value = Math.max(0, Math.min(index, pageCount.value - 1));
-}
-
-// Pagination toggled
-watch(
-  () => props.pagination,
-  () => {
-    page.value = 0;
-  }
-);
-
-// External page size changed
-watch(
-  () => props.pageSize,
-  (size) => {
-    selectedPageSize.value = validPageSize(size) ? size : 10;
-    page.value = 0;
-  }
-);
-
-// Page size selected
-watch(selectedPageSize, () => {
-  page.value = 0;
-});
-
-// Items changed
-watch([() => props.items, () => props.items.length], () => {
-  page.value = 0;
-});
 </script>
 
 <style scoped>
@@ -646,3 +398,4 @@ watch([() => props.items, () => props.items.length], () => {
   }
 }
 </style>
+```

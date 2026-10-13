@@ -28,13 +28,13 @@
       >
         <template #content>
           <data-table
-            v-if="vorgaenge.length > 0"
             :items="vorgaenge"
             :columns="columns"
             row-key="aktenzeichen"
             :page-size="pageSize"
             :page-size-options="pageSizeOptions"
             caption="Vorgänge zum Träger"
+            empty-message="Es liegen aktuell keine Vorgänge vor."
           >
             <template #cell-einrichtungsadresse="{ row }">
               <div>{{ row.einrichtung?.name }}</div>
@@ -66,15 +66,6 @@
               </a>
             </template>
           </data-table>
-          <muc-callout
-            v-else
-            type="info"
-            class="no-vorgaenge-callout"
-          >
-            <template #content>
-              <p>Es liegen aktuell keine Vorgänge vor.</p>
-            </template>
-          </muc-callout>
         </template>
       </muc-card>
     </div>

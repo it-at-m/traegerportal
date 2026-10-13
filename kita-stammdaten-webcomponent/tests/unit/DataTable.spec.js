@@ -2,17 +2,19 @@
  * @file DataTable.spec.js
  * @description Unit tests for DataTable.
  *
- * @generated AI-assisted
+ * @generated This tests were generated with assistance from AI.
  */
 
 // @vitest-environment jsdom
-// Requires vitest, @vue/test-utils, vue, @vitejs/plugin-vue, jsdom.
-// Adjust the SFC import path.
+// Requires Vitest, Vue Test Utils, and jsdom.
 import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import { h, nextTick, reactive } from "vue";
 
+
+
 import DataTable from "../../src/components/DataTable.vue";
+
 
 // Mock design system components with native elements for DOM tests.
 vi.mock("@muenchen/muc-patternlab-vue", async () => {
@@ -102,7 +104,7 @@ function header(wrapper, label) {
   const result = wrapper
     .findAll("thead th")
     .find((th) => th.text().trim() === label);
-  expect(result, `Spalte ${label} fehlt`).toBeDefined();
+  expect(result, `Column ${label} is missing`).toBeDefined();
   return result;
 }
 
@@ -128,8 +130,8 @@ function availableSizes(wrapper) {
     .map((option) => Number(option.element.value));
 }
 
-describe("DataTable – Darstellung und Zellen", () => {
-  it('rendert alle Spalten mit ihrem Label und scope="col"', () => {
+describe("DataTable - rendering and cells", () => {
+  it('renders each column label and scope="col"', () => {
     const wrapper = mountTable();
 
     expect(wrapper.findAll("thead th").map((th) => th.text())).toEqual([
@@ -145,7 +147,7 @@ describe("DataTable – Darstellung und Zellen", () => {
     ).toBe(true);
   });
 
-  it("rendert die Werte aller Zeilen in der standardmäßigen ID-DESC-Reihenfolge", () => {
+  it("renders all rows in the default descending ID order", () => {
     const wrapper = mountTable({ pagination: false });
 
     expect(rowCells(wrapper)).toEqual([
@@ -156,7 +158,7 @@ describe("DataTable – Darstellung und Zellen", () => {
     ]);
   });
 
-  it("zeigt eine Caption nur bei nicht leerem caption-Prop", async () => {
+  it("renders a caption only when provided", async () => {
     const wrapper = mountTable({ caption: "Mitarbeitendenübersicht" });
 
     expect(wrapper.get("caption").text()).toBe("Mitarbeitendenübersicht");
@@ -166,11 +168,11 @@ describe("DataTable – Darstellung und Zellen", () => {
     expect(wrapper.find("caption").exists()).toBe(false);
   });
 
-  it("rendert ohne Caption-Prop überhaupt kein caption-Element", () => {
+  it("omits the caption element when unset", () => {
     expect(mountTable().find("caption").exists()).toBe(false);
   });
 
-  it("zeigt null und undefined als leere Zellen an", () => {
+  it("renders null and undefined as empty cells", () => {
     const wrapper = mountTable({
       items: [{ id: 1, name: null, age: undefined }],
       columns: makeColumns().slice(0, 3),
@@ -179,7 +181,7 @@ describe("DataTable – Darstellung und Zellen", () => {
     expect(rowCells(wrapper)).toEqual([["1", "", ""]]);
   });
 
-  it("zeigt Zahlen und Booleans als Strings an", () => {
+  it("renders numbers and booleans as strings", () => {
     const wrapper = mountTable({
       items: [{ id: 10, age: 0, active: false }],
       columns: [
@@ -192,7 +194,7 @@ describe("DataTable – Darstellung und Zellen", () => {
     expect(rowCells(wrapper)).toEqual([["10", "0", "false"]]);
   });
 
-  it("formatiert Date-Zellen als deutsches Datum", () => {
+  it("formats dates using the German locale", () => {
     const date = new Date(2025, 1, 3); // Feb 3, 2025 (local).
     const wrapper = mountTable({
       items: [{ id: 1, date }],
@@ -204,7 +206,7 @@ describe("DataTable – Darstellung und Zellen", () => {
     ]);
   });
 
-  it("zeigt nicht unterstützte Objekt- und Array-Zellwerte als leer an", () => {
+  it("renders unsupported objects and arrays as empty cells", () => {
     const wrapper = mountTable({
       items: [{ id: 1, metadata: { a: 1 }, tags: ["a", "b"] }],
       columns: [
@@ -217,7 +219,7 @@ describe("DataTable – Darstellung und Zellen", () => {
     expect(rowCells(wrapper)).toEqual([["1", "", ""]]);
   });
 
-  it("ermittelt einen fehlenden Zellwert als leer", () => {
+  it("renders missing cell values as empty", () => {
     const wrapper = mountTable({
       items: [{ id: 1 }],
       columns: [{ key: "missing", label: "Fehlt" }],
@@ -226,7 +228,7 @@ describe("DataTable – Darstellung und Zellen", () => {
     expect(firstColumnValues(wrapper)).toEqual([""]);
   });
 
-  it("nutzt column.value statt des Rohwerts und übergibt die Zeile", () => {
+  it("uses column.value with the original row", () => {
     const value = vi.fn((row) => `${row.name} (${row.age})`);
     const wrapper = mountTable({
       columns: [
@@ -246,7 +248,7 @@ describe("DataTable – Darstellung und Zellen", () => {
     );
   });
 
-  it("verwendet einen benannten cell-<key>-Slot inklusive row, column und value", () => {
+  it("passes row, column, and value to a named cell slot", () => {
     const slot = vi.fn(({ row, column, value }) =>
       h(
         "strong",
@@ -273,7 +275,7 @@ describe("DataTable – Darstellung und Zellen", () => {
     );
   });
 
-  it("gibt dem Slot den berechneten Wert aus column.value weiter", () => {
+  it("passes the computed column value to the cell slot", () => {
     const wrapper = mountTable(
       {
         columns: [
@@ -298,7 +300,7 @@ describe("DataTable – Darstellung und Zellen", () => {
     );
   });
 
-  it("zeigt bei leerer Liste eine Leerzustandszeile mit passendem colspan", () => {
+  it("renders the empty state with the correct colspan", () => {
     const wrapper = mountTable({ items: [] });
 
     expect(wrapper.findAll("tbody tr")).toHaveLength(1);
@@ -307,14 +309,14 @@ describe("DataTable – Darstellung und Zellen", () => {
     expect(rangeText(wrapper)).toBe("0–0 von 0");
   });
 
-  it("setzt colspan bei null Spalten mindestens auf 1", () => {
+  it("uses a minimum colspan of one without columns", () => {
     const wrapper = mountTable({ items: [], columns: [] });
 
     expect(wrapper.findAll("thead th")).toHaveLength(0);
     expect(wrapper.get("tbody td").attributes("colspan")).toBe("1");
   });
 
-  it("blendet den Leerzustand aus, sobald Zeilen vorhanden sind", async () => {
+  it("removes the empty state after rows are added", async () => {
     const wrapper = mountTable({ items: [] });
 
     await wrapper.setProps({ items: makeRows() });
@@ -325,8 +327,8 @@ describe("DataTable – Darstellung und Zellen", () => {
   });
 });
 
-describe("DataTable – Standardsortierung und Sortierzustand", () => {
-  it("sortiert ohne explizite Vorgaben nach rowKey absteigend", () => {
+describe("DataTable - default sorting and sort state", () => {
+  it("sorts by rowKey descending by default", () => {
     const wrapper = mountTable({ pagination: false });
 
     expect(firstColumnValues(wrapper)).toEqual(["4", "3", "2", "1"]);
@@ -334,7 +336,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(header(wrapper, "Name").attributes("aria-sort")).toBeUndefined();
   });
 
-  it("funktioniert auch, wenn rowKey nicht in columns enthalten ist", () => {
+  it("sorts by rowKey when the key is not a column", () => {
     const wrapper = mountTable({
       pagination: false,
       columns: [{ key: "name", label: "Name" }],
@@ -349,7 +351,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(header(wrapper, "Name").attributes("aria-sort")).toBeUndefined();
   });
 
-  it("sortiert weiterhin nach rowKey, wenn dessen Spalte nicht sortierbar ist", () => {
+  it("sorts by rowKey even when its column is not sortable", () => {
     const wrapper = mountTable({
       columns: [
         { key: "id", label: "ID", sortable: false },
@@ -362,7 +364,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(header(wrapper, "ID").find("button").exists()).toBe(false);
   });
 
-  it("sortiert numerisch lesbare Strings beim rowKey-Fallback natürlich", () => {
+  it("sorts numbered rowKey strings naturally", () => {
     const wrapper = mountTable({
       items: [
         { id: "item2", title: "B" },
@@ -376,7 +378,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(firstColumnValues(wrapper)).toEqual(["C", "B", "A"]);
   });
 
-  it("ändert beim Klick auf die rowKey-Spalte den Fallback DESC zu ASC", async () => {
+  it("changes the default rowKey sort from DESC to ASC", async () => {
     const wrapper = mountTable();
 
     await sortButton(wrapper, "ID").trigger("click");
@@ -384,7 +386,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(header(wrapper, "ID").attributes("aria-sort")).toBe("ascending");
   });
 
-  it("wechselt beim nächsten Klick auf rowKey von ASC zurück zu DESC", async () => {
+  it("changes the rowKey sort from ASC back to DESC", async () => {
     const wrapper = mountTable();
 
     await sortButton(wrapper, "ID").trigger("click");
@@ -392,7 +394,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(firstColumnValues(wrapper)).toEqual(["4", "3", "2", "1"]);
   });
 
-  it("startet bei einer anderen Spalte mit ASC und wechselt danach zu DESC", async () => {
+  it("sorts another column ASC and then DESC", async () => {
     const wrapper = mountTable();
 
     await sortButton(wrapper, "Name").trigger("click");
@@ -405,7 +407,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(header(wrapper, "Name").attributes("aria-sort")).toBe("descending");
   });
 
-  it("kehrt nach dem dritten Klick auf eine andere Spalte zur ID-DESC-Sortierung zurück", async () => {
+  it("restores the default ID DESC order on the third click", async () => {
     const wrapper = mountTable();
 
     await sortButton(wrapper, "Name").trigger("click");
@@ -417,7 +419,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(header(wrapper, "Name").attributes("aria-sort")).toBeUndefined();
   });
 
-  it("wechselt beim Klick auf eine neue Spalte unmittelbar zu deren ASC-Sortierung", async () => {
+  it("starts a new column sort in ascending order", async () => {
     const wrapper = mountTable();
 
     await sortButton(wrapper, "Name").trigger("click");
@@ -428,14 +430,14 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(header(wrapper, "Alter").attributes("aria-sort")).toBe("ascending");
   });
 
-  it("verwendet defaultSortKey mit Richtung ASC", () => {
+  it("applies an ascending defaultSortKey", () => {
     const wrapper = mountTable({ defaultSortKey: "name" });
 
     expect(firstColumnValues(wrapper)).toEqual(["1", "4", "2", "3"]);
     expect(header(wrapper, "Name").attributes("aria-sort")).toBe("ascending");
   });
 
-  it("verwendet defaultSortKey mit Richtung DESC", () => {
+  it("applies a descending defaultSortKey", () => {
     const wrapper = mountTable({
       defaultSortKey: "name",
       defaultSortDirection: "desc",
@@ -445,7 +447,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(header(wrapper, "Name").attributes("aria-sort")).toBe("descending");
   });
 
-  it("setzt ohne rowKey-Fallback eine Sortierung nach ASC → DESC → unsortiert zurück", async () => {
+  it("cycles ASC, DESC, and unsorted without a rowKey default", async () => {
     const wrapper = mountTable({ defaultSortKey: "name" });
     expect(firstColumnValues(wrapper)).toEqual(["1", "4", "2", "3"]);
 
@@ -457,21 +459,21 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(wrapper.find("th[aria-sort]").exists()).toBe(false);
   });
 
-  it("verhindert die Standardsortierung bei unbekanntem defaultSortKey", () => {
+  it("keeps input order for an unknown defaultSortKey", () => {
     const wrapper = mountTable({ defaultSortKey: "does-not-exist" });
 
     expect(firstColumnValues(wrapper)).toEqual(["3", "1", "4", "2"]);
     expect(wrapper.find("th[aria-sort]").exists()).toBe(false);
   });
 
-  it("verhindert die Standardsortierung bei explizit nicht sortierbarem defaultSortKey", () => {
+  it("keeps input order for a non-sortable defaultSortKey", () => {
     const wrapper = mountTable({ defaultSortKey: "active" });
 
     expect(firstColumnValues(wrapper)).toEqual(["3", "1", "4", "2"]);
     expect(wrapper.find("th[aria-sort]").exists()).toBe(false);
   });
 
-  it("lässt nicht sortierbare Spalten ohne Sortierbutton", () => {
+  it("omits sorting controls for non-sortable columns", () => {
     const wrapper = mountTable();
 
     expect(header(wrapper, "Aktiv").find("button").exists()).toBe(false);
@@ -479,7 +481,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(wrapper.findAll("thead button.sort-button")).toHaveLength(3);
   });
 
-  it("zeigt nur für die aktive Spalte ein Sortier-Icon", async () => {
+  it("shows a sort icon only on the active column", async () => {
     const wrapper = mountTable();
 
     expect(wrapper.findAll(".sort-icon")).toHaveLength(1);
@@ -495,7 +497,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     expect(header(wrapper, "ID").find(".sort-icon").exists()).toBe(false);
   });
 
-  it("setzt die Richtung der Icons korrekt und macht sie für Screenreader unsichtbar", async () => {
+  it("reflects sort direction and hides icons from screen readers", async () => {
     const wrapper = mountTable({ defaultSortKey: "name" });
 
     expect(
@@ -511,7 +513,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     );
   });
 
-  it("aktualisiert die deutschsprachigen Sortierlabels im Fallback-Zyklus", async () => {
+  it("updates localized sort labels during the default sort cycle", async () => {
     const wrapper = mountTable();
 
     expect(sortButton(wrapper, "ID").attributes("aria-label")).toBe(
@@ -537,7 +539,7 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
     );
   });
 
-  it('verwendet ohne Fallback den Text "Sortierung zurücksetzen"', async () => {
+  it('uses the reset label without default rowKey sorting', async () => {
     const wrapper = mountTable({ defaultSortKey: "name" });
 
     await sortButton(wrapper, "Name").trigger("click");
@@ -547,8 +549,8 @@ describe("DataTable – Standardsortierung und Sortierzustand", () => {
   });
 });
 
-describe("DataTable – Vergleichslogik", () => {
-  it("sortiert Zahlen numerisch statt lexikografisch", () => {
+describe("DataTable - value comparison", () => {
+  it("sorts numbers numerically", () => {
     const wrapper = mountTable({
       items: [
         { id: 1, score: 10 },
@@ -562,7 +564,7 @@ describe("DataTable – Vergleichslogik", () => {
     expect(firstColumnValues(wrapper)).toEqual(["-1", "2", "10"]);
   });
 
-  it("sortiert Strings mit numerischen Bestandteilen natürlich", () => {
+  it("sorts strings with numbers naturally", () => {
     const wrapper = mountTable({
       items: [
         { id: 1, code: "A10" },
@@ -576,7 +578,7 @@ describe("DataTable – Vergleichslogik", () => {
     expect(firstColumnValues(wrapper)).toEqual(["A1", "a2", "A10"]);
   });
 
-  it("sortiert unabhängig von Groß- und Kleinschreibung", () => {
+  it("compares strings case-insensitively", () => {
     const wrapper = mountTable({
       items: [
         { id: 1, word: "zebra" },
@@ -590,7 +592,7 @@ describe("DataTable – Vergleichslogik", () => {
     expect(firstColumnValues(wrapper)).toEqual(["Anna", "birne", "zebra"]);
   });
 
-  it("berücksichtigt den de-Collator mit sensitivity=base", () => {
+  it("uses the German collator with base sensitivity", () => {
     const wrapper = mountTable({
       items: [
         { id: 1, word: "Müller" },
@@ -607,7 +609,7 @@ describe("DataTable – Vergleichslogik", () => {
     expect(firstColumnValues(wrapper)).toEqual(["1", "2", "3"]);
   });
 
-  it("sortiert Dates über Zeitstempel aufsteigend und absteigend", async () => {
+  it("sorts dates by timestamp in both directions", async () => {
     const wrapper = mountTable({
       items: [
         { id: 1, date: new Date(2025, 5, 1) },
@@ -626,7 +628,7 @@ describe("DataTable – Vergleichslogik", () => {
     expect(firstColumnValues(wrapper)).toEqual(["1", "3", "2"]);
   });
 
-  it("hält null, undefined und den leeren String am Ende der ASC-Sortierung", () => {
+  it("keeps empty values last when sorting ascending", () => {
     const wrapper = mountTable({
       items: [
         { id: 1, score: null },
@@ -645,7 +647,7 @@ describe("DataTable – Vergleichslogik", () => {
     expect(firstColumnValues(wrapper)).toEqual(["4", "2", "1", "3", "5"]);
   });
 
-  it("hält leere Werte auch bei DESC am Ende", () => {
+  it("keeps empty values last when sorting descending", () => {
     const wrapper = mountTable({
       items: [
         { id: 1, score: null },
@@ -665,7 +667,7 @@ describe("DataTable – Vergleichslogik", () => {
     expect(firstColumnValues(wrapper)).toEqual(["2", "4", "1", "3", "5"]);
   });
 
-  it("behandelt ein ungültiges Date als leeren Sortierwert", () => {
+  it("treats invalid dates as empty sort values", () => {
     const wrapper = mountTable({
       items: [
         { id: 1, date: new Date("invalid") },
@@ -682,7 +684,7 @@ describe("DataTable – Vergleichslogik", () => {
     expect(firstColumnValues(wrapper)).toEqual(["3", "2", "1"]);
   });
 
-  it("belässt gleichwertige Werte dank stabiler Sortierung in Eingabereihenfolge", () => {
+  it("preserves input order for equal values", () => {
     const wrapper = mountTable({
       items: [
         { id: 3, score: 1 },
@@ -699,7 +701,7 @@ describe("DataTable – Vergleichslogik", () => {
     expect(firstColumnValues(wrapper)).toEqual(["3", "1", "2"]);
   });
 
-  it("sortiert mit den durch column.value berechneten Werten", () => {
+  it("sorts using values returned by column.value", () => {
     const wrapper = mountTable({
       columns: [
         { key: "id", label: "ID" },
@@ -712,7 +714,7 @@ describe("DataTable – Vergleichslogik", () => {
     expect(firstColumnValues(wrapper)).toEqual(["3", "1", "4", "2"]);
   });
 
-  it("sortiert boolesche Werte über ihre String-Repräsentation", () => {
+  it("sorts booleans by their string representation", () => {
     const wrapper = mountTable({
       items: [
         { id: 1, ok: true },
@@ -728,7 +730,7 @@ describe("DataTable – Vergleichslogik", () => {
     expect(firstColumnValues(wrapper)).toEqual(["2", "1"]);
   });
 
-  it("verändert beim Sortieren nicht die übergebenen items", async () => {
+  it("does not mutate input items while sorting", async () => {
     const items = makeRows();
     const originalIds = items.map((row) => row.id);
     const originalObjects = [...items];
@@ -744,8 +746,8 @@ describe("DataTable – Vergleichslogik", () => {
   });
 });
 
-describe("DataTable – eigener defaultSort-Comparator", () => {
-  it("setzt ohne defaultSortKey die erste sortierbare Spalte als Standardspalte", () => {
+describe("DataTable - custom default comparator", () => {
+  it("chooses the first sortable column without defaultSortKey", () => {
     const comparator = vi.fn((a, b) => a.id - b.id);
     const wrapper = mountTable({
       columns: [
@@ -761,7 +763,7 @@ describe("DataTable – eigener defaultSort-Comparator", () => {
     expect(comparator).toHaveBeenCalled();
   });
 
-  it("verwendet den Comparator statt des Spaltenwertvergleichs", () => {
+  it("uses the comparator instead of column values", () => {
     const comparator = vi.fn((a, b) => a.id - b.id);
     const wrapper = mountTable({
       defaultSort: comparator,
@@ -773,7 +775,7 @@ describe("DataTable – eigener defaultSort-Comparator", () => {
     expect(comparator).toHaveBeenCalled();
   });
 
-  it("invertiert den Comparator beim Richtungswechsel", async () => {
+  it("reverses the comparator when switching direction", async () => {
     const wrapper = mountTable({
       defaultSort: (a, b) => a.id - b.id,
       defaultSortKey: "name",
@@ -783,7 +785,7 @@ describe("DataTable – eigener defaultSort-Comparator", () => {
     expect(firstColumnValues(wrapper)).toEqual(["4", "3", "2", "1"]);
   });
 
-  it("benutzt nach dem Zurücksetzen wieder die ursprüngliche Datenreihenfolge", async () => {
+  it("restores input order when sorting is cleared", async () => {
     const wrapper = mountTable({
       defaultSort: (a, b) => a.id - b.id,
       defaultSortKey: "name",
@@ -796,7 +798,7 @@ describe("DataTable – eigener defaultSort-Comparator", () => {
     expect(wrapper.find("th[aria-sort]").exists()).toBe(false);
   });
 
-  it("benutzt den Comparator auch nach Wechsel zu einer anderen Spalte erneut", async () => {
+  it("reuses the comparator after switching columns", async () => {
     const wrapper = mountTable({
       defaultSort: (a, b) => a.id - b.id,
       defaultSortKey: "name",
@@ -808,7 +810,7 @@ describe("DataTable – eigener defaultSort-Comparator", () => {
     expect(firstColumnValues(wrapper)).toEqual(["1", "2", "3", "4"]);
   });
 
-  it("interpretiert den Comparator in der konfigurierten Default-Richtung", async () => {
+  it("respects the configured default comparator direction", async () => {
     const wrapper = mountTable({
       defaultSort: (a, b) => a.id - b.id,
       defaultSortKey: "name",
@@ -826,7 +828,7 @@ describe("DataTable – eigener defaultSort-Comparator", () => {
     expect(firstColumnValues(wrapper)).toEqual(["4", "3", "2", "1"]);
   });
 
-  it("bleibt unsortiert, wenn keine sortierbare Default-Spalte existiert", () => {
+  it("remains unsorted without a sortable default column", () => {
     const wrapper = mountTable({
       columns: [{ key: "id", label: "ID", sortable: false }],
       defaultSort: (a, b) => a.id - b.id,
@@ -837,8 +839,8 @@ describe("DataTable – eigener defaultSort-Comparator", () => {
   });
 });
 
-describe("DataTable – clientseitige Pagination", () => {
-  it("ist standardmäßig aktiviert und startet mit einer Seitengröße von 10", () => {
+describe("DataTable - client-side pagination", () => {
+  it("enables pagination with a page size of ten by default", () => {
     const wrapper = mountTable({ items: makeManyRows(12) });
 
     expect(wrapper.find(".table-pagination").exists()).toBe(true);
@@ -858,7 +860,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(rangeText(wrapper)).toBe("1–10 von 12");
   });
 
-  it("rendert bei pagination=false sämtliche Zeilen ohne Steuerelemente", () => {
+  it("shows all rows without pagination controls when disabled", () => {
     const wrapper = mountTable({
       items: makeManyRows(12),
       pagination: false,
@@ -870,7 +872,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(firstColumnValues(wrapper)[0]).toBe("12");
   });
 
-  it("navigiert auf die nächste und vorherige Seite", async () => {
+  it("navigates to the next and previous pages", async () => {
     const wrapper = mountTable({ items: makeManyRows(12), pageSize: 5 });
 
     expect(rangeText(wrapper)).toBe("1–5 von 12");
@@ -885,7 +887,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(firstColumnValues(wrapper)).toEqual(["12", "11", "10", "9", "8"]);
   });
 
-  it("zeigt auf der letzten Seite nur die verbleibenden Zeilen", async () => {
+  it("shows only remaining rows on the last page", async () => {
     const wrapper = mountTable({ items: makeManyRows(12), pageSize: 5 });
 
     await nextButton(wrapper).trigger("click");
@@ -896,7 +898,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(nextButton(wrapper).element.disabled).toBe(true);
   });
 
-  it("deaktiviert die vorherige Schaltfläche auf Seite 1 und die nächste auf der letzten Seite", async () => {
+  it("disables navigation at the first and last pages", async () => {
     const wrapper = mountTable({ items: makeManyRows(11), pageSize: 5 });
 
     expect(previousButton(wrapper).element.disabled).toBe(true);
@@ -911,21 +913,21 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(nextButton(wrapper).element.disabled).toBe(true);
   });
 
-  it("deaktiviert beide Navigationsbuttons bei nur einer Seite", () => {
+  it("disables both navigation buttons for one page", () => {
     const wrapper = mountTable();
 
     expect(previousButton(wrapper).element.disabled).toBe(true);
     expect(nextButton(wrapper).element.disabled).toBe(true);
   });
 
-  it("deaktiviert beide Navigationsbuttons für eine leere Tabelle", () => {
+  it("disables navigation for an empty table", () => {
     const wrapper = mountTable({ items: [] });
 
     expect(previousButton(wrapper).element.disabled).toBe(true);
     expect(nextButton(wrapper).element.disabled).toBe(true);
   });
 
-  it("zeigt das Label der Seitengröße und die voreingestellten Optionen", () => {
+  it("renders the page size label and default choices", () => {
     const wrapper = mountTable();
 
     expect(wrapper.get(".page-size-control").text()).toContain(
@@ -934,7 +936,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(availableSizes(wrapper)).toEqual([5, 10, 25, 50]);
   });
 
-  it("sortiert doppelte/unsortierte pageSizeOptions und ergänzt die aktuelle Größe", () => {
+  it("deduplicates and sorts page size options", () => {
     const wrapper = mountTable({
       pageSize: 7,
       pageSizeOptions: [25, 5, 25, 10, 5],
@@ -945,7 +947,7 @@ describe("DataTable – clientseitige Pagination", () => {
   });
 
   it.each([0, -1, 2.5, Number.NaN, Infinity, Number.MAX_SAFE_INTEGER + 1])(
-    "setzt die ungültige pageSize=%s auf 10 zurück",
+    "resets invalid pageSize=%s to ten",
     (pageSize) => {
       const wrapper = mountTable({ items: makeManyRows(12), pageSize });
 
@@ -955,7 +957,7 @@ describe("DataTable – clientseitige Pagination", () => {
     }
   );
 
-  it("filtert ungültige Werte aus pageSizeOptions", () => {
+  it("filters invalid page size options", () => {
     const wrapper = mountTable({
       pageSize: 7,
       pageSizeOptions: [0, -1, 2.5, Number.NaN, Infinity, 5, 5, 1, 10],
@@ -964,7 +966,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(availableSizes(wrapper)).toEqual([1, 5, 7, 10]);
   });
 
-  it("ändert die Seitengröße über das Select und kehrt zu Seite 1 zurück", async () => {
+  it("resets to page one when the page size changes", async () => {
     const wrapper = mountTable({ items: makeManyRows(12), pageSize: 5 });
 
     await nextButton(wrapper).trigger("click");
@@ -976,7 +978,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(previousButton(wrapper).element.disabled).toBe(true);
   });
 
-  it("reagiert auf eine von außen geänderte pageSize und setzt den Index zurück", async () => {
+  it("responds to external page size updates", async () => {
     const wrapper = mountTable({ items: makeManyRows(12), pageSize: 5 });
 
     await nextButton(wrapper).trigger("click");
@@ -988,7 +990,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(firstColumnValues(wrapper)).toHaveLength(7);
   });
 
-  it("setzt eine nachträglich ungültig gewordene Seitengröße auf 10", async () => {
+  it("resets a subsequently invalid page size to ten", async () => {
     const wrapper = mountTable({ items: makeManyRows(12), pageSize: 5 });
 
     await nextButton(wrapper).trigger("click");
@@ -998,7 +1000,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(rangeText(wrapper)).toBe("1–10 von 12");
   });
 
-  it("setzt bei einer Sortieränderung die aktuelle Seite zurück", async () => {
+  it("resets to page one when sorting changes", async () => {
     const wrapper = mountTable({ items: makeManyRows(12), pageSize: 5 });
 
     await nextButton(wrapper).trigger("click");
@@ -1008,7 +1010,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(firstColumnValues(wrapper)).toEqual(["1", "2", "3", "4", "5"]);
   });
 
-  it("sortiert alle Datensätze, bevor die Seitenselektion erfolgt", () => {
+  it("sorts all items before pagination", () => {
     const wrapper = mountTable({
       items: makeManyRows(12),
       defaultSortKey: "id",
@@ -1019,7 +1021,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(firstColumnValues(wrapper)).toEqual(["1", "2", "3", "4", "5"]);
   });
 
-  it("setzt den Index beim Deaktivieren und erneuten Aktivieren zurück", async () => {
+  it("resets the page after toggling pagination", async () => {
     const wrapper = mountTable({ items: makeManyRows(12), pageSize: 5 });
 
     await nextButton(wrapper).trigger("click");
@@ -1033,7 +1035,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(firstColumnValues(wrapper)).toEqual(["12", "11", "10", "9", "8"]);
   });
 
-  it("behält beim Umschalten der Pagination die aktuelle Sortierung bei", async () => {
+  it("keeps the sort state when toggling pagination", async () => {
     const wrapper = mountTable({ items: makeManyRows(12), pageSize: 5 });
 
     await sortButton(wrapper, "ID").trigger("click");
@@ -1044,7 +1046,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(header(wrapper, "ID").attributes("aria-sort")).toBe("ascending");
   });
 
-  it("setzt beim Austausch der items die Seitennummer zurück", async () => {
+  it("resets the page when items are replaced", async () => {
     const wrapper = mountTable({ items: makeManyRows(12), pageSize: 5 });
 
     await nextButton(wrapper).trigger("click");
@@ -1054,7 +1056,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(firstColumnValues(wrapper)).toEqual(["12", "11", "10", "9", "8"]);
   });
 
-  it("aktualisiert die Anzeige, wenn die Datenmenge schrumpft", async () => {
+  it("updates the range when items are removed", async () => {
     const wrapper = mountTable({ items: makeManyRows(12), pageSize: 5 });
 
     await nextButton(wrapper).trigger("click");
@@ -1065,7 +1067,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(nextButton(wrapper).element.disabled).toBe(true);
   });
 
-  it("beobachtet auch Änderungen an der Array-Länge bei gleicher Referenz", async () => {
+  it("responds to length changes within the same reactive array", async () => {
     const items = reactive(makeManyRows(12));
     const wrapper = mountTable({ items, pageSize: 5 });
 
@@ -1080,7 +1082,7 @@ describe("DataTable – clientseitige Pagination", () => {
     expect(firstColumnValues(wrapper)).toEqual(["12", "11", "10", "9", "8"]);
   });
 
-  it("berechnet den Bereich korrekt bei exakt voller letzter Seite", async () => {
+  it("shows the correct range on a full last page", async () => {
     const wrapper = mountTable({ items: makeManyRows(10), pageSize: 5 });
 
     await nextButton(wrapper).trigger("click");
@@ -1089,8 +1091,8 @@ describe("DataTable – clientseitige Pagination", () => {
   });
 });
 
-describe("DataTable – Prop-Updates und Barrierefreiheit", () => {
-  it("aktualisiert Zeilen bei neuen items ohne Remount", async () => {
+describe("DataTable - prop updates and accessibility", () => {
+  it("updates rows without remounting the table", async () => {
     const wrapper = mountTable();
 
     await wrapper.setProps({
@@ -1100,7 +1102,7 @@ describe("DataTable – Prop-Updates und Barrierefreiheit", () => {
     expect(rowCells(wrapper)[0]).toEqual(["7", "Neu", "99", "false"]);
   });
 
-  it("aktualisiert die Spalten bei neuen columns", async () => {
+  it("updates columns when their props change", async () => {
     const wrapper = mountTable();
 
     await wrapper.setProps({ columns: [{ key: "name", label: "Person" }] });
@@ -1115,7 +1117,7 @@ describe("DataTable – Prop-Updates und Barrierefreiheit", () => {
     ]);
   });
 
-  it("übernimmt eine neue defaultSortKey-Prop solange keine Sortierung überschrieben wurde", async () => {
+  it("updates defaultSortKey before manual sorting", async () => {
     const wrapper = mountTable({ defaultSortKey: "name" });
 
     await wrapper.setProps({ defaultSortKey: "age" });
@@ -1123,14 +1125,14 @@ describe("DataTable – Prop-Updates und Barrierefreiheit", () => {
     expect(header(wrapper, "Alter").attributes("aria-sort")).toBe("ascending");
   });
 
-  it("übernimmt eine neue defaultSortDirection solange keine Sortierung überschrieben wurde", async () => {
+  it("updates defaultSortDirection before manual sorting", async () => {
     const wrapper = mountTable({ defaultSortKey: "name" });
 
     await wrapper.setProps({ defaultSortDirection: "desc" });
     expect(firstColumnValues(wrapper)).toEqual(["3", "2", "4", "1"]);
   });
 
-  it("behält die manuell gewählte Sortierung beim Wechsel der Default-Props bei", async () => {
+  it("preserves manual sorting when default props change", async () => {
     const wrapper = mountTable({ defaultSortKey: "name" });
 
     await sortButton(wrapper, "Alter").trigger("click");
@@ -1143,7 +1145,7 @@ describe("DataTable – Prop-Updates und Barrierefreiheit", () => {
     expect(header(wrapper, "Alter").attributes("aria-sort")).toBe("ascending");
   });
 
-  it("aktualisiert den rowKey-Fallback, wenn rowKey geändert wird", async () => {
+  it("updates default rowKey sorting when rowKey changes", async () => {
     const wrapper = mountTable({
       items: [
         { id: 2, code: 10, label: "A" },
@@ -1158,7 +1160,7 @@ describe("DataTable – Prop-Updates und Barrierefreiheit", () => {
     expect(firstColumnValues(wrapper)).toEqual(["C", "A", "B"]); // Code DESC
   });
 
-  it('stellt Sortierbuttons als type="button" dar', () => {
+  it('renders sort buttons with type="button"', () => {
     const wrapper = mountTable();
 
     expect(
@@ -1168,14 +1170,14 @@ describe("DataTable – Prop-Updates und Barrierefreiheit", () => {
     ).toBe(true);
   });
 
-  it("setzt die aria-sort-Attribute nur auf die aktive Spaltenüberschrift", () => {
+  it("sets aria-sort only on the active column", () => {
     const wrapper = mountTable({ defaultSortKey: "name" });
 
     expect(wrapper.findAll("th[aria-sort]")).toHaveLength(1);
     expect(header(wrapper, "Name").attributes("aria-sort")).toBe("ascending");
   });
 
-  it("kennzeichnet die Seitennavigation und -bereichsausgabe für Screenreader", () => {
+  it("labels pagination for screen readers", () => {
     const wrapper = mountTable();
 
     expect(wrapper.get("nav.page-navigation").attributes("aria-label")).toBe(
@@ -1189,12 +1191,109 @@ describe("DataTable – Prop-Updates und Barrierefreiheit", () => {
     expect(nextButton(wrapper).attributes("aria-label")).toBe("Nächste Seite");
   });
 
-  it("hält die Tabellenstruktur bei deaktivierter Pagination zugänglich", () => {
+  it("keeps the table accessible without pagination", () => {
     const wrapper = mountTable({ caption: "Personen", pagination: false });
 
     expect(wrapper.get("table").classes()).toContain("data-table");
     expect(wrapper.get("caption").text()).toBe("Personen");
     expect(wrapper.findAll("thead th")).toHaveLength(4);
     expect(wrapper.findAll("tbody tr")).toHaveLength(4);
+  });
+});
+
+
+describe("DataTable - optional row keys", () => {
+  it("renders without rowKey in original order by default", () => {
+    const wrapper = mount(DataTable, {
+      props: {
+        items: [{ name: "Zoe" }, { name: "Anna" }, { name: "Berta" }],
+        columns: [{ key: "name", label: "Name" }],
+        pagination: false,
+      },
+    });
+
+    expect(firstColumnValues(wrapper)).toEqual(["Zoe", "Anna", "Berta"]);
+    expect(wrapper.find("th[aria-sort]").exists()).toBe(false);
+  });
+
+  it("sorts without rowKey and restores input order after the third click", async () => {
+    const wrapper = mountTable({ rowKey: undefined, pagination: false });
+
+    expect(firstColumnValues(wrapper)).toEqual(["3", "1", "4", "2"]);
+    await sortButton(wrapper, "Name").trigger("click");
+    expect(firstColumnValues(wrapper)).toEqual(["1", "4", "2", "3"]);
+    await sortButton(wrapper, "Name").trigger("click");
+    expect(firstColumnValues(wrapper)).toEqual(["3", "2", "4", "1"]);
+    await sortButton(wrapper, "Name").trigger("click");
+    expect(firstColumnValues(wrapper)).toEqual(["3", "1", "4", "2"]);
+    expect(wrapper.find("th[aria-sort]").exists()).toBe(false);
+  });
+
+  it("keeps row component identity when sorting without rowKey", async () => {
+    const mounts = [];
+    const StatefulCell = {
+      props: { name: String },
+      setup(props) {
+        const initialName = props.name;
+        mounts.push(initialName);
+        return () => h("span", { class: "initial-name" }, initialName);
+      },
+    };
+    const wrapper = mount(DataTable, {
+      props: {
+        items: [{ name: "Zoe" }, { name: "Anna" }, { name: "Berta" }],
+        columns: [{ key: "name", label: "Name" }],
+        pagination: false,
+      },
+      slots: { "cell-name": ({ row }) => h(StatefulCell, { name: row.name }) },
+    });
+
+    expect(firstColumnValues(wrapper)).toEqual(["Zoe", "Anna", "Berta"]);
+    expect(mounts).toEqual(["Zoe", "Anna", "Berta"]);
+
+    await sortButton(wrapper, "Name").trigger("click");
+    expect(firstColumnValues(wrapper)).toEqual(["Anna", "Berta", "Zoe"]);
+    expect(mounts).toHaveLength(3);
+
+    await sortButton(wrapper, "Name").trigger("click");
+    expect(firstColumnValues(wrapper)).toEqual(["Zoe", "Berta", "Anna"]);
+    expect(mounts).toHaveLength(3);
+  });
+
+  it("uses index fallback for missing IDs while sorting and paging", async () => {
+    const wrapper = mount(DataTable, {
+      props: {
+        items: [{ id: null, name: "C" }, { id: null, name: "A" }, { id: null, name: "B" }],
+        columns: [{ key: "name", label: "Name" }],
+        rowKey: "id",
+        defaultSortKey: "name",
+        pageSize: 2,
+      },
+    });
+
+    expect(firstColumnValues(wrapper)).toEqual(["A", "B"]);
+    expect(rangeText(wrapper)).toBe("1–2 von 3");
+    await nextButton(wrapper).trigger("click");
+    expect(firstColumnValues(wrapper)).toEqual(["C"]);
+  });
+
+  it("respects explicit sort configuration without rowKey", () => {
+    const wrapper = mountTable({
+      rowKey: undefined,
+      defaultSortKey: "name",
+      pagination: false,
+    });
+
+    expect(firstColumnValues(wrapper)).toEqual(["1", "4", "2", "3"]);
+    expect(header(wrapper, "Name").attributes("aria-sort")).toBe("ascending");
+  });
+
+  it("returns to input order after rowKey is removed", async () => {
+    const wrapper = mountTable({ pagination: false });
+
+    expect(firstColumnValues(wrapper)).toEqual(["4", "3", "2", "1"]);
+    await wrapper.setProps({ rowKey: undefined });
+    expect(firstColumnValues(wrapper)).toEqual(["3", "1", "4", "2"]);
+    expect(wrapper.find("th[aria-sort]").exists()).toBe(false);
   });
 });
