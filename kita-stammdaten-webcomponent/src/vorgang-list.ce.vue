@@ -28,6 +28,7 @@
       >
         <template #content>
           <data-table
+            v-if="vorgaenge.length > 0"
             :items="vorgaenge"
             :columns="columns"
             row-key="aktenzeichen"
@@ -104,9 +105,9 @@ import { computed, ref, watch } from "vue";
 import type { TableColumn } from "./components/DataTable.vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
-import { AuthService } from "./util/AuthService.ts";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
 import DataTable from "./components/DataTable.vue";
+import { AuthService } from "./util/AuthService.ts";
 import {
   formatAdresse,
   formatDate,
@@ -171,10 +172,10 @@ const vorgaenge = ref<VorgaengeDTO[]>([]);
 const loading = ref(false);
 const dataLoadingError = ref(false);
 
-function getDetailsUrl(aktenzeichen: string): string {
-  const url = getUrlWithOriginAsBaseAndDefaultParams(props.detailsUrl);
-  url.searchParams.append("id", aktenzeichen);
-  return url.href;
+function getDetailsUrl(aktenzeichen: string): string | undefined {
+  return getUrlWithOriginAsBaseAndDefaultParams(props.detailsUrl, {
+    id: aktenzeichen,
+  });
 }
 
 function loadVorgaenge() {

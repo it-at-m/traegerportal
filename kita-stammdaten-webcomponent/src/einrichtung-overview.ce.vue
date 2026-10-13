@@ -113,10 +113,10 @@ const props = defineProps({
 const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 
-function getDetailsUrl(einrichtungId: string): string {
-  const url = getUrlWithOriginAsBaseAndDefaultParams(props.detailsUrl);
-  url.searchParams.append("einrichtungId", einrichtungId);
-  return url.href;
+function getDetailsUrl(einrichtungId: string): string | undefined {
+  return getUrlWithOriginAsBaseAndDefaultParams(props.detailsUrl, {
+    einrichtungId: einrichtungId,
+  });
 }
 
 const einrichtungen = ref<EinrichtungDTO[]>();

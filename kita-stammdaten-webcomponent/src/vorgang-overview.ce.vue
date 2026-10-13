@@ -91,7 +91,7 @@ function loadVorgangCount() {
 }
 
 const traegerLink = computed(() => {
-  return getUrlWithOriginAsBaseAndDefaultParams(props.listUrl).href;
+  return getUrlWithOriginAsBaseAndDefaultParams(props.listUrl);
 });
 
 watch(
