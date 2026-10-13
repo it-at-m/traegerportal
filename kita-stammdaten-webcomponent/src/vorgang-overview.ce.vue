@@ -63,6 +63,13 @@ const dataLoadingError = ref<boolean>();
 const emit = defineEmits(["loadingError", "unknownTraeger"]);
 
 function loadVorgangCount() {
+  console.debug("Loading Vorgang count...");
+
+  if (!props.token) {
+    console.debug("Skipping, because no token is known yet.");
+    return;
+  }
+
   loading.value = true;
   const service = new StammdatenService();
   service
