@@ -57,8 +57,8 @@
               <a
                 class="details-link"
                 :href="getDetailsUrl(row.aktenzeichen)"
+                aria-label="Vorgangsdetails"
               >
-                <span hidden>Vorgangsdetails</span>
                 <muc-icon
                   icon="arrow-right"
                   aria-hidden="true"
