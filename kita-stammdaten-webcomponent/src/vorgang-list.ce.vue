@@ -28,7 +28,6 @@
       >
         <template #content>
           <data-table
-            v-if="vorgaenge.length > 0"
             :items="vorgaenge"
             :columns="columns"
             row-key="aktenzeichen"

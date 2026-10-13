@@ -86,7 +86,6 @@
       >
         <template #content>
           <data-table
-            v-if="traeger.ansprechpartner.length > 0"
             :items="traeger.ansprechpartner"
             :columns="columns"
             row-key="id"
