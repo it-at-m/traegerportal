@@ -62,6 +62,7 @@ import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import TraegerDTO from "@/types/TraegerDTO";
+import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
 import {
   formatAdresse,
   formatTraegerTeam,
@@ -79,10 +80,6 @@ const props = defineProps({
     type: String,
     default: null,
   },
-  authLoading: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const loading = ref<boolean>();
@@ -90,6 +87,13 @@ const dataLoadingError = ref<boolean>();
 const emit = defineEmits(["loadingError", "unknownTraeger"]);
 
 function loadTraeger() {
+  console.debug("Loading Träger...");
+
+  if (!props.token) {
+    console.debug("Skipping, because no token is known yet.");
+    return;
+  }
+
   loading.value = true;
   const service = new StammdatenService();
   service
@@ -127,7 +131,7 @@ function loadTraeger() {
 }
 
 const traegerLink = computed(() => {
-  return `${props.detailsUrl}?&lg-idphint=ELSTER_NEZO`;
+  return getUrlWithOriginAsBaseAndDefaultParams(props.detailsUrl);
 });
 
 const hasLink = computed(() => {

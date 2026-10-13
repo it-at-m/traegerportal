@@ -1,15 +1,11 @@
-import type EinrichtungDTO from "@/types/EinrichtungDTO.ts";
+import type FallbearbeitungEinrichtungDTO from "@/types/FallbearbeitungEinrichtungDTO.ts";
 
 export class VorgangsstatusDTO {
   status: string;
   bemerkung: string;
   gruende: string[];
 
-  constructor(
-    status: string,
-    bemerkung: string,
-    gruende: string[]
-  ) {
+  constructor(status: string, bemerkung: string, gruende: string[]) {
     this.status = status;
     this.bemerkung = bemerkung;
     this.gruende = gruende;
@@ -18,14 +14,14 @@ export class VorgangsstatusDTO {
 
 export default class VorgaengeDTO {
   aktenzeichen: string;
-  einrichtung: EinrichtungDTO;
+  einrichtung: FallbearbeitungEinrichtungDTO;
   vorgangsart: string;
   status: VorgangsstatusDTO;
   letzteAenderung: Date;
 
   constructor(
     aktenzeichen: string,
-    einrichtung: EinrichtungDTO,
+    einrichtung: FallbearbeitungEinrichtungDTO,
     vorgangsart: string,
     status: VorgangsstatusDTO,
     letzteAenderung: Date

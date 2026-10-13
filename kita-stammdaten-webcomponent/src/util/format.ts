@@ -5,11 +5,7 @@ import type { AnsprechpartnerDTO, TeamDTO } from "@/types/TraegerDTO";
 import type VorgaengeDTO from "@/types/VorgaengeDTO.ts";
 import type { VorgangsstatusDTO } from "@/types/VorgaengeDTO.ts";
 
-import {
-  einrichtungsstatus,
-  vorgangsart,
-  vorgangsstatus,
-} from "@/util/enums.ts";
+import { anrede, einrichtungsstatus, vorgangsart, vorgangsstatus } from "@/util/enums.ts";
 
 export const noValueFallback = "Keine Daten hinterlegt";
 
@@ -75,7 +71,9 @@ export function formatTraegerRollen(
   ) {
     return noValueFallback;
   }
-  return ansprechpartner.rollen.join(", ");
+  return [...ansprechpartner.rollen]
+    .sort((a, b) => a.localeCompare(b))
+    .join(", ");
 }
 
 export function textOrFallback(text: string | undefined | null | number) {
@@ -89,4 +87,8 @@ export function formatDate(value?: string | number | Date | null) {
   return isNaN(date.getTime())
     ? noValueFallback
     : date.toLocaleDateString("de-DE");
+}
+
+export function formatAnrede(text: string) {
+  return anrede.get(text);
 }

@@ -1,3 +1,11 @@
+<!--
+  @file DataTable.vue
+  @description Reusable data table component with sorting and pagination.
+
+  @remarks
+  This component was generated with assistance from AI.
+-->
+
 <template>
   <div class="table-container">
     <div class="table-scroll">
@@ -29,19 +37,29 @@
                 <span>{{ column.label }}</span>
 
                 <span
-                  class="sort-icon"
-                  :class="{
-                    'sort-icon--active': sort?.key === column.key,
-                    'sort-icon--desc':
-                      sort?.key === column.key && sort.direction === 'desc',
-                  }"
+                  v-if="sort?.key === column.key"
+                  class="sort-icon sort-icon--active"
+                  :class="{ 'sort-icon--desc': sort.direction === 'desc' }"
                   aria-hidden="true"
                 >
                   <muc-icon icon="arrow-up" />
                 </span>
               </button>
 
-              <span v-else>{{ column.label }}</span>
+              <span
+                v-else
+                class="sort-label"
+              >
+                <span>{{ column.label }}</span>
+                <span
+                  v-if="sort?.key === column.key"
+                  class="sort-icon sort-icon--active"
+                  :class="{ 'sort-icon--desc': sort.direction === 'desc' }"
+                  aria-hidden="true"
+                >
+                  <muc-icon icon="arrow-up" />
+                </span>
+              </span>
             </th>
           </tr>
         </thead>
@@ -75,8 +93,11 @@
       </table>
     </div>
 
-    <!-- Clientseitige Pagination -->
-    <div class="table-pagination">
+    <!-- Client-side pagination -->
+    <div
+      v-if="pagination"
+      class="table-pagination"
+    >
       <label class="page-size-control">
         <span>Zeilen pro Seite</span>
 
@@ -155,25 +176,34 @@ const props = withDefaults(
     columns: TableColumn<T>[];
     rowKey: keyof T;
     caption?: string;
+    pagination?: boolean;
     pageSize?: number;
     pageSizeOptions?: number[];
     defaultSort?: (a: T, b: T) => number;
+    defaultSortKey?: string;
+    defaultSortDirection?: "asc" | "desc";
   }>(),
   {
+    caption: "",
+    pagination: true,
     pageSize: 10,
     pageSizeOptions: () => [5, 10, 25, 50],
-    caption: "",
     defaultSort: undefined,
+    defaultSortKey: undefined,
+    defaultSortDirection: "asc",
   }
 );
 
-defineSlots<{
-  [name: `cell-${string}`]: (props: {
-    row: T;
-    column: TableColumn<T>;
-    value: TableCellValue;
-  }) => unknown;
-}>();
+defineSlots<
+  Record<
+    `cell-${string}`,
+    (props: {
+      row: T;
+      column: TableColumn<T>;
+      value: TableCellValue;
+    }) => unknown
+  >
+>();
 
 type SortDirection = "asc" | "desc";
 
@@ -182,7 +212,35 @@ interface SortState {
   direction: SortDirection;
 }
 
-const sort = ref<SortState | null>(null);
+// Default to rowKey DESC, even if the column is hidden.
+const useRowKeyFallback = computed(
+  () => props.defaultSort === undefined && props.defaultSortKey === undefined
+);
+
+// A custom comparator defaults to the first sortable column (ASC).
+const defaultSortState = computed<SortState | null>(() => {
+  if (useRowKeyFallback.value) {
+    return { key: String(props.rowKey), direction: "desc" };
+  }
+
+  const key =
+    props.defaultSortKey ??
+    props.columns.find((column) => column.sortable !== false)?.key;
+
+  const column = props.columns.find(
+    (column) => column.key === key && column.sortable !== false
+  );
+
+  return column
+    ? { key: column.key, direction: props.defaultSortDirection }
+    : null;
+});
+
+// undefined: default sort; null: unsorted.
+const sortOverride = ref<SortState | null | undefined>(undefined);
+const sort = computed<SortState | null>(() =>
+  sortOverride.value === undefined ? defaultSortState.value : sortOverride.value
+);
 const page = ref(0);
 
 const collator = new Intl.Collator("de", {
@@ -190,9 +248,7 @@ const collator = new Intl.Collator("de", {
   sensitivity: "base",
 });
 
-// --------------------------------------------------
-// Spaltenwerte
-// --------------------------------------------------
+// Cell values
 
 function getValue(row: T, column: TableColumn<T>): TableCellValue {
   if (column.value) {
@@ -200,6 +256,21 @@ function getValue(row: T, column: TableColumn<T>): TableCellValue {
   }
 
   const value = (row as Record<string, unknown>)[column.key];
+
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean" ||
+    value instanceof Date
+  ) {
+    return value;
+  }
+
+  return null;
+}
+
+function getRowKeyValue(row: T): TableCellValue {
+  const value: unknown = row[props.rowKey];
 
   if (
     typeof value === "string" ||
@@ -221,17 +292,19 @@ function displayValue(value: TableCellValue): string {
     : String(value);
 }
 
-// --------------------------------------------------
-// Sortierung
-// --------------------------------------------------
+// Sorting
 
 function toggleSort(key: string): void {
   if (sort.value?.key !== key) {
-    sort.value = { key, direction: "asc" };
+    sortOverride.value = { key, direction: "asc" };
   } else if (sort.value.direction === "asc") {
-    sort.value = { key, direction: "desc" };
+    sortOverride.value = { key, direction: "desc" };
+  } else if (useRowKeyFallback.value) {
+    // Restore rowKey DESC; toggle rowKey to ASC to avoid a no-op.
+    sortOverride.value =
+      key === String(props.rowKey) ? { key, direction: "asc" } : undefined;
   } else {
-    sort.value = null;
+    sortOverride.value = null;
   }
 
   page.value = 0;
@@ -248,9 +321,17 @@ function getSortLabel(column: TableColumn<T>): string {
     return `${column.label} aufsteigend sortieren`;
   }
 
-  return sort.value.direction === "asc"
-    ? `${column.label} absteigend sortieren`
-    : `${column.label} Sortierung zurücksetzen`;
+  if (sort.value.direction === "asc") {
+    return `${column.label} absteigend sortieren`;
+  }
+
+  if (useRowKeyFallback.value) {
+    return column.key === String(props.rowKey)
+      ? `${column.label} aufsteigend sortieren`
+      : `${column.label} auf Standardsortierung zurücksetzen`;
+  }
+
+  return `${column.label} Sortierung zurücksetzen`;
 }
 
 function isEmpty(value: TableCellValue): boolean {
@@ -275,22 +356,33 @@ function compareValues(a: TableCellValue, b: TableCellValue): number {
 
 const sortedItems = computed<T[]>(() => {
   const result = [...props.items];
+  const activeSort = sort.value;
 
-  if (!sort.value) {
-    return props.defaultSort ? result.sort(props.defaultSort) : result;
-  }
+  // Keep the original order when sorting is cleared.
+  if (!activeSort) return result;
 
-  const column = props.columns.find((col) => col.key === sort.value?.key);
+  const column = props.columns.find((col) => col.key === activeSort.key);
+  const isRowKeySort = activeSort.key === String(props.rowKey);
 
-  if (!column || column.sortable === false) {
+  // Allow rowKey sorting even if its column is hidden or not sortable.
+  if ((!column || column.sortable === false) && !isRowKeySort) {
     return result;
   }
 
-  const direction = sort.value.direction === "asc" ? 1 : -1;
+  // Reuse the default comparator when its column is selected again.
+  const comparator = props.defaultSort;
+  const defaultState = defaultSortState.value;
+
+  if (comparator && defaultState?.key === activeSort.key) {
+    const factor = activeSort.direction === defaultState.direction ? 1 : -1;
+    return result.sort((a, b) => comparator(a, b) * factor);
+  }
+
+  const direction = activeSort.direction === "asc" ? 1 : -1;
 
   return result.sort((a, b) => {
-    const valueA = getValue(a, column);
-    const valueB = getValue(b, column);
+    const valueA = column ? getValue(a, column) : getRowKeyValue(a);
+    const valueB = column ? getValue(b, column) : getRowKeyValue(b);
 
     if (isEmpty(valueA) && isEmpty(valueB)) return 0;
     if (isEmpty(valueA)) return 1;
@@ -300,9 +392,7 @@ const sortedItems = computed<T[]>(() => {
   });
 });
 
-// --------------------------------------------------
-// Clientseitige Pagination
-// --------------------------------------------------
+// Client-side pagination
 
 function validPageSize(value: number): boolean {
   return Number.isSafeInteger(value) && value > 0;
@@ -342,6 +432,8 @@ const lastItem = computed(() =>
 );
 
 const visibleRows = computed(() => {
+  if (!props.pagination) return sortedItems.value;
+
   const start = currentPageIndex.value * selectedPageSize.value;
 
   return sortedItems.value.slice(start, start + selectedPageSize.value);
@@ -351,7 +443,15 @@ function goToPage(index: number): void {
   page.value = Math.max(0, Math.min(index, pageCount.value - 1));
 }
 
-// Seitengröße von außen geändert
+// Pagination toggled
+watch(
+  () => props.pagination,
+  () => {
+    page.value = 0;
+  }
+);
+
+// External page size changed
 watch(
   () => props.pageSize,
   (size) => {
@@ -360,12 +460,12 @@ watch(
   }
 );
 
-// Seitengröße über Dropdown geändert
+// Page size selected
 watch(selectedPageSize, () => {
   page.value = 0;
 });
 
-// Neue Daten erhalten
+// Items changed
 watch([() => props.items, () => props.items.length], () => {
   page.value = 0;
 });
@@ -382,7 +482,7 @@ watch([() => props.items, () => props.items.length], () => {
   overflow-x: auto;
 }
 
-/* Tabelle */
+/* Table */
 
 .data-table {
   width: 100%;
@@ -409,7 +509,7 @@ watch([() => props.items, () => props.items.length], () => {
   background-color: #f9f9f9;
 }
 
-/* Sortierung */
+/* Sorting */
 
 .sort-button {
   display: inline-flex;
@@ -437,7 +537,13 @@ watch([() => props.items, () => props.items.length], () => {
   outline-offset: 0.1875rem;
 }
 
-/* Sortier-Icon */
+/* Sort icon */
+
+.sort-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
 
 .sort-icon {
   display: inline-flex;
@@ -446,10 +552,12 @@ watch([() => props.items, () => props.items.length], () => {
   flex: 0 0 1em;
   width: 1em;
   height: 1em;
-  opacity: 0.35;
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+
+  /* Vuetify high-emphasis surface color. */
+  color: inherit;
+  color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
+  opacity: 0;
+  transition: transform 0.2s ease;
 }
 
 .sort-icon :deep(svg) {
@@ -460,28 +568,19 @@ watch([() => props.items, () => props.items.length], () => {
   max-height: 1em;
 }
 
-/* Hover: Icon wird deutlicher */
+/* Show active icons only, including on hover. */
 
-.sort-button:hover .sort-icon,
-.sort-button:focus-visible .sort-icon {
-  opacity: 0.7;
-}
-
-/* Aktive Sortierung */
-
-.sort-icon--active,
-.sort-button:hover .sort-icon--active,
-.sort-button:focus-visible .sort-icon--active {
+.sort-icon--active {
   opacity: 1;
 }
 
-/* Absteigende Sortierung */
+/* Descending sort */
 
 .sort-icon--desc {
   transform: rotate(180deg);
 }
 
-/* Barrierefreiheit: reduzierte Animationen */
+/* Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
   .sort-icon {
@@ -524,7 +623,7 @@ watch([() => props.items, () => props.items.length], () => {
   font-variant-numeric: tabular-nums;
 }
 
-/* Barrierefreiheit */
+/* Accessibility */
 
 .sr-only {
   position: absolute;
@@ -538,7 +637,7 @@ watch([() => props.items, () => props.items.length], () => {
   border: 0;
 }
 
-/* Responsive Darstellung */
+/* Responsive layout */
 
 @media (max-width: 37.5rem) {
   .table-pagination {

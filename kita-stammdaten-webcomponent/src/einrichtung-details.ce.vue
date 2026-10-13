@@ -149,8 +149,6 @@
 </template>
 
 <script setup lang="ts">
-import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts";
-
 import {
   MucCallout,
   MucCard,
@@ -163,9 +161,8 @@ import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.
 import { ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
-import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
+import { AuthService } from "./util/AuthService.ts";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
-import { setAccessToken } from "@/util/constants";
 import {
   formatAdresse,
   formatEinrichtungsstatus,
@@ -173,18 +170,7 @@ import {
   textOrFallback,
 } from "./util/format";
 
-const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
-
-function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
-  if (authEventDetails && authEventDetails.accessToken) {
-    console.debug("Receiving new authevent...");
-
-    setAccessToken(authEventDetails.accessToken);
-    token.value = authEventDetails.accessToken;
-  }
-}
-
-const token = ref<string>();
+const { token, loggedIn } = new AuthService();
 
 const einrichtung = ref<EinrichtungDTO>();
 
@@ -205,41 +191,42 @@ function loadEinrichtung(einrichtungId: string | null) {
   if (!token.value) {
     console.debug("Skipping, because no token is known yet.");
     return;
-  } else if (!einrichtungId) {
+  }
+  if (!einrichtungId) {
     console.debug("Skipping, because no einrichtungId is specified.");
     return;
-  } else {
-    loading.value = true;
-    const service = new StammdatenService();
-    service
-      .getEinrichtung(token.value, einrichtungId)
-      .then((resp) => {
-        if (resp.ok) {
-          resp.json().then((response: EinrichtungDTO) => {
-            einrichtung.value = response;
-            dataLoadingError.value = false;
-          });
-        } else {
-          resp.text().then((errBody) => {
-            dataLoadingError.value = true;
-            throw Error(errBody);
-          });
-        }
-      })
-      .catch((error) => {
-        dataLoadingError.value = true;
-        console.debug(error);
-      })
-      .finally(() => {
-        loading.value = false;
-      });
   }
+
+  loading.value = true;
+  const service = new StammdatenService();
+  service
+    .getEinrichtung(token.value, einrichtungId)
+    .then((resp) => {
+      if (resp.ok) {
+        resp.json().then((response: EinrichtungDTO) => {
+          einrichtung.value = response;
+          dataLoadingError.value = false;
+        });
+      } else {
+        resp.text().then((errBody) => {
+          dataLoadingError.value = true;
+          throw Error(errBody);
+        });
+      }
+    })
+    .catch((error) => {
+      dataLoadingError.value = true;
+      console.debug(error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
 watch(
-  () => token.value,
-  (newToken, oldToken) => {
-    if (newToken !== oldToken) {
+  token,
+  (newToken) => {
+    if (newToken) {
       loadEinrichtung(getEinrichtungId());
     }
   },

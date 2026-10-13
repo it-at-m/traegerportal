@@ -21,10 +21,15 @@
         :header="formatEinrichtungTitle(einrichtung)"
       >
         <template #subtitle>
-          <a :href="getDetailsUrl(einrichtung.id)"
-            ><muc-button variant="ghost"
-              >Einrichtungsdetails<muc-icon icon="arrow-right" /></muc-button
-          ></a>
+          <a
+            :href="getDetailsUrl(einrichtung.id)"
+            @click.stop
+          >
+            <muc-button variant="ghost">
+              Einrichtungsdetails
+              <muc-icon icon="arrow-right" />
+            </muc-button>
+          </a>
         </template>
         <template #content>
           <div>
@@ -83,6 +88,7 @@ import { computed, ref, watch } from "vue";
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
 import SimplePagination from "@/components/SimplePagination.vue";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
+import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
 import {
   formatAdresse,
   formatEinrichtungsstatus,
@@ -102,17 +108,15 @@ const props = defineProps({
     type: String,
     default: null,
   },
-  authLoading: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 
 function getDetailsUrl(einrichtungId: string): string {
-  return `${props.detailsUrl}?einrichtungId=${einrichtungId}&lg-idphint=ELSTER_NEZO`;
+  const url = getUrlWithOriginAsBaseAndDefaultParams(props.detailsUrl);
+  url.searchParams.append("einrichtungId", einrichtungId);
+  return url.href;
 }
 
 const einrichtungen = ref<EinrichtungDTO[]>();
@@ -121,6 +125,11 @@ const emit = defineEmits(["loadingError"]);
 
 function loadEinrichtungen() {
   console.debug("Loading einrichtungen...");
+
+  if (!props.token) {
+    console.debug("Skipping, because no token is known yet.");
+    return;
+  }
 
   loading.value = true;
   const service = new StammdatenService();

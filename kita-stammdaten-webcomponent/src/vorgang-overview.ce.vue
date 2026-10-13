@@ -43,21 +43,18 @@ import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.
 import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
+import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
 
 const vorgangCount = ref<number>(0);
 
 const props = defineProps({
-  detailsUrl: {
+  listUrl: {
     type: String,
     default: null,
   },
   token: {
     type: String,
     default: null,
-  },
-  authLoading: {
-    type: Boolean,
-    default: false,
   },
 });
 
@@ -94,7 +91,7 @@ function loadVorgangCount() {
 }
 
 const traegerLink = computed(() => {
-  return `${props.detailsUrl}?&lg-idphint=ELSTER_NEZO`;
+  return getUrlWithOriginAsBaseAndDefaultParams(props.listUrl).href;
 });
 
 watch(
