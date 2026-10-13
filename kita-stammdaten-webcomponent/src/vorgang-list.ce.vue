@@ -93,7 +93,7 @@ import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref, watch } from "vue";
 
-import type { TableColumn } from "./components/DataTable.vue";
+import type { TableColumn } from "./components/data-table/types.ts";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";

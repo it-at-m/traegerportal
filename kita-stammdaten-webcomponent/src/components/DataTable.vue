@@ -149,11 +149,6 @@
   </div>
 </template>
 
-<script lang="ts">
-// Preserve type imports previously exposed by DataTable.vue.
-export type { TableCellValue, TableColumn } from "./data-table/types";
-</script>
-
 <script setup lang="ts" generic="T extends object">
 import { MucButton, MucIcon } from "@muenchen/muc-patternlab-vue";
 
