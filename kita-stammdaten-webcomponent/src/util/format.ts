@@ -5,7 +5,12 @@ import type { AnsprechpartnerDTO, TeamDTO } from "@/types/TraegerDTO";
 import type VorgaengeDTO from "@/types/VorgaengeDTO.ts";
 import type { VorgangsstatusDTO } from "@/types/VorgaengeDTO.ts";
 
-import { anrede, einrichtungsstatus, vorgangsart, vorgangsstatus } from "@/util/enums.ts";
+import {
+  anrede,
+  einrichtungsstatus,
+  vorgangsart,
+  vorgangsstatus,
+} from "@/util/enums.ts";
 
 export const noValueFallback = "Keine Daten hinterlegt";
 
@@ -39,15 +44,24 @@ export function formatAdresse(adresse: AdresseDTO): string {
 }
 
 export function formatVorgangsart(dto: VorgaengeDTO) {
-  return vorgangsart.get(dto.vorgangsart);
+  if (!dto.vorgangsart) return noValueFallback;
+  const _vorgangsart = vorgangsart.get(dto.vorgangsart);
+  if (!_vorgangsart) return dto.vorgangsart;
+  return _vorgangsart;
 }
 
 export function formatVorgangsstatus(dto: VorgangsstatusDTO) {
-  return vorgangsstatus.get(dto.status);
+  if (!dto.status) return noValueFallback;
+  const _status = vorgangsstatus.get(dto.status);
+  if (!_status) return dto.status;
+  return _status;
 }
 
 export function formatEinrichtungsstatus(dto: EinrichtungsstatusDTO) {
-  return einrichtungsstatus.get(dto.status);
+  if (!dto.status) return noValueFallback;
+  const _status = einrichtungsstatus.get(dto.status);
+  if (!_status) return dto.status;
+  return _status;
 }
 
 export function formatEinrichtungTitle(einrichtung: EinrichtungDTO) {
@@ -96,6 +110,9 @@ export function formatDate(value?: string | number | Date | null) {
     : date.toLocaleDateString("de-DE");
 }
 
-export function formatAnrede(text: string) {
-  return anrede.get(text);
+export function formatAnrede(value: string) {
+  if (!value) return noValueFallback;
+  const _anrede = anrede.get(value);
+  if (!_anrede) return value;
+  return _anrede;
 }
