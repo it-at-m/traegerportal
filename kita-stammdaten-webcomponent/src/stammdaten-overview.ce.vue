@@ -61,10 +61,10 @@
               </p>
             </template>
           </muc-callout>
-          <vorgaenge-overview-vue-component
+          <vorgang-overview-vue-component
             v-else
             class="flex-area full-width"
-            :details-url="vorgangDetailsUrl"
+            :list-url="vorgangListUrl"
             :token="token"
             @loading-error="loadingErrorVorgaenge = true"
           />
@@ -102,31 +102,18 @@
 </template>
 
 <script setup lang="ts">
-import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts";
-
 import { MucCallout } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref } from "vue";
 
-import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
 import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
 import TraegerOverviewVueComponent from "@/traeger-overview.ce.vue";
-import { setAccessToken } from "@/util/constants";
-import VorgaengeOverviewVueComponent from "@/vorgaenge-overview.ce.vue";
+import VorgangOverviewVueComponent from "@/vorgang-overview.ce.vue";
+import { AuthService } from "./util/AuthService.ts";
 
-const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
+const { token, loggedIn } = new AuthService();
 
-function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
-  if (authEventDetails && authEventDetails.accessToken) {
-    console.debug("Receiving new authevent...");
-
-    setAccessToken(authEventDetails.accessToken);
-    token.value = authEventDetails.accessToken;
-  }
-}
-
-const token = ref<string | undefined>();
 const unknownTraeger = ref<boolean>(false);
 const loadingErrorTraeger = ref<boolean>(false);
 const loadingErrorEinrichtungen = ref<boolean>(false);
@@ -149,7 +136,7 @@ defineProps({
     type: String,
     default: null,
   },
-  vorgangDetailsUrl: {
+  vorgangListUrl: {
     type: String,
     default: null,
   },

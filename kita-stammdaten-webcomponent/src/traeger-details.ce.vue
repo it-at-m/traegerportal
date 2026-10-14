@@ -85,41 +85,20 @@
         :disabled="false"
       >
         <template #content>
-          <table>
-            <thead>
-              <tr>
-                <th>Anrede</th>
-                <th>Vorname</th>
-                <th>Nachname</th>
-                <th>Telefonnummer</th>
-                <th>E-Mail-Adresse</th>
-                <th>Rolle</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="ansprechpartner in traeger.ansprechpartner"
-                :key="ansprechpartner.id"
-              >
-                <td>
-                  {{ textOrFallback(anrede.get(ansprechpartner.anrede)) }}
-                </td>
-                <td>{{ textOrFallback(ansprechpartner.vorname) }}</td>
-                <td>{{ textOrFallback(ansprechpartner.nachname) }}</td>
-                <td>{{ textOrFallback(ansprechpartner.telefon) }}</td>
-                <td>{{ textOrFallback(ansprechpartner.email) }}</td>
-                <td>{{ formatTraegerRollen(ansprechpartner) }}</td>
-              </tr>
-              <tr
-                v-if="
-                  !traeger.ansprechpartner ||
-                  traeger.ansprechpartner.length == 0
-                "
-              >
-                <td colspan="6">{{ noValueFallback }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <data-table
+            :items="traeger.ansprechpartner"
+            :columns="columns"
+            row-key="id"
+            :pagination="false"
+            caption="Ansprechpersonen"
+          >
+            <template #cell-anrede="{ row }">
+              {{ formatAnrede(row.anrede) }}
+            </template>
+            <template #cell-rollen="{ row }">
+              {{ formatTraegerRollen(row) }}
+            </template>
+          </data-table>
         </template>
       </muc-card>
     </div>
@@ -134,8 +113,6 @@
 </template>
 
 <script setup lang="ts">
-import type AuthorizationEventDetails from "@/types/AuthorizationEventDetails.ts";
-
 import {
   MucCallout,
   MucCard,
@@ -144,33 +121,53 @@ import {
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
+
+import type { TableColumn } from "./components/data-table/types.ts";
+import type { AnsprechpartnerDTO } from "./types/TraegerDTO";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
-import { useDBSLoginWebcomponentPlugin } from "@/composables/DBSLoginWebcomponentPlugin.ts";
-import TraegerDTO from "@/types/TraegerDTO";
-import { setAccessToken } from "@/util/constants";
-import { anrede } from "@/util/enums";
+import DataTable from "./components/DataTable.vue";
+import TraegerDTO from "./types/TraegerDTO";
+import { AuthService } from "./util/AuthService.ts";
 import {
   formatAdresse,
+  formatAnrede,
   formatTraegerRollen,
   formatTraegerTeam,
-  noValueFallback,
   textOrFallback,
 } from "./util/format";
 
-const { loggedIn } = useDBSLoginWebcomponentPlugin(_authChangedCallback);
+const columns = computed<TableColumn<AnsprechpartnerDTO>[]>(() => [
+  {
+    key: "anrede",
+    label: "Anrede",
+  },
+  {
+    key: "vorname",
+    label: "Vorname",
+  },
+  {
+    key: "nachname",
+    label: "Nachname",
+  },
+  {
+    key: "telefon",
+    label: "Telefonnummer",
+  },
+  {
+    key: "email",
+    label: "E-Mail-Adresse",
+  },
+  {
+    key: "rollen",
+    label: "Rollen",
+    value: (ansprechperson) => formatTraegerRollen(ansprechperson),
+    sortable: false,
+  },
+]);
 
-function _authChangedCallback(authEventDetails?: AuthorizationEventDetails) {
-  if (authEventDetails && authEventDetails.accessToken) {
-    console.debug("Receiving new authevent...");
-
-    setAccessToken(authEventDetails.accessToken);
-    token.value = authEventDetails.accessToken;
-  }
-}
-
-const token = ref<string>();
+const { token, loggedIn } = new AuthService();
 
 const traeger = ref<TraegerDTO>();
 
@@ -183,38 +180,38 @@ function loadTraeger() {
   if (!token.value) {
     console.debug("Skipping, because no token is known yet.");
     return;
-  } else {
-    loading.value = true;
-    const service = new StammdatenService();
-    service
-      .getTraeger(token.value)
-      .then((resp) => {
-        if (resp.ok) {
-          resp.json().then((response: TraegerDTO) => {
-            traeger.value = response;
-            dataLoadingError.value = false;
-          });
-        } else {
-          resp.text().then((errBody) => {
-            dataLoadingError.value = true;
-            throw Error(errBody);
-          });
-        }
-      })
-      .catch((error) => {
-        dataLoadingError.value = true;
-        console.debug(error);
-      })
-      .finally(() => {
-        loading.value = false;
-      });
   }
+
+  loading.value = true;
+  const service = new StammdatenService();
+  service
+    .getTraeger(token.value)
+    .then((resp) => {
+      if (resp.ok) {
+        resp.json().then((response: TraegerDTO) => {
+          traeger.value = response;
+          dataLoadingError.value = false;
+        });
+      } else {
+        resp.text().then((errBody) => {
+          dataLoadingError.value = true;
+          throw Error(errBody);
+        });
+      }
+    })
+    .catch((error) => {
+      dataLoadingError.value = true;
+      console.debug(error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
 watch(
-  () => token.value,
-  (newToken, oldToken) => {
-    if (newToken !== oldToken) {
+  token,
+  (newToken) => {
+    if (newToken) {
       loadTraeger();
     }
   },
@@ -229,18 +226,5 @@ watch(
 
 .card {
   margin-bottom: 1rem;
-}
-
-table,
-th,
-td {
-  border: 1px solid var(--color-neutrals-blue);
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding-left: 0.4rem;
-  padding-right: 0.4rem;
 }
 </style>

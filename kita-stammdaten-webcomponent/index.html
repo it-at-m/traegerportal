@@ -28,7 +28,15 @@
       type="module"
     ></script>
     <script
+      src="src/vorgang-overview-webcomponent.ts"
+      type="module"
+    ></script>
+    <script
       src="src/einrichtung-overview-webcomponent.ts"
+      type="module"
+    ></script>
+    <script
+      src="src/stammdaten-overview-webcomponent.ts"
       type="module"
     ></script>
     <script
@@ -36,11 +44,11 @@
       type="module"
     ></script>
     <script
-      src="src/einrichtung-details-webcomponent.ts"
+      src="src/vorgang-list-webcomponent.ts"
       type="module"
     ></script>
     <script
-      src="src/stammdaten-overview-webcomponent.ts"
+      src="src/einrichtung-details-webcomponent.ts"
       type="module"
     ></script>
 
@@ -53,11 +61,25 @@
         import("/src/dev/local-dev-auto-login.ts");
       }
     </script>
+
     <style>
+      .component-section {
+        margin-bottom: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      .component-section summary {
+        font-weight: bold;
+      }
+
       .component-display {
         width: 90%;
+        border: 0.1rem dashed;
         margin: auto;
         margin-top: 1rem;
+        margin-bottom: 1rem;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -71,8 +93,48 @@
         be activated.
       </strong>
     </noscript>
-    <div class="component-display">
-      <stammdaten-overview style="width: 80%" />
-    </div>
+    <details
+      class="component-section"
+      open
+    >
+      <summary id="anchor-stammdaten-overview">stammdaten-overview</summary>
+      <div class="component-display">
+        <stammdaten-overview
+          traeger-details-url="#anchor-traeger-details"
+          einrichtung-details-url="#anchor-einrichtung-details"
+          vorgang-list-url="#anchor-vorgang-list"
+        />
+      </div>
+    </details>
+
+    <details
+      class="component-section"
+      open
+    >
+      <summary id="anchor-traeger-details">traeger-details</summary>
+      <div class="component-display">
+        <traeger-details />
+      </div>
+    </details>
+
+    <details
+      class="component-section"
+      open
+    >
+      <summary id="anchor-vorgang-list">vorgang-list</summary>
+      <div class="component-display">
+        <vorgang-list details-url="#anchor-vorgang-details" />
+      </div>
+    </details>
+
+    <details
+      class="component-section"
+      open
+    >
+      <summary id="anchor-einrichtung-details">einrichtung-details</summary>
+      <div class="component-display">
+        <einrichtung-details />
+      </div>
+    </details>
   </body>
 </html>

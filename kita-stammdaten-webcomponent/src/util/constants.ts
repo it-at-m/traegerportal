@@ -7,22 +7,12 @@ export const enum STATUS_INDICATORS {
   ERROR = "error",
 }
 
-let ACCESS_TOKEN: string | undefined = undefined;
-
 export function getAPIBaseURL(): string {
   if (import.meta.env.VITE_VUE_APP_API_URL) {
     return import.meta.env.VITE_VUE_APP_API_URL;
   } else {
     return new URL(import.meta.url).origin;
   }
-}
-
-export function setAccessToken(newAccessToken: string): void {
-  ACCESS_TOKEN = newAccessToken;
-}
-
-export function getAccessToken(): string | undefined {
-  return ACCESS_TOKEN;
 }
 
 class Cookie {
@@ -78,4 +68,24 @@ export function getDateInGermanDateFormat(
   } else {
     return "-";
   }
+}
+
+export function getUrlWithOriginAsBaseAndDefaultParams(
+  url: string,
+  params: Record<string, string> = {}
+): string | undefined {
+  if (!url?.trim()) {
+    return undefined;
+  }
+  const _url = new URL(url, globalThis.location.origin);
+
+  // Set default parameters
+  _url.searchParams.set("lg-idphint", "ELSTER_NEZO");
+
+  // Set custom parameters (override defaults if present)
+  Object.entries(params).forEach(([key, value]) => {
+    _url.searchParams.set(key, value);
+  });
+
+  return _url.href;
 }

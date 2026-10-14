@@ -56,4 +56,17 @@ export default class StammdatenService {
       },
     });
   }
+  getVorgaenge(token: string): Promise<Response> {
+    const url = getAPIBaseURL() + "/meinevorgaenge";
+
+    return fetch(url, {
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+    });
+  }
 }

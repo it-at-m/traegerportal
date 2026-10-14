@@ -19,6 +19,7 @@ export class AnsprechpartnerDTO {
   telefon: string;
   email: string;
   rollen: string[];
+  bemerkung: string;
 
   constructor(
     id: number,
@@ -27,7 +28,8 @@ export class AnsprechpartnerDTO {
     nachname: string,
     telefon: string,
     email: string,
-    rollen: string[]
+    rollen: string[],
+    bemerkung: string
   ) {
     this.id = id;
     this.anrede = anrede;
@@ -36,6 +38,7 @@ export class AnsprechpartnerDTO {
     this.telefon = telefon;
     this.email = email;
     this.rollen = rollen;
+    this.bemerkung = bemerkung;
   }
 }
 

@@ -41,7 +41,8 @@ export default defineConfig(({ mode }) => {
           "stammdaten-overview": "./src/stammdaten-overview-webcomponent.ts",
           "traeger-details": "./src/traeger-details-webcomponent.ts",
           "einrichtung-details": "./src/einrichtung-details-webcomponent.ts",
-          "vorgaenge-overview": "./src/vorgaenge-overview-webcomponent.ts",
+          "vorgang-overview": "./src/vorgang-overview-webcomponent.ts",
+          "vorgang-list": "./src/vorgang-list-webcomponent.ts",
         },
         output: {
           entryFileNames: "entry-[name]-[hash].js",
