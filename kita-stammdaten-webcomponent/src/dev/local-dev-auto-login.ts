@@ -34,3 +34,5 @@ document.dispatchEvent(
     detail: eventDetails,
   })
 );
+
+console.debug("Started with development login");
