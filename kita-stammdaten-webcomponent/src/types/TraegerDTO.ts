@@ -29,7 +29,7 @@ export class AnsprechpartnerDTO {
     telefon: string,
     email: string,
     rollen: string[],
-    bemerkung: string,
+    bemerkung: string
   ) {
     this.id = id;
     this.anrede = anrede;

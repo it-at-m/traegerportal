@@ -70,19 +70,22 @@ export function getDateInGermanDateFormat(
   }
 }
 
-export function getUrlWithOriginAsBaseAndDefaultParams(url: string, params: Record<string, string> = {}): string | undefined {
+export function getUrlWithOriginAsBaseAndDefaultParams(
+  url: string,
+  params: Record<string, string> = {}
+): string | undefined {
   if (!url?.trim()) {
     return undefined;
   }
   const _url = new URL(url, globalThis.location.origin);
-  
+
   // Set default parameters
   _url.searchParams.set("lg-idphint", "ELSTER_NEZO");
-  
+
   // Set custom parameters (override defaults if present)
   Object.entries(params).forEach(([key, value]) => {
     _url.searchParams.set(key, value);
   });
-  
+
   return _url.href;
 }

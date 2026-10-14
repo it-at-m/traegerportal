@@ -102,16 +102,15 @@
 </template>
 
 <script setup lang="ts">
-
 import { MucCallout } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref } from "vue";
 
 import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
-import { AuthService } from "./util/AuthService.ts";
 import TraegerOverviewVueComponent from "@/traeger-overview.ce.vue";
 import VorgangOverviewVueComponent from "@/vorgang-overview.ce.vue";
+import { AuthService } from "./util/AuthService.ts";
 
 const { token, loggedIn } = new AuthService();
 

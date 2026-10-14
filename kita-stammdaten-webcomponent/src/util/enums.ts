@@ -30,4 +30,3 @@ export const vorgangsstatus = new Map<string, string>([
   ["ANTRAG_WIDERSPRUCH", "Antrag Widerspruch"],
   ["ANTRAG_KLAGE", "Antrag Klage"],
 ]);
-

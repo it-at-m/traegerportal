@@ -11,10 +11,7 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import { h, nextTick, reactive } from "vue";
 
-
-
 import DataTable from "../../src/components/DataTable.vue";
-
 
 // Mock design system components with native elements for DOM tests.
 vi.mock("@muenchen/muc-patternlab-vue", async () => {
@@ -539,7 +536,7 @@ describe("DataTable - default sorting and sort state", () => {
     );
   });
 
-  it('uses the reset label without default rowKey sorting', async () => {
+  it("uses the reset label without default rowKey sorting", async () => {
     const wrapper = mountTable({ defaultSortKey: "name" });
 
     await sortButton(wrapper, "Name").trigger("click");
@@ -1201,7 +1198,6 @@ describe("DataTable - prop updates and accessibility", () => {
   });
 });
 
-
 describe("DataTable - optional row keys", () => {
   it("renders without rowKey in original order by default", () => {
     const wrapper = mount(DataTable, {
@@ -1263,7 +1259,11 @@ describe("DataTable - optional row keys", () => {
   it("uses index fallback for missing IDs while sorting and paging", async () => {
     const wrapper = mount(DataTable, {
       props: {
-        items: [{ id: null, name: "C" }, { id: null, name: "A" }, { id: null, name: "B" }],
+        items: [
+          { id: null, name: "C" },
+          { id: null, name: "A" },
+          { id: null, name: "B" },
+        ],
         columns: [{ key: "name", label: "Name" }],
         rowKey: "id",
         defaultSortKey: "name",

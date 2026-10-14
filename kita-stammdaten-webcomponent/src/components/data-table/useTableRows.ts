@@ -1,3 +1,9 @@
+/**
+ * @file useTableRows.ts
+ * @description Part of the DataTable.vue component
+ * @generated Generated with AI assistance
+ */
+
 import { computed } from "vue";
 
 import type { TableProps, TableRow } from "./types";

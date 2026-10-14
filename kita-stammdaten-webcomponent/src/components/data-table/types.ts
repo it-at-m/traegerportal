@@ -1,3 +1,9 @@
+/**
+ * @file types.ts
+ * @description Part of the DataTable.vue component
+ * @generated Generated with AI assistance
+ */
+
 /** Values supported by the default cell renderer and sort comparator. */
 export type TableCellValue =
   | string

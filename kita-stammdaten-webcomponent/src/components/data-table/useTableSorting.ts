@@ -1,3 +1,9 @@
+/**
+ * @file useTableSorting.ts
+ * @description Part of the DataTable.vue component
+ * @generated Generated with AI assistance
+ */
+
 import type { ComputedRef } from "vue";
 
 import { computed, ref } from "vue";

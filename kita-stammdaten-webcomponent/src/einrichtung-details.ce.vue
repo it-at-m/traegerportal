@@ -161,8 +161,8 @@ import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.
 import { ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
-import { AuthService } from "./util/AuthService.ts";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
+import { AuthService } from "./util/AuthService.ts";
 import {
   formatAdresse,
   formatEinrichtungsstatus,

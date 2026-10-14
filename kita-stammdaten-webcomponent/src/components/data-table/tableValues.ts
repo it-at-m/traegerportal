@@ -1,3 +1,9 @@
+/**
+ * @file tableValues.ts
+ * @description Part of the DataTable.vue component
+ * @generated Generated with AI assistance
+ */
+
 import type { TableCellValue, TableColumn } from "./types";
 
 const collator = new Intl.Collator("de", {

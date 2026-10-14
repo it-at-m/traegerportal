@@ -1,133 +1,140 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8"/>
+  <head>
+    <meta charset="UTF-8" />
     <meta
-            name="robots"
-            content="noindex"
+      name="robots"
+      content="noindex"
     />
     <link
-            href="/favicon.ico"
-            rel="icon"
+      href="/favicon.ico"
+      rel="icon"
     />
     <meta
-            content="width=device-width, initial-scale=1.0"
-            name="viewport"
+      content="width=device-width, initial-scale=1.0"
+      name="viewport"
     />
     <title>refarch-webcomponent</title>
 
     <!-- Muenchen.de Fontfaces -->
     <link
-            href="https://assets.muenchen.de/mde/1.1.19/css/fonts.css"
-            rel="stylesheet"
+      href="https://assets.muenchen.de/mde/1.1.19/css/fonts.css"
+      rel="stylesheet"
     />
 
     <!-- built files will be auto injected -->
     <script
-            src="src/traeger-overview-webcomponent.ts"
-            type="module"
+      src="src/traeger-overview-webcomponent.ts"
+      type="module"
     ></script>
     <script
-            src="src/vorgang-overview-webcomponent.ts"
-            type="module"
+      src="src/vorgang-overview-webcomponent.ts"
+      type="module"
     ></script>
     <script
-            src="src/einrichtung-overview-webcomponent.ts"
-            type="module"
+      src="src/einrichtung-overview-webcomponent.ts"
+      type="module"
     ></script>
     <script
-            src="src/stammdaten-overview-webcomponent.ts"
-            type="module"
+      src="src/stammdaten-overview-webcomponent.ts"
+      type="module"
     ></script>
     <script
-            src="src/traeger-details-webcomponent.ts"
-            type="module"
+      src="src/traeger-details-webcomponent.ts"
+      type="module"
     ></script>
     <script
-            src="src/vorgang-list-webcomponent.ts"
-            type="module"
+      src="src/vorgang-list-webcomponent.ts"
+      type="module"
     ></script>
     <script
-            src="src/einrichtung-details-webcomponent.ts"
-            type="module"
+      src="src/einrichtung-details-webcomponent.ts"
+      type="module"
     ></script>
 
     <!-- Enable automatic Keycloak login for local development when configured -->
     <script type="module">
-        if (
-            import.meta.env.DEV &&
-            import.meta.env.VITE_KEYCLOAK_AUTOLOGIN === "true"
-        ) {
-            import("/src/dev/local-dev-auto-login.ts");
-        }
+      if (
+        import.meta.env.DEV &&
+        import.meta.env.VITE_KEYCLOAK_AUTOLOGIN === "true"
+      ) {
+        import("/src/dev/local-dev-auto-login.ts");
+      }
     </script>
 
     <style>
-        .component-section {
-            margin-bottom: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            overflow: hidden;
-        }
+      .component-section {
+        margin-bottom: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+      }
 
-        .component-section summary {
-            font-weight: bold;
-        }
+      .component-section summary {
+        font-weight: bold;
+      }
 
-        .component-display {
-            width: 90%;
-            border: 0.1rem dashed;
-            margin: auto;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+      .component-display {
+        width: 90%;
+        border: 0.1rem dashed;
+        margin: auto;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     </style>
-</head>
-<body>
-<noscript>
-    <strong>
+  </head>
+  <body>
+    <noscript>
+      <strong>
         In order for the development page to work correctly, JavaScript needs to
         be activated.
-    </strong>
-</noscript>
-<details class="component-section" open>
-    <summary id="anchor-stammdaten-overview">stammdaten-overview</summary>
-    <div class="component-display">
+      </strong>
+    </noscript>
+    <details
+      class="component-section"
+      open
+    >
+      <summary id="anchor-stammdaten-overview">stammdaten-overview</summary>
+      <div class="component-display">
         <stammdaten-overview
-                traeger-details-url="#anchor-traeger-details"
-                einrichtung-details-url="#anchor-einrichtung-details"
-                vorgang-list-url="#anchor-vorgang-list"
+          traeger-details-url="#anchor-traeger-details"
+          einrichtung-details-url="#anchor-einrichtung-details"
+          vorgang-list-url="#anchor-vorgang-list"
         />
-    </div>
-</details>
+      </div>
+    </details>
 
-<details class="component-section" open>
-    <summary id="anchor-traeger-details">traeger-details</summary>
-    <div class="component-display">
-        <traeger-details
-        />
-    </div>
-</details>
+    <details
+      class="component-section"
+      open
+    >
+      <summary id="anchor-traeger-details">traeger-details</summary>
+      <div class="component-display">
+        <traeger-details />
+      </div>
+    </details>
 
-<details class="component-section" open>
-    <summary id="anchor-vorgang-list">vorgang-list</summary>
-    <div class="component-display">
-        <vorgang-list
-                details-url="#anchor-vorgang-details"
-        />
-    </div>
-</details>
+    <details
+      class="component-section"
+      open
+    >
+      <summary id="anchor-vorgang-list">vorgang-list</summary>
+      <div class="component-display">
+        <vorgang-list details-url="#anchor-vorgang-details" />
+      </div>
+    </details>
 
-<details class="component-section" open>
-    <summary id="anchor-einrichtung-details">einrichtung-details</summary>
-    <div class="component-display">
-        <einrichtung-details
-        />
-    </div>
-</details>
-
-</body>
+    <details
+      class="component-section"
+      open
+    >
+      <summary id="anchor-einrichtung-details">einrichtung-details</summary>
+      <div class="component-display">
+        <einrichtung-details />
+      </div>
+    </details>
+  </body>
 </html>
