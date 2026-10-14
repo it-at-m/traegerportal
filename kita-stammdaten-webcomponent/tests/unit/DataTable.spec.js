@@ -5,6 +5,8 @@
  * @generated This tests were generated with assistance from AI.
  */
 
+/* eslint-disable vue/one-component-per-file -- Multiple component mocks are required for testing. */
+
 // @vitest-environment jsdom
 // Requires Vitest, Vue Test Utils, and jsdom.
 import { mount } from "@vue/test-utils";
@@ -22,10 +24,22 @@ vi.mock("@muenchen/muc-patternlab-vue", async () => {
       name: "MucButton",
       inheritAttrs: false,
       props: {
-        type: String,
-        icon: String,
-        variant: String,
-        disabled: Boolean,
+        type: {
+          type: String,
+          default: "button",
+        },
+        icon: {
+          type: String,
+          default: "",
+        },
+        variant: {
+          type: String,
+          default: "",
+        },
+        disabled: {
+          type: Boolean,
+          default: false,
+        },
       },
       setup(props, { attrs, slots }) {
         return () =>
@@ -38,10 +52,18 @@ vi.mock("@muenchen/muc-patternlab-vue", async () => {
     }),
     MucIcon: defineComponent({
       name: "MucIcon",
-      props: { icon: String },
+      props: {
+        icon: {
+          type: String,
+          default: "",
+        },
+      },
       setup() {
         return () =>
-          createElement("svg", { class: "mock-icon", "aria-hidden": "true" });
+          createElement("svg", {
+            class: "mock-icon",
+            "aria-hidden": "true",
+          });
       },
     }),
   };
