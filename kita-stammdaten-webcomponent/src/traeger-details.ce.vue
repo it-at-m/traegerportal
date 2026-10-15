@@ -39,14 +39,18 @@
         :disabled="false"
       >
         <template #content>
-          <div><b>Träger-ID:</b> {{ textOrFallback(traeger.id) }}</div>
+          <div>
+            <muc-icon icon="lock" /><b>Träger-ID:</b>
+            {{ textOrFallback(traeger.id) }}
+          </div>
           <div><b>Name:</b> {{ textOrFallback(traeger.name) }}</div>
           <div>
             <b>Rechtsform:</b> {{ textOrFallback(traeger.traegerform) }}
           </div>
           <div><b>Adresse: </b>{{ formatAdresse(traeger.adresse) }}</div>
           <div>
-            <b>Zugeordnetes Team:</b> {{ formatTraegerTeam(traeger.team) }}
+            <muc-icon icon="lock" /><b>Zugeordnetes Team:</b>
+            {{ formatTraegerTeam(traeger.team) }}
           </div>
         </template>
       </muc-card>
@@ -116,6 +120,7 @@
 import {
   MucCallout,
   MucCard,
+  MucIcon,
   MucLink,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";

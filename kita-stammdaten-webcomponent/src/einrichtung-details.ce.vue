@@ -42,7 +42,7 @@
         <template #content>
           <div><b>Name:</b> {{ textOrFallback(einrichtung.name) }}</div>
           <div>
-            <b>Status:</b>
+            <muc-icon icon="lock" /><b>Status:</b>
             {{ formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus) }}
           </div>
           <div>
