@@ -36,6 +36,9 @@ export const ansprechpartnerRollen = new Map<string, string>([
   ["VORSTAND", "Vorstand"],
   ["FACHBERATUNG", "Fachberatung"],
   ["SAEULE1", "(Ansprechpartner*in für) Säule 1"],
-  ["BELEGUNG_DER_EINRICHTUNG", "(Ansprechpartner*in für) Belegung der Einrichtung"],
+  [
+    "BELEGUNG_DER_EINRICHTUNG",
+    "(Ansprechpartner*in für) Belegung der Einrichtung",
+  ],
   ["SONSTIGE", "Sonstige"],
 ]);
