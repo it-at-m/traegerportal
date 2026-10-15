@@ -7,6 +7,7 @@ import type { VorgangsstatusDTO } from "@/types/VorgaengeDTO.ts";
 
 import {
   anrede,
+  ansprechpartnerRollen,
   einrichtungsstatus,
   vorgangsart,
   vorgangsstatus,
@@ -88,10 +89,11 @@ export function formatTraegerRollen(
   return [...ansprechpartner.rollen]
     .sort((a, b) => a.localeCompare(b))
     .map((role) => {
+      const prettyRolle = ansprechpartnerRollen.get(role);
       if (role == "SONSTIGE" && ansprechpartner.bemerkung) {
-        return role + " (" + ansprechpartner.bemerkung + ")";
+        return prettyRolle + " (" + ansprechpartner.bemerkung + ")";
       } else {
-        return role;
+        return prettyRolle;
       }
     })
     .join(", ");

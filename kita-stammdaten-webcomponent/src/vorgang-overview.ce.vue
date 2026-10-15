@@ -12,8 +12,8 @@
     <muc-card
       id="vorgaenge-card"
       title="Vorgänge"
-      :href="traegerLink"
-      :disabled="!traegerLink"
+      :href="vorgangLink"
+      :disabled="!vorgangLink"
       style="width: 100%"
     >
       <template #content>
@@ -97,7 +97,7 @@ function loadVorgangCount() {
     });
 }
 
-const traegerLink = computed(() => {
+const vorgangLink = computed(() => {
   return getUrlWithOriginAsBaseAndDefaultParams(props.listUrl);
 });
 
