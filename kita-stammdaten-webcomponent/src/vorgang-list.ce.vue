@@ -33,11 +33,31 @@
             row-key="aktenzeichen"
             :page-size="pageSize"
             :page-size-options="pageSizeOptions"
+            default-sort-key="letzteAenderung"
+            default-sort-direction="desc"
             caption="Vorgänge zum Träger"
             empty-message="Es liegen aktuell keine Vorgänge vor."
           >
+            <template #cell-aktenzeichen="{ row }">
+              <div
+                :class="{
+                  changedSinceLastExternalRead:
+                    row.changedSinceLastExternalRead,
+                }"
+              >
+                {{ row.aktenzeichen }}
+              </div>
+            </template>
+
             <template #cell-einrichtungsadresse="{ row }">
-              <div>{{ row.einrichtung?.name }}</div>
+              <div
+                :class="{
+                  changedSinceLastExternalRead:
+                    row.changedSinceLastExternalRead,
+                }"
+              >
+                {{ row.einrichtung?.name }}
+              </div>
               <div>{{ formatAdresse(row.einrichtung?.adresse) }}</div>
             </template>
 
@@ -50,7 +70,14 @@
             </template>
 
             <template #cell-letzteAenderung="{ row }">
-              {{ formatDate(row.letzteAenderung) }}
+              <div
+                :class="{
+                  changedSinceLastExternalRead:
+                    row.changedSinceLastExternalRead,
+                }"
+              >
+                {{ formatDate(row.letzteAenderung) }}
+              </div>
             </template>
 
             <template #cell-aktionen="{ row }">
@@ -233,5 +260,9 @@ watch(
 
 .no-vorgaenge-callout {
   margin-top: 1rem;
+}
+
+.changedSinceLastExternalRead {
+  font-weight: bold;
 }
 </style>

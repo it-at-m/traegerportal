@@ -18,18 +18,21 @@ export default class VorgaengeDTO {
   vorgangsart: string;
   status: VorgangsstatusDTO;
   letzteAenderung: Date;
+  changedSinceLastExternalRead: boolean;
 
   constructor(
     aktenzeichen: string,
     einrichtung: FallbearbeitungEinrichtungDTO,
     vorgangsart: string,
     status: VorgangsstatusDTO,
-    letzteAenderung: Date
+    letzteAenderung: Date,
+    changedSinceLastExternalRead: boolean
   ) {
     this.aktenzeichen = aktenzeichen;
     this.einrichtung = einrichtung;
     this.vorgangsart = vorgangsart;
     this.status = status;
     this.letzteAenderung = letzteAenderung;
+    this.changedSinceLastExternalRead = changedSinceLastExternalRead;
   }
 }

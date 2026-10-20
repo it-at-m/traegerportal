@@ -88,13 +88,15 @@ export function formatTraegerRollen(
   }
   return [...ansprechpartner.rollen]
     .sort((a, b) => a.localeCompare(b))
-    .map((role) => {
-      const prettyRolle = ansprechpartnerRollen.get(role);
-      if (role == "SONSTIGE" && ansprechpartner.bemerkung) {
-        return prettyRolle + " (" + ansprechpartner.bemerkung + ")";
-      } else {
-        return prettyRolle;
+    .filter((rolle) => rolle != "SAEULE1")
+    .map((rolle) => {
+      const _rolle = formatRolle(rolle);
+
+      if (rolle == "SONSTIGE" && ansprechpartner.bemerkung) {
+        return _rolle + " (" + ansprechpartner.bemerkung + ")";
       }
+
+      return _rolle;
     })
     .join(", ");
 }
@@ -110,6 +112,13 @@ export function formatDate(value?: string | number | Date | null) {
   return isNaN(date.getTime())
     ? noValueFallback
     : date.toLocaleDateString("de-DE");
+}
+
+export function formatRolle(value: string) {
+  if (!value) return undefined;
+  const _rolle = ansprechpartnerRollen.get(value);
+  if (!_rolle) return value;
+  return _rolle;
 }
 
 export function formatAnrede(value: string) {
