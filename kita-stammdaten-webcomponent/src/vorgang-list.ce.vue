@@ -39,25 +39,11 @@
             empty-message="Es liegen aktuell keine Vorgänge vor."
           >
             <template #cell-aktenzeichen="{ row }">
-              <div
-                :class="{
-                  changedSinceLastExternalRead:
-                    row.changedSinceLastExternalRead,
-                }"
-              >
-                {{ row.aktenzeichen }}
-              </div>
+              {{ row.aktenzeichen }}
             </template>
 
             <template #cell-einrichtungsadresse="{ row }">
-              <div
-                :class="{
-                  changedSinceLastExternalRead:
-                    row.changedSinceLastExternalRead,
-                }"
-              >
-                {{ row.einrichtung?.name }}
-              </div>
+              <div>{{ row.einrichtung?.name }}</div>
               <div>{{ formatAdresse(row.einrichtung?.adresse) }}</div>
             </template>
 
@@ -70,27 +56,31 @@
             </template>
 
             <template #cell-letzteAenderung="{ row }">
-              <div
-                :class="{
-                  changedSinceLastExternalRead:
-                    row.changedSinceLastExternalRead,
-                }"
-              >
-                {{ formatDate(row.letzteAenderung) }}
-              </div>
+              {{ formatDate(row.letzteAenderung) }}
             </template>
 
             <template #cell-aktionen="{ row }">
-              <a
-                class="details-link"
-                :href="getDetailsUrl(row.aktenzeichen)"
-                aria-label="Vorgangsdetails"
-              >
-                <muc-icon
-                  icon="arrow-right"
-                  aria-hidden="true"
-                />
-              </a>
+              <div class="actions">
+                <div class="actions-cols">
+                  <muc-icon
+                    v-if="row.changedSinceLastExternalRead"
+                    icon="bell"
+                    aria-label="Aktualisierungen"
+                  />
+                </div>
+                <div class="actions-cols">
+                  <a
+                    class="details-link"
+                    :href="getDetailsUrl(row.aktenzeichen)"
+                    aria-label="Vorgangsdetails"
+                  >
+                    <muc-icon
+                      icon="arrow-right"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </div>
+              </div>
             </template>
           </data-table>
         </template>
@@ -246,23 +236,23 @@ watch(
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
 
-.details-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 8px;
+  width: 100%;
+  height: 100%;
 }
 
-.details-link:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
+.actions-cols {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 100%;
 }
 
 .no-vorgaenge-callout {
   margin-top: 1rem;
-}
-
-.changedSinceLastExternalRead {
-  font-weight: bold;
 }
 </style>
