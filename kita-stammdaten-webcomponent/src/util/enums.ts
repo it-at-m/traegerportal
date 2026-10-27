@@ -22,6 +22,7 @@ export const vorgangsart = new Map<string, string>([
 ]);
 
 export const vorgangsstatus = new Map<string, string>([
+  ["BERATUNG_OFFEN", "Beratung offen"],
   ["BERATUNG_GESCHLOSSEN", "Beratung geschlossen"],
   ["ANTRAG_OFFEN", "Antrag offen"],
   ["ANTRAG_GENEHMIGT", "Antrag genehmigt"],
@@ -29,6 +30,8 @@ export const vorgangsstatus = new Map<string, string>([
   ["ANTRAG_GENEHMIGT_MIT_AUFLAGEN", "Antrag genehmigt mit Auflagen"],
   ["ANTRAG_WIDERSPRUCH", "Antrag Widerspruch"],
   ["ANTRAG_KLAGE", "Antrag Klage"],
+  ["IN_BEARBEITUNG", "In Bearbeitung"],
+  ["RUECKFRAGE", "Rückfrage"],
 ]);
 
 export const ansprechpartnerRollen = new Map<string, string>([
