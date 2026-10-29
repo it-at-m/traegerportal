@@ -127,3 +127,35 @@ export function formatAnrede(value: string) {
   if (!_anrede) return value;
   return _anrede;
 }
+
+export function formatBetreff(dto?: VorgaengeDTO): string | undefined {
+  if (!dto) {
+    return undefined;
+  }
+
+  if (dto.vorgangsart === "EINRICHTUNGSDATEN_AENDERN") {
+    return concatIfNotBlank(
+      ", ",
+      dto.einrichtung.name,
+      formatAdresse(dto.einrichtung.adresse),
+      dto.einrichtung.kibigWebId
+    );
+  }
+
+  if (dto.vorgangsart === "TRAEGERDATEN_AENDERN") {
+    return concatIfNotBlank(
+      ", ",
+      dto.traeger.name,
+      formatAdresse(dto.traeger.adresse)
+    );
+  }
+
+  return undefined;
+}
+
+export function concatIfNotBlank(
+  separator: string,
+  ...strings: (string | null | undefined)[]
+): string {
+  return strings.filter((s) => s != null && s.trim() !== "").join(separator);
+}
