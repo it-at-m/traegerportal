@@ -1,5 +1,6 @@
 package de.muenchen.rbs.traegerportal.gateway.configuration;
 
+import de.muenchen.rbs.traegerportal.gateway.adapter.StammdatenSecurityGatewayFilter2Factory;
 import de.muenchen.rbs.traegerportal.gateway.adapter.StammdatenSecurityGatewayFilterFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,6 +57,13 @@ public class GatewayConfig {
                                 .rewritePath("^/meinevorgaenge", fbBasePath)
                                 .removeRequestHeader("Origin")
                                 .filter(gatewayFilterFactory.apply(new StammdatenSecurityGatewayFilterFactory.Config())))
+                        .uri(fbUrl))
+                .route("traeger-by-unternehmenskontoid", r -> r.path("/traeger/by-unternehmenskontoid/", "/traeger/by-unternehmenskontoid/**")
+                        .and().method(HttpMethod.GET)
+                        .filters(f -> f
+                                .rewritePath("^/traeger/by-unternehmenskontoid/", evTraegerBasePath)
+                                .removeRequestHeader("Origin")
+                                .filter(gatewayFilterFactory.apply(new StammdatenSecurityGatewayFilter2Factory.Config())))
                         .uri(fbUrl))
                 .route("webcomponents", r -> r.path("/webcomponents/**")
                         .and().method(HttpMethod.GET)

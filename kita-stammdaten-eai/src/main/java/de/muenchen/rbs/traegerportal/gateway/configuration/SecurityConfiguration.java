@@ -1,6 +1,5 @@
 package de.muenchen.rbs.traegerportal.gateway.configuration;
 
-import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +16,8 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
+import java.time.Duration;
+
 @Slf4j
 @Configuration
 @Profile("!no-security")
@@ -28,72 +29,96 @@ public class SecurityConfiguration {
     @Bean
     @Order(1)
     public SecurityWebFilterChain webcomponentsFilterChain(final ServerHttpSecurity http) {
-        http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/webcomponents/**"))
-                .authorizeExchange(
-                        authorizeExchangeSpec -> {
-                            authorizeExchangeSpec.anyExchange().permitAll();
-                        })
+        return http
+                .securityMatcher(ServerWebExchangeMatchers.pathMatchers(
+                        "/webcomponents/**"
+                ))
+                .authorizeExchange(exchanges -> exchanges
+                        .anyExchange().permitAll()
+                )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .cors(Customizer.withDefaults());
-        return http.build();
+                .cors(Customizer.withDefaults())
+                .build();
     }
 
     @Bean
     @Order(2)
-    public SecurityWebFilterChain apiFilterChain(final ServerHttpSecurity http) {
-        http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/meintraeger/**", "/meinevorgaenge/**"))
-                .authorizeExchange(
-                        authorizeExchangeSpec -> {
-                            authorizeExchangeSpec
-                                    .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-                            authorizeExchangeSpec.anyExchange().authenticated();
-                        })
+    public SecurityWebFilterChain meinTraegerApiFilterChain(final ServerHttpSecurity http) {
+        return http
+                .securityMatcher(ServerWebExchangeMatchers.pathMatchers(
+                        "/meintraeger/**",
+                        "/meinevorgaenge/**"
+                ))
+                .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .anyExchange().authenticated()
+                )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(Customizer.withDefaults())
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
-        return http.build();
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(Customizer.withDefaults())
+                )
+                .build();
     }
 
     @Bean
     @Order(3)
-    public SecurityWebFilterChain clientAccessFilterChain(final ServerHttpSecurity http,
+    public SecurityWebFilterChain directApiFilterChain(final ServerHttpSecurity http) {
+        return http
+                .securityMatcher(ServerWebExchangeMatchers.pathMatchers(
+                        "/traeger/by-unternehmenskontoid/**"
+                ))
+                .authorizeExchange(exchanges -> exchanges
+                        .anyExchange()
+                        .hasAuthority("CLIENT_VALIDIERUNGSEAI")
+                )
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .cors(Customizer.withDefaults())
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(Customizer.withDefaults())
+                )
+                .build();
+    }
+
+    @Bean
+    @Order(4)
+    public SecurityWebFilterChain clientAccessFilterChain(
+            final ServerHttpSecurity http,
             @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") final String issuerUri,
             @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") final String jwkSetUri) {
         log.info("Initializing security with issuer URI {} and jwk set uri {}", issuerUri, jwkSetUri);
 
         // security config
-        http.securityMatcher(ServerWebExchangeMatchers.pathMatchers("/**"))
-                .authorizeExchange(
-                        authorizeExchangeSpec -> {
-                            authorizeExchangeSpec.pathMatchers(
-                                    "/api/*/actuator/info",
-                                    "/actuator/health",
-                                    "/actuator/health/liveness",
-                                    "/actuator/health/readiness",
-                                    "/actuator/info",
-                                    "/actuator/metrics",
-                                    "/actuator/sbom",
-                                    "/actuator/sbom/application")
-                                    .permitAll();
-                        })
+        return http.
+                securityMatcher(ServerWebExchangeMatchers.pathMatchers(
+                        "/**"
+                ))
+                .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers(
+                                "/api/*/actuator/info",
+                                "/actuator/health",
+                                "/actuator/health/liveness",
+                                "/actuator/health/readiness",
+                                "/actuator/info",
+                                "/actuator/metrics",
+                                "/actuator/sbom",
+                                "/actuator/sbom/application")
+                        .permitAll()
+                )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .cors(ServerHttpSecurity.CorsSpec::disable);
-        return http.build();
+                .cors(ServerHttpSecurity.CorsSpec::disable)
+                .build();
     }
 
     /**
      * Returns the session timeout determined by Spring Boot.
      * <p>
-     * Prior to Spring Boot 4, the timeout was resolved explicitly using {@link SessionProperties}
-     * with
-     * {@link ServerProperties#getServlet()} as a fallback,
+     * Prior to Spring Boot 4, the timeout was resolved explicitly using {@link SessionProperties} with {@link ServerProperties#getServlet()} as a fallback,
      * mirroring the timeout resolution described in the
      * <a href="https://docs.spring.io/spring-boot/reference/web/spring-session.html">Spring
-     * Session</a>
-     * documentation.
+     * Session</a> documentation.
      * <p>
-     * Since Spring Boot 4, this resolution is encapsulated by {@link SessionTimeout}. An
-     * {@link IllegalStateException} is thrown if no session timeout could be
+     * Since Spring Boot 4, this resolution is encapsulated by {@link SessionTimeout}. An {@link IllegalStateException} is thrown if no session timeout could be
      * determined.
      *
      * @return the resolved session timeout
