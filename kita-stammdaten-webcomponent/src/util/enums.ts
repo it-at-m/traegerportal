@@ -31,7 +31,7 @@ export const vorgangsstatus = new Map<string, string>([
   ["ANTRAG_WIDERSPRUCH", "Antrag Widerspruch"],
   ["ANTRAG_KLAGE", "Antrag Klage"],
   ["IN_BEARBEITUNG", "In Bearbeitung"],
-  ["RUECKFRAGE", "Rückfrage"],
+  ["RUECKFRAGE", "Informationen angefragt"],
 ]);
 
 export const ansprechpartnerRollen = new Map<string, string>([
