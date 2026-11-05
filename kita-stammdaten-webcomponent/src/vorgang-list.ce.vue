@@ -42,9 +42,8 @@
               {{ row.aktenzeichen }}
             </template>
 
-            <template #cell-einrichtungsadresse="{ row }">
-              <div>{{ row.einrichtung?.name }}</div>
-              <div>{{ formatAdresse(row.einrichtung?.adresse) }}</div>
+            <template #cell-betreff="{ row }">
+              {{ formatBetreff(row) }}
             </template>
 
             <template #cell-vorgangsart="{ row }">
@@ -117,7 +116,7 @@ import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
 import DataTable from "./components/DataTable.vue";
 import { AuthService } from "./util/AuthService.ts";
 import {
-  formatAdresse,
+  formatBetreff,
   formatDate,
   formatVorgangsart,
   formatVorgangsstatus,
@@ -144,18 +143,13 @@ const columns = computed<TableColumn<VorgaengeDTO>[]>(() => [
     label: "Aktenzeichen",
   },
   {
-    key: "einrichtungsadresse",
-    label: "Einrichtungsadresse",
-    value: (vorgang) => vorgang.einrichtung?.name ?? "",
+    key: "betreff",
+    label: "Betreff",
+    value: (vorgang) => formatBetreff(vorgang),
   },
   {
     key: "vorgangsart",
     label: "Vorgangsart",
-  },
-  {
-    key: "kibigWebId",
-    label: "KiBiG.web-Nummer",
-    value: (vorgang) => vorgang.einrichtung?.kibigWebId ?? "",
   },
   {
     key: "status",
