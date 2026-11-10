@@ -45,3 +45,11 @@ export const ansprechpartnerRollen = new Map<string, string>([
   ],
   ["SONSTIGE", "Sonstige"],
 ]);
+
+export const einrichtungsartenLhm = new Map<string, string>([
+  ["KINDERKRIPPE", "Kinderkrippe"],
+  ["KINDERGARTEN", "Kindergarten"],
+  ["HORT", "Hort"],
+  ["HAUS_FUER_KINDER", "Haus für Kinder"],
+  ["TAGESHEIM", "Tagesheim",],
+]);

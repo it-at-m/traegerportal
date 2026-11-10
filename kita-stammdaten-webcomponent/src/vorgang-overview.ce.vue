@@ -9,32 +9,33 @@
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
-    <muc-card
-      id="vorgaenge-card"
-      title="Vorgänge"
-      :href="vorgangLink"
-      :disabled="!vorgangLink"
-      style="width: 100%"
-    >
-      <template #content>
-        <div>
-          <muc-icon icon="file" />
-          <b>{{ vorgangCount }} Vorgänge mit neuen Änderungen</b>
-        </div>
-        <muc-button
-          variant="ghost"
-          class="card-action-button"
-          >Alle Vorgänge<muc-icon icon="arrow-right"
+
+    <h2 class="vorgaenge-ueberschrift">
+      <span>
+        <muc-icon icon="file" /> Meine Vorgänge ({{ vorgangCount }})
+      </span>
+      <a :href="vorgangLink">
+        <muc-button variant="ghost"
+          >Alle Vorgänge anzeigen<muc-icon icon="arrow-right"
         /></muc-button>
-      </template>
-    </muc-card>
+      </a>
+    </h2>
+
+    <muc-card-container>
+      <vorgang-card
+        v-for="vorgang in vorgaenge?.slice(0, 3)"
+        :key="vorgang.aktenzeichen"
+        :vorgang="vorgang"
+        :vorgang-link="detailsUrl"
+      />
+    </muc-card-container>
   </div>
 </template>
 
 <script setup lang="ts">
 import {
   MucButton,
-  MucCard,
+  MucCardContainer,
   MucIcon,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
@@ -43,12 +44,19 @@ import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.
 import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
+import VorgangCard from "./components/VorgangCard.vue";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
+import VorgaengeDTO from "./types/VorgaengeDTO";
 
 const vorgangCount = ref<number>(0);
+const vorgaenge = ref<VorgaengeDTO[]>();
 
 const props = defineProps({
   listUrl: {
+    type: String,
+    default: null,
+  },
+  detailsUrl: {
     type: String,
     default: null,
   },
@@ -62,7 +70,7 @@ const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 const emit = defineEmits(["loadingError", "unknownTraeger"]);
 
-function loadVorgangCount() {
+function loadData() {
   console.debug("Loading Vorgang count...");
 
   if (!props.token) {
@@ -95,6 +103,38 @@ function loadVorgangCount() {
     .finally(() => {
       loading.value = false;
     });
+
+  service
+    .getVorgaenge(props.token)
+    .then((resp) => {
+      if (resp.ok) {
+        resp.json().then((response) => {
+          vorgaenge.value = response.content as VorgaengeDTO[];
+          // Assigne den Typen VorgaengeDTO, damit Methoden verwendet werden können
+          vorgaenge.value.forEach((item: VorgaengeDTO) => {
+            Object.setPrototypeOf(item, VorgaengeDTO.prototype);
+          });
+          // Sortiere neueste zuerst
+          vorgaenge.value.sort(
+            (a, b) => new Date(b.letzteAenderung).getTime() - new Date(a.letzteAenderung).getTime()
+          );
+          dataLoadingError.value = false;
+        });
+      } else {
+        resp.text().then((errBody) => {
+          dataLoadingError.value = true;
+          emit("loadingError");
+          throw Error(errBody);
+        });
+      }
+    })
+    .catch((error) => {
+      dataLoadingError.value = true;
+      console.debug(error);
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 
 const vorgangLink = computed(() => {
@@ -105,7 +145,7 @@ watch(
   () => props.token,
   (newToken, oldToken) => {
     if (newToken !== oldToken) {
-      loadVorgangCount();
+      loadData();
     }
   },
   { immediate: true }
@@ -116,6 +156,16 @@ watch(
 @import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
+
+.vorgaenge-ueberschrift {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
 
 .card-content {
   padding: 1rem !important;

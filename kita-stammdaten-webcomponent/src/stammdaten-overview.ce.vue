@@ -28,67 +28,68 @@
         </template>
       </muc-callout>
       <div v-else>
-        <div class="flex-container full-width">
-          <muc-callout
-            v-if="loadingErrorTraeger"
-            type="error"
-            style="width: 50%"
-          >
-            <template #content>
-              <p>
-                Die Trägerdaten können derzeit nicht geladen werden. Bitte
-                versuchen Sie es zu einem späteren Zeitpunkt erneut.
-              </p>
-            </template>
-          </muc-callout>
-          <traeger-overview-vue-component
-            v-else
-            class="flex-area full-width"
-            :details-url="traegerDetailsUrl"
-            :token="token"
-            @unknown-traeger="unknownTraeger = true"
-            @loading-error="loadingErrorTraeger = true"
-          />
-          <muc-callout
-            v-if="loadingErrorVorgaenge"
-            type="error"
-            style="width: 50%"
-          >
-            <template #content>
-              <p>
-                Die Vorgänge können derzeit nicht geladen werden. Bitte
-                versuchen Sie es zu einem späteren Zeitpunkt erneut.
-              </p>
-            </template>
-          </muc-callout>
-          <vorgang-overview-vue-component
-            v-else
-            class="flex-area full-width"
-            :list-url="vorgangListUrl"
-            :token="token"
-            @loading-error="loadingErrorVorgaenge = true"
-          />
-        </div>
         <muc-callout
-          v-if="loadingErrorEinrichtungen"
+          v-if="loadingErrorTraeger"
           type="error"
-          style="margin-top: 2.5rem"
         >
           <template #content>
             <p>
-              Die Einrichtungen können derzeit nicht geladen werden. Bitte
+              Die Trägerdaten können derzeit nicht geladen werden. Bitte
               versuchen Sie es zu einem späteren Zeitpunkt erneut.
             </p>
           </template>
         </muc-callout>
-        <einrichtung-overview-vue-component
+        <traeger-overview-vue-component
           v-else
-          :details-url="einrichtungDetailsUrl"
-          :page-size="pageSize"
-          :token="token"
           class="full-width"
-          @loading-error="loadingErrorEinrichtungen = true"
-        />
+          :details-url="traegerDetailsUrl"
+          :token="token"
+          @unknown-traeger="unknownTraeger = true"
+          @loading-error="loadingErrorTraeger = true"
+        >
+          <template #default>
+            <muc-callout
+              v-if="loadingErrorVorgaenge"
+              type="error"
+              style="width: 50%"
+            >
+              <template #content>
+                <p>
+                  Die Vorgänge können derzeit nicht geladen werden. Bitte
+                  versuchen Sie es zu einem späteren Zeitpunkt erneut.
+                </p>
+              </template>
+            </muc-callout>
+            <vorgang-overview-vue-component
+              v-else
+              class="full-width"
+              :list-url="vorgangListUrl"
+              :details-url="vorgangDetailsUrl"
+              :token="token"
+              @loading-error="loadingErrorVorgaenge = true"
+            />
+            <muc-callout
+              v-if="loadingErrorEinrichtungen"
+              type="error"
+              style="margin-top: 2.5rem"
+            >
+              <template #content>
+                <p>
+                  Die Einrichtungen können derzeit nicht geladen werden. Bitte
+                  versuchen Sie es zu einem späteren Zeitpunkt erneut.
+                </p>
+              </template>
+            </muc-callout>
+            <einrichtung-overview-vue-component
+              v-else
+              :details-url="einrichtungDetailsUrl"
+              :page-size="pageSize"
+              :token="token"
+              class="full-width"
+              @loading-error="loadingErrorEinrichtungen = true"
+            />
+          </template>
+        </traeger-overview-vue-component>
       </div>
     </div>
     <div v-else>
@@ -140,9 +141,13 @@ defineProps({
     type: String,
     default: null,
   },
+  vorgangDetailsUrl: {
+    type: String,
+    default: null,
+  },
   pageSize: {
     type: Number,
-    default: 5,
+    default: 6,
   },
 });
 </script>

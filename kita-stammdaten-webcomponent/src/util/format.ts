@@ -11,6 +11,7 @@ import {
   einrichtungsstatus,
   vorgangsart,
   vorgangsstatus,
+  einrichtungsartenLhm,
 } from "@/util/enums.ts";
 
 export const noValueFallback = "Keine Daten hinterlegt";
@@ -19,7 +20,15 @@ export function getPreceededStringOrEmptyString(stringParameter: string) {
   return stringParameter ? " " + stringParameter : "";
 }
 
-export function formatStrasse(adresse: AdresseDTO): string {
+export function formatEinrichtungsart(art: string | undefined): string {
+  if (!art) {
+    return noValueFallback;
+  }
+  const status = einrichtungsartenLhm.get(art) ?? ""; 
+  return status;
+}
+
+export function formatStrasse(adresse: AdresseDTO | null | undefined): string {
   if (!adresse) {
     return noValueFallback;
   } else {
@@ -33,7 +42,7 @@ export function formatStrasse(adresse: AdresseDTO): string {
   }
 }
 
-export function formatAdresse(adresse: AdresseDTO): string {
+export function formatAdresse(adresse: AdresseDTO | null | undefined): string {
   if (!adresse) {
     return noValueFallback;
   } else {
@@ -58,8 +67,8 @@ export function formatVorgangsstatus(dto: VorgangsstatusDTO) {
   return _status;
 }
 
-export function formatEinrichtungsstatus(dto: EinrichtungsstatusDTO) {
-  if (!dto.status) return noValueFallback;
+export function formatEinrichtungsstatus(dto: EinrichtungsstatusDTO | null | undefined) {
+  if (!dto || !dto.status) return noValueFallback;
   const _status = einrichtungsstatus.get(dto.status);
   if (!_status) return dto.status;
   return _status;
@@ -126,6 +135,10 @@ export function formatAnrede(value: string) {
   const _anrede = anrede.get(value);
   if (!_anrede) return value;
   return _anrede;
+}
+
+export function formatAnsprechpartnerFullname(value: AnsprechpartnerDTO) {
+  return `${value.vorname} ${value.nachname}`;
 }
 
 export function formatBetreff(dto?: VorgaengeDTO): string | undefined {

@@ -2,9 +2,11 @@ import type AdresseDTO from "./AdresseDTO";
 
 export class MerkmaleDTO {
   kibigWebId: string;
+  einrichtungsartLhm: string;
 
-  constructor(kibigWebId: string) {
+  constructor(kibigWebId: string, einrichtungsartLhm: string) {
     this.kibigWebId = kibigWebId;
+    this.einrichtungsartLhm = einrichtungsartLhm;
   }
 }
 

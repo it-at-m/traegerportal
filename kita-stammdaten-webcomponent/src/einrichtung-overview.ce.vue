@@ -9,51 +9,44 @@
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
-    <muc-accordion
-      v-if="einrichtungenVorhanden"
-      id="einrichtung-accordion"
-      multiple
-    >
-      <muc-accordion-item
-        v-for="einrichtung in currentPage"
-        :id="'einrichtung-accordion-item-' + einrichtung.id"
-        :key="einrichtung.id"
-        :header="formatEinrichtungTitle(einrichtung)"
-      >
-        <template #subtitle>
-          <a
-            :href="getDetailsUrl(einrichtung.id)"
-            @click.stop
-          >
-            <muc-button variant="ghost">
-              Einrichtungsdetails
-              <muc-icon icon="arrow-right" />
-            </muc-button>
-          </a>
-        </template>
-        <template #content>
-          <div>
-            <span class="einrichtung-attribute"
-              ><b>KIGIB.web-Nummer:</b>
-              {{ einrichtung.merkmale.kibigWebId }}</span
-            >
-          </div>
-          <div>
-            <span class="einrichtung-attribute"
-              ><b>Status:</b>
-              {{
-                formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus)
-              }}</span
-            >
-          </div>
-          <div>
-            <span class="einrichtung-attribute"
-              ><b>Adresse:</b> {{ formatAdresse(einrichtung.adresse) }}</span
-            >
-          </div>
-        </template>
-      </muc-accordion-item>
-    </muc-accordion>
+    <div v-if="einrichtungenVorhanden">
+      <h2 class="einrichtungen-ueberschrift"><muc-icon icon="home" />Meine Einrichtungen ({{ einrichtungen?.length }})</h2>
+      <muc-card-container id="einrichtung-container">
+        <muc-card
+          v-for="einrichtung in currentPage"
+          :id="'einrichtung-item-' + einrichtung.id"
+          :key="einrichtung.id"
+          :title="einrichtung.name"
+          :href="getDetailsUrl(einrichtung.id)"
+          :tagline="formatEinrichtungsart(einrichtung.merkmale?.einrichtungsartLhm)"
+        >
+          <template #content>
+            <div>
+              <b :class="`einrichtung-status ${einrichtung.aktuellGueltigerStatus?.status}`">
+                {{
+                  formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus)
+                }}
+              </b>
+            </div>
+            <div>
+              <span class="einrichtung-attribute"
+                ><b>Adresse:</b> {{ formatStrasse(einrichtung.adresse) }}</span
+              >
+            </div>
+            <div>
+              <span class="einrichtung-attribute"
+                ><b>KIGIB.web-Nummer:</b>
+                {{ einrichtung.merkmale.kibigWebId }}</span
+              >
+            </div>
+          </template>
+        </muc-card>
+      </muc-card-container>
+      <muc-button v-if="morePages" class="action-button" @click="displayMore">
+        Mehr anzeigen
+        <muc-icon icon="arrow-down" />
+      </muc-button>
+    </div>
     <muc-callout
       v-else
       type="info"
@@ -63,21 +56,15 @@
         <p>Keine Einrichtungen hinterlegt</p>
       </template>
     </muc-callout>
-    <simple-pagination
-      v-if="!!einrichtungen && multiplePages"
-      v-model="pageNumber"
-      :total-items="einrichtungen.length"
-      :items-per-page="pageSize"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
 import {
-  MucAccordion,
-  MucAccordionItem,
   MucButton,
   MucCallout,
+  MucCard,
+  MucCardContainer,
   MucIcon,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
@@ -86,13 +73,12 @@ import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.
 import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
-import SimplePagination from "@/components/SimplePagination.vue";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
 import {
-  formatAdresse,
+  formatStrasse,
+  formatEinrichtungsart,
   formatEinrichtungsstatus,
-  formatEinrichtungTitle,
 } from "./util/format";
 
 const props = defineProps({
@@ -140,7 +126,7 @@ function loadEinrichtungen() {
         resp.json().then((response) => {
           einrichtungen.value = response.content as EinrichtungDTO[];
           einrichtungen.value.sort((a, b) =>
-            formatEinrichtungTitle(a).localeCompare(formatEinrichtungTitle(b))
+            a.name.localeCompare(b.name)
           );
           dataLoadingError.value = false;
         });
@@ -163,17 +149,22 @@ function loadEinrichtungen() {
 }
 
 const pageNumber = ref<number>(0);
+
 const currentPage = computed(() => {
   return einrichtungen.value instanceof Array
     ? einrichtungen.value.slice(
-        pageNumber.value * props.pageSize,
+        0,
         (pageNumber.value + 1) * props.pageSize
       )
     : [];
 });
-const multiplePages = computed(() => {
+
+function displayMore() {
+  pageNumber.value++;
+}
+const morePages = computed(() => {
   if (einrichtungen.value) {
-    return props.pageSize < einrichtungen.value.length;
+    return props.pageSize * (pageNumber.value + 1) < einrichtungen.value.length;
   } else {
     return false;
   }
@@ -203,33 +194,41 @@ watch(
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
 
-.m-component-accordion {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  padding-right: 0 !important;
+.einrichtungen-ueberschrift {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 
-.m-component-accordion .container {
-  padding-left: 0;
-  padding-right: 0;
-  max-width: 100%;
-}
-
-.m-accordion__section {
-  border: solid 1px var(--color-neutrals-blue);
-  border-bottom: solid 5px var(--color-brand-main-blue) !important;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  margin-bottom: 16px;
-}
-
-.m-accordion__section-button {
-  padding-top: 16px;
-  padding-bottom: 16px;
+.action-button {
+  margin-top: 2rem;
 }
 
 .einrichtung-attribute {
   padding-right: 1rem;
+}
+
+.einrichtung-status {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  background-color: #d3d3d3;
+  border-radius: 12px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.einrichtung-status.VORPLANUNG {
+  background-color: #f9e79f; /* light yellow */
+}
+
+.einrichtung-status.VOR_BETRIEB {
+  background-color: #aed6f1; /* light blue */
+}
+
+.einrichtung-status.IN_BETRIEB {
+  background-color: #a9dfbf; /* light green */
 }
 
 .content-width {

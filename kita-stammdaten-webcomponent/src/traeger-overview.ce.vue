@@ -9,51 +9,41 @@
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
-    <muc-card
-      v-if="traeger"
-      id="traeger-card"
-      :title="textOrFallback(traeger.name)"
-      :href="hasLink ? traegerLink : undefined"
-      :disabled="!traeger"
-      style="width: 100%"
+    <muc-intro
+      :title="traeger?.name ?? ''"
+      tagline="Mein Bereich"
+      :divider="false"
     >
-      <template #content>
-        <div>
-          <muc-icon icon="account" /><b>Träger-ID:</b>
-          {{ textOrFallback(traeger?.id) }}
-        </div>
-        <div>
-          <muc-icon icon="home" /><b>Name:</b>
-          {{ textOrFallback(traeger?.name) }}
-        </div>
-        <div>
-          <muc-icon icon="web" /><b>Form:</b>
-          {{ textOrFallback(traeger?.traegerform) }}
-        </div>
-        <div>
-          <muc-icon icon="map-pin" /><b>Adresse:</b>
-          {{ formatAdresse(traeger.adresse) }}
-        </div>
-        <div>
-          <muc-icon icon="user-group" /><b>Team:</b>
-          {{ formatTraegerTeam(traeger.team) }}
-        </div>
-        <muc-button
-          variant="ghost"
-          class="card-action-button"
-        >
-          Trägerdetails<muc-icon icon="arrow-right" />
-        </muc-button>
+      <template #default>
+        <a :href="hasLink ? traegerLink : undefined">
+          <muc-button >
+            Trägerdaten ansehen
+            <muc-icon icon="arrow-right" />
+          </muc-button>
+        </a>
       </template>
-    </muc-card>
+    </muc-intro>
+    <slot />
+    <div
+      v-if="traeger?.team"
+      class="kita-intro"
+    >
+      <h2>Zuständiges RBS-Team</h2>
+      <div>
+        <muc-icon icon="account" /><b>{{ textOrFallback(traeger?.team?.name) }}</b>
+      </div>
+      <a :href="`mailto:${traeger?.team?.postfach}`">
+        <muc-icon icon="mail" /><b>{{ textOrFallback(traeger?.team?.postfach) }}</b>
+      </a>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import {
   MucButton,
-  MucCard,
   MucIcon,
+  MucIntro,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
@@ -63,11 +53,7 @@ import { computed, ref, watch } from "vue";
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import TraegerDTO from "@/types/TraegerDTO";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
-import {
-  formatAdresse,
-  formatTraegerTeam,
-  textOrFallback,
-} from "./util/format";
+import { textOrFallback } from "./util/format";
 
 const traeger = ref<TraegerDTO>();
 
@@ -149,21 +135,24 @@ watch(
 );
 </script>
 
-<style scoped>
+<style>
 @import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
 
-.card-content {
-  padding: 1rem !important;
+.m-intro {
+  --intro-bg-color: #E1D7FF !important;
+  background: var(--intro-bg-color);
+  margin-bottom: 0 !important;
 }
 
-.card-action-button {
-  float: right;
-  margin-bottom: 1rem;
-}
-
-#traeger-card {
-  position: relative;
+.kita-intro {
+  --intro-bg-color: #E1D7FF !important;
+  background: var(--intro-bg-color);
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  margin-top: 2rem;
 }
 </style>

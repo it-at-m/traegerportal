@@ -24,119 +24,140 @@
       v-else
       style="width: 100%"
     >
-      <h2 v-if="einrichtung">
-        {{ formatEinrichtungTitle(einrichtung) }} -
-        {{ formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus) }}
-      </h2>
-      <muc-link
-        label="Einrichtungsdaten ändern"
-        href="https://test81-k2.muenchen.de/intelliform/forms/integration/05/05/2277/index?eid=2"
-        prepend-icon="pencil"
-      />
-      <muc-card
-        v-if="einrichtung"
-        id="einrichtung-card-allgemein"
-        title="Allgemeines"
-        :disabled="false"
+      <muc-intro
+        :title="einrichtung?.name ?? ''"
+        :tagline="
+          formatEinrichtungsart(einrichtung?.merkmale?.einrichtungsartLhm)
+        "
+        :divider="false"
       >
-        <template #content>
-          <div><b>Name:</b> {{ textOrFallback(einrichtung.name) }}</div>
+        <template #default>
           <div>
-            <muc-icon icon="lock" /><b>Status:</b>
-            {{ formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus) }}
+            <b
+              :class="`einrichtung-status ${einrichtung?.aktuellGueltigerStatus?.status}`"
+            >
+              {{
+                formatEinrichtungsstatus(einrichtung?.aktuellGueltigerStatus)
+              }}
+            </b>
           </div>
-          <div>
-            <muc-icon icon="lock" /><b>KIGIB.web-Nummer:</b>
-            {{ textOrFallback(einrichtung.merkmale?.kibigWebId) }}
-          </div>
-          <div>
-            <muc-icon icon="lock" /><b>Adresse: </b
-            >{{ formatAdresse(einrichtung.adresse) }}
-          </div>
-          <div>
-            <muc-icon icon="lock" /><b>Stadtbezirk: </b
-            >{{ textOrFallback(einrichtung.stadtbezirk?.name) }}
-          </div>
-          <div>
-            <muc-icon icon="lock" /><b>Schulsprengel: </b
-            >{{ textOrFallback(einrichtung.schulsprengel?.schule) }}
-          </div>
+          <dl class="m-descriptionlist">
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">KIBIG.web-Nummer</dt>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(einrichtung?.merkmale?.kibigWebId) }}
+              </dd>
+            </div>
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">Adresse</dt>
+              <dd class="m-descriptionlist__description">
+                {{ formatAdresse(einrichtung?.adresse) }}
+              </dd>
+            </div>
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">Stadtbezirk</dt>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(einrichtung?.stadtbezirk?.name) }}
+              </dd>
+            </div>
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">Schulsprengel</dt>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(einrichtung?.schulsprengel?.schule) }}
+              </dd>
+            </div>
+          </dl>
+          <a :href="hasLink ? einrichtungBearbeitenLink : undefined">
+            <muc-button>
+              Trägerdaten ändern
+              <muc-icon icon="ext-link" />
+            </muc-button>
+          </a>
         </template>
-      </muc-card>
-      <muc-card
-        v-if="einrichtung"
-        id="einrichtung-card-kontakt"
-        title="Kontaktdaten der Einrichtung"
-        :disabled="false"
-      >
-        <template #content>
-          <div>
-            <b>Telefonnummer:</b>
-            {{ textOrFallback(einrichtung.kontaktdaten?.telefon) }}
+      </muc-intro>
+      <div class="page-body">
+        <h2>Kontaktdaten</h2>
+        <dl class="m-descriptionlist">
+          <div class="m-descriptionlist__group">
+            <dt class="m-descriptionlist__term">Telefonnummer</dt>
+            <dd class="m-descriptionlist__description">
+              {{ textOrFallback(einrichtung?.kontaktdaten?.telefon) }}
+            </dd>
           </div>
-          <div>
-            <b>Faxnummer:</b>
-            {{ textOrFallback(einrichtung.kontaktdaten?.fax) }}
+          <div class="m-descriptionlist__group">
+            <dt class="m-descriptionlist__term">Faxnummer</dt>
+            <dd class="m-descriptionlist__description">
+              {{ textOrFallback(einrichtung?.kontaktdaten?.fax) }}
+            </dd>
           </div>
-          <div>
-            <b>E-Mail-Adresse:</b>
-            {{ textOrFallback(einrichtung.kontaktdaten?.email) }}
+          <div class="m-descriptionlist__group">
+            <dt class="m-descriptionlist__term">E-Mail-Adresse</dt>
+            <dd class="m-descriptionlist__description">
+              {{ textOrFallback(einrichtung?.kontaktdaten?.email) }}
+            </dd>
           </div>
-          <div>
-            <b>Homepage:</b>
-            {{ textOrFallback(einrichtung.kontaktdaten?.homepageUrl) }}
+          <div class="m-descriptionlist__group">
+            <dt class="m-descriptionlist__term">Webseite</dt>
+            <dd class="m-descriptionlist__description">
+              {{ textOrFallback(einrichtung?.kontaktdaten?.homepageUrl) }}
+            </dd>
           </div>
-          <div>
-            <b>Notfall-Telefonnummer:</b>
-            {{ textOrFallback(einrichtung.kontaktdaten?.notfallTelefon) }}
+          <div class="m-descriptionlist__group">
+            <dt class="m-descriptionlist__term">Notfall-Telefonnummer</dt>
+            <dd class="m-descriptionlist__description">
+              {{ textOrFallback(einrichtung?.kontaktdaten?.notfallTelefon) }}
+            </dd>
           </div>
-        </template>
-      </muc-card>
-      <muc-card
-        v-if="einrichtung"
-        id="einrichtung-card-plaetze"
-        title="Platzstruktur der Einrichtung"
-        :disabled="true"
-      >
-        <template #content>
-          <div>
-            <muc-icon icon="lock" /><b>Gesamt: </b>
-            {{
-              textOrFallback(
-                einrichtung.aktuellGueltigeBetriebserlaubnis
-                  ?.aktuellGueltigeSollbelegung?.plaetzeGesamt
-              )
-            }}
+        </dl>
+        <h2>Platzstruktur</h2>
+        <dl class="m-descriptionlist">
+          <div class="m-descriptionlist__group">
+            <dt class="m-descriptionlist__term">Plätze Gesamt</dt>
+            <dd class="m-descriptionlist__description">
+              {{
+                textOrFallback(
+                  einrichtung?.aktuellGueltigeBetriebserlaubnis
+                    ?.aktuellGueltigeSollbelegung?.plaetzeGesamt
+                )
+              }}
+            </dd>
           </div>
-          <div>
-            <muc-icon icon="lock" /><b>Kinderkrippe: </b>
-            {{
-              textOrFallback(
-                einrichtung.aktuellGueltigeBetriebserlaubnis
-                  ?.aktuellGueltigeSollbelegung?.plaetzeKinderkrippe
-              )
-            }}
+          <div class="m-descriptionlist__group">
+            <dt class="m-descriptionlist__term">Plätze Kinderkrippe</dt>
+            <dd class="m-descriptionlist__description">
+              {{
+                textOrFallback(
+                  einrichtung?.aktuellGueltigeBetriebserlaubnis
+                    ?.aktuellGueltigeSollbelegung?.plaetzeKinderkrippe
+                )
+              }}
+            </dd>
           </div>
-          <div>
-            <muc-icon icon="lock" /><b>kindergarten: </b>
-            {{
-              textOrFallback(
-                einrichtung.aktuellGueltigeBetriebserlaubnis
-                  ?.aktuellGueltigeSollbelegung?.plaetzeKindergarten
-              )
-            }}
+          <div class="m-descriptionlist__group">
+            <dt class="m-descriptionlist__term">Plätze Kindergarten</dt>
+            <dd class="m-descriptionlist__description">
+              {{
+                textOrFallback(
+                  einrichtung?.aktuellGueltigeBetriebserlaubnis
+                    ?.aktuellGueltigeSollbelegung?.plaetzeKindergarten
+                )
+              }}
+            </dd>
           </div>
-          <div>
-            <muc-icon icon="lock" /><b>Hort: </b>
-            {{
-              textOrFallback(
-                einrichtung.aktuellGueltigeBetriebserlaubnis
-                  ?.aktuellGueltigeSollbelegung?.plaetzeHort
-              )
-            }}
+          <div class="m-descriptionlist__group">
+            <dt class="m-descriptionlist__term">Plätze Hort</dt>
+            <dd class="m-descriptionlist__description">
+              {{
+                textOrFallback(
+                  einrichtung?.aktuellGueltigeBetriebserlaubnis
+                    ?.aktuellGueltigeSollbelegung?.plaetzeHort
+                )
+              }}
+            </dd>
           </div>
-        </template>
-      </muc-card>
+        </dl>
+        <muc-divider />
+      </div>
     </div>
   </div>
   <div v-else>
@@ -150,25 +171,33 @@
 
 <script setup lang="ts">
 import {
+  MucButton,
   MucCallout,
-  MucCard,
   MucIcon,
-  MucLink,
+  MucIntro,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
+import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
 import { AuthService } from "./util/AuthService.ts";
 import {
   formatAdresse,
+  formatEinrichtungsart,
   formatEinrichtungsstatus,
-  formatEinrichtungTitle,
   textOrFallback,
 } from "./util/format";
+
+const props = defineProps({
+  bearbeitenUrl: {
+    type: String,
+    default: null,
+  },
+});
 
 const { token, loggedIn } = new AuthService();
 
@@ -232,6 +261,14 @@ watch(
   },
   { immediate: true }
 );
+
+const einrichtungBearbeitenLink = computed(() => {
+  return getUrlWithOriginAsBaseAndDefaultParams(props.bearbeitenUrl);
+});
+
+const hasLink = computed(() => {
+  return props.bearbeitenUrl && einrichtung.value;
+});
 </script>
 
 <style>
@@ -239,7 +276,62 @@ watch(
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
 
-.card {
+.m-intro {
+  --intro-bg-color: #e1d7ff;
+  background: var(--intro-bg-color);
+  margin-bottom: 0 !important;
+}
+
+.kita-intro {
+  --intro-bg-color: #e1d7ff;
+  background: var(--intro-bg-color);
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  margin-top: 2rem;
+}
+
+.page-body {
+  margin-left: 1.5rem;
+  margin-top: 1rem;
+}
+
+.m-descriptionlist {
   margin-bottom: 1rem;
+}
+
+.muc-divider {
+  margin-bottom: 1rem;
+}
+
+h2 {
+  padding-bottom: 1rem;
+  align-items: center;
+  gap: 2rem;
+  display: flex;
+}
+
+.einrichtung-status {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  background-color: #d3d3d3;
+  border-radius: 12px;
+  white-space: nowrap;
+  user-select: none;
+  border: 1px solid;
+  margin-bottom: 1rem;
+}
+
+.einrichtung-status.VORPLANUNG {
+  background-color: #f9e79f; /* light yellow */
+}
+
+.einrichtung-status.VOR_BETRIEB {
+  background-color: #aed6f1; /* light blue */
+}
+
+.einrichtung-status.IN_BETRIEB {
+  background-color: #a9dfbf; /* light green */
 }
 </style>
