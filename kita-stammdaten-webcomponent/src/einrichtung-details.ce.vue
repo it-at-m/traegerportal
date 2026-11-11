@@ -24,14 +24,90 @@
       v-else
       style="width: 100%"
     >
-      <muc-intro
-        :title="einrichtung?.name ?? ''"
-        :tagline="
-          formatEinrichtungsart(einrichtung?.merkmale?.einrichtungsartLhm)
-        "
-        :divider="false"
-      >
-        <template #default>
+      <traegerportal-page :title="einrichtung?.name ?? ''" :tagline="formatEinrichtungsart(einrichtung?.merkmale?.einrichtungsartLhm)">
+        <template #content>
+          <h2>Kontaktdaten</h2>
+          <dl class="m-descriptionlist">
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">Telefonnummer</dt>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(einrichtung?.kontaktdaten?.telefon) }}
+              </dd>
+            </div>
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">Faxnummer</dt>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(einrichtung?.kontaktdaten?.fax) }}
+              </dd>
+            </div>
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">E-Mail-Adresse</dt>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(einrichtung?.kontaktdaten?.email) }}
+              </dd>
+            </div>
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">Webseite</dt>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(einrichtung?.kontaktdaten?.homepageUrl) }}
+              </dd>
+            </div>
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">Notfall-Telefonnummer</dt>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(einrichtung?.kontaktdaten?.notfallTelefon) }}
+              </dd>
+            </div>
+          </dl>
+          <h2>Platzstruktur</h2>
+          <dl class="m-descriptionlist">
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">Plätze Gesamt</dt>
+              <dd class="m-descriptionlist__description">
+                {{
+                  textOrFallback(
+                    einrichtung?.aktuellGueltigeBetriebserlaubnis
+                      ?.aktuellGueltigeSollbelegung?.plaetzeGesamt
+                  )
+                }}
+              </dd>
+            </div>
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">Plätze Kinderkrippe</dt>
+              <dd class="m-descriptionlist__description">
+                {{
+                  textOrFallback(
+                    einrichtung?.aktuellGueltigeBetriebserlaubnis
+                      ?.aktuellGueltigeSollbelegung?.plaetzeKinderkrippe
+                  )
+                }}
+              </dd>
+            </div>
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">Plätze Kindergarten</dt>
+              <dd class="m-descriptionlist__description">
+                {{
+                  textOrFallback(
+                    einrichtung?.aktuellGueltigeBetriebserlaubnis
+                      ?.aktuellGueltigeSollbelegung?.plaetzeKindergarten
+                  )
+                }}
+              </dd>
+            </div>
+            <div class="m-descriptionlist__group">
+              <dt class="m-descriptionlist__term">Plätze Hort</dt>
+              <dd class="m-descriptionlist__description">
+                {{
+                  textOrFallback(
+                    einrichtung?.aktuellGueltigeBetriebserlaubnis
+                      ?.aktuellGueltigeSollbelegung?.plaetzeHort
+                  )
+                }}
+              </dd>
+            </div>
+          </dl>
+        </template>
+        <template #intro-content>
           <div>
             <b
               :class="`einrichtung-status ${einrichtung?.aktuellGueltigerStatus?.status}`"
@@ -74,90 +150,7 @@
             </muc-button>
           </a>
         </template>
-      </muc-intro>
-      <div class="page-body">
-        <h2>Kontaktdaten</h2>
-        <dl class="m-descriptionlist">
-          <div class="m-descriptionlist__group">
-            <dt class="m-descriptionlist__term">Telefonnummer</dt>
-            <dd class="m-descriptionlist__description">
-              {{ textOrFallback(einrichtung?.kontaktdaten?.telefon) }}
-            </dd>
-          </div>
-          <div class="m-descriptionlist__group">
-            <dt class="m-descriptionlist__term">Faxnummer</dt>
-            <dd class="m-descriptionlist__description">
-              {{ textOrFallback(einrichtung?.kontaktdaten?.fax) }}
-            </dd>
-          </div>
-          <div class="m-descriptionlist__group">
-            <dt class="m-descriptionlist__term">E-Mail-Adresse</dt>
-            <dd class="m-descriptionlist__description">
-              {{ textOrFallback(einrichtung?.kontaktdaten?.email) }}
-            </dd>
-          </div>
-          <div class="m-descriptionlist__group">
-            <dt class="m-descriptionlist__term">Webseite</dt>
-            <dd class="m-descriptionlist__description">
-              {{ textOrFallback(einrichtung?.kontaktdaten?.homepageUrl) }}
-            </dd>
-          </div>
-          <div class="m-descriptionlist__group">
-            <dt class="m-descriptionlist__term">Notfall-Telefonnummer</dt>
-            <dd class="m-descriptionlist__description">
-              {{ textOrFallback(einrichtung?.kontaktdaten?.notfallTelefon) }}
-            </dd>
-          </div>
-        </dl>
-        <h2>Platzstruktur</h2>
-        <dl class="m-descriptionlist">
-          <div class="m-descriptionlist__group">
-            <dt class="m-descriptionlist__term">Plätze Gesamt</dt>
-            <dd class="m-descriptionlist__description">
-              {{
-                textOrFallback(
-                  einrichtung?.aktuellGueltigeBetriebserlaubnis
-                    ?.aktuellGueltigeSollbelegung?.plaetzeGesamt
-                )
-              }}
-            </dd>
-          </div>
-          <div class="m-descriptionlist__group">
-            <dt class="m-descriptionlist__term">Plätze Kinderkrippe</dt>
-            <dd class="m-descriptionlist__description">
-              {{
-                textOrFallback(
-                  einrichtung?.aktuellGueltigeBetriebserlaubnis
-                    ?.aktuellGueltigeSollbelegung?.plaetzeKinderkrippe
-                )
-              }}
-            </dd>
-          </div>
-          <div class="m-descriptionlist__group">
-            <dt class="m-descriptionlist__term">Plätze Kindergarten</dt>
-            <dd class="m-descriptionlist__description">
-              {{
-                textOrFallback(
-                  einrichtung?.aktuellGueltigeBetriebserlaubnis
-                    ?.aktuellGueltigeSollbelegung?.plaetzeKindergarten
-                )
-              }}
-            </dd>
-          </div>
-          <div class="m-descriptionlist__group">
-            <dt class="m-descriptionlist__term">Plätze Hort</dt>
-            <dd class="m-descriptionlist__description">
-              {{
-                textOrFallback(
-                  einrichtung?.aktuellGueltigeBetriebserlaubnis
-                    ?.aktuellGueltigeSollbelegung?.plaetzeHort
-                )
-              }}
-            </dd>
-          </div>
-        </dl>
-        <muc-divider />
-      </div>
+      </traegerportal-page>
     </div>
   </div>
   <div v-else>
@@ -170,11 +163,12 @@
 </template>
 
 <script setup lang="ts">
+import TraegerportalPage from "./components/TraegerportalPage.vue";
+
 import {
   MucButton,
   MucCallout,
   MucIcon,
-  MucIntro,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
@@ -333,5 +327,13 @@ h2 {
 
 .einrichtung-status.IN_BETRIEB {
   background-color: #a9dfbf; /* light green */
+}
+
+.m-intro-summary-text__text p {
+  margin-bottom: 0;
+}
+
+.m-intro-vertical__tagline {
+  margin-bottom: 0;
 }
 </style>

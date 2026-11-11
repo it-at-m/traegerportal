@@ -4,37 +4,55 @@
     size="200px"
     text="Lade Träger ..."
   />
-  <div v-else-if="!dataLoadingError">
+  <div v-else>
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
     <muc-intro
-      :title="traeger?.name ?? ''"
+      :title="traeger?.name ?? 'Mein Träger'"
       tagline="Mein Bereich"
       :divider="false"
     >
       <template #default>
+        <muc-callout v-if="dataLoadingError">
+          <template #content>
+            <p>
+              Die Trägerdaten können derzeit nicht geladen werden. Bitte
+              versuchen Sie es zu einem späteren Zeitpunkt erneut.
+            </p>
+          </template>
+        </muc-callout>
         <a :href="hasLink ? traegerLink : undefined">
-          <muc-button >
+          <muc-button>
             Trägerdaten ansehen
             <muc-icon icon="arrow-right" />
           </muc-button>
         </a>
       </template>
     </muc-intro>
-    <slot />
-    <div
-      v-if="traeger?.team"
-      class="kita-intro"
-    >
-      <h2>Zuständiges RBS-Team</h2>
-      <div>
-        <muc-icon icon="account" /><b>{{ textOrFallback(traeger?.team?.name) }}</b>
+    <div class="page-body">
+      <div class="body-content container">
+      <slot />
       </div>
-      <a :href="`mailto:${traeger?.team?.postfach}`">
-        <muc-icon icon="mail" /><b>{{ textOrFallback(traeger?.team?.postfach) }}</b>
-      </a>
+    </div>
+    <div
+      v-if="traeger?.team && !dataLoadingError"
+      class="kita-banner"
+    >
+      <div class="kita-banner-content container">
+        <h2>Zuständiges RBS-Team</h2>
+        <div>
+          <muc-icon icon="account" /><b>{{
+            textOrFallback(traeger?.team?.name)
+          }}</b>
+        </div>
+        <a :href="`mailto:${traeger?.team?.postfach}`">
+          <muc-icon icon="mail" /><b>{{
+            textOrFallback(traeger?.team?.postfach)
+          }}</b>
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -42,6 +60,7 @@
 <script setup lang="ts">
 import {
   MucButton,
+  MucCallout,
   MucIcon,
   MucIntro,
   MucSpinner,
@@ -55,8 +74,6 @@ import TraegerDTO from "@/types/TraegerDTO";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
 import { textOrFallback } from "./util/format";
 
-const traeger = ref<TraegerDTO>();
-
 const props = defineProps({
   detailsUrl: {
     type: String,
@@ -67,6 +84,8 @@ const props = defineProps({
     default: null,
   },
 });
+
+const traeger = ref<TraegerDTO>();
 
 const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
@@ -141,18 +160,32 @@ watch(
 @import "@muenchen/muc-patternlab-vue/style.css";
 
 .m-intro {
-  --intro-bg-color: #E1D7FF !important;
+  --intro-bg-color: #e1d7ff !important;
   background: var(--intro-bg-color);
   margin-bottom: 0 !important;
 }
 
-.kita-intro {
-  --intro-bg-color: #E1D7FF !important;
+.kita-banner {
+  --intro-bg-color: #e1d7ff !important;
   background: var(--intro-bg-color);
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
   padding-top: 3rem;
   padding-bottom: 3rem;
   margin-top: 2rem;
+  text-align: center;
+}
+
+.kita-banner-content {
+  display: inline-block;
+  text-align: left;
+}
+
+.body-content {
+  display: inline-block;
+  text-align: left;
+}
+
+.page-body {
+  margin-top: 1rem;
+  text-align: center;
 }
 </style>

@@ -1,116 +1,116 @@
 <template>
-  <div class="bordered-area">
-    <!-- eslint-disable-next-line vue/no-v-html -->
-    <div v-html="mucIconsSprite" />
-    <!-- eslint-disable-next-line vue/no-v-html -->
-    <div v-html="customIconsSprite" />
-    <div v-if="loggedIn">
-      <muc-callout
-        v-if="unknownTraeger"
-        type="info"
-      >
-        <template #content>
-          <p>
-            Ihr Träger ist bei der Landeshauptstadt München noch nicht gemeldet.
-            Bitte registrieren Sie sich mit diesem Unternehmenskonto.
-          </p>
-        </template>
-      </muc-callout>
-      <muc-callout
-        v-if="loadingErrorAll"
-        type="error"
-      >
-        <template #content>
-          <p>
-            Die Schnittstelle ist nicht erreichbar. Bitte versuchen Sie es zu
-            einem späteren Zeitpunkt erneut.
-          </p>
-        </template>
-      </muc-callout>
-      <div v-else>
-        <muc-callout
-          v-if="loadingErrorTraeger"
-          type="error"
-        >
-          <template #content>
-            <p>
-              Die Trägerdaten können derzeit nicht geladen werden. Bitte
-              versuchen Sie es zu einem späteren Zeitpunkt erneut.
-            </p>
-          </template>
-        </muc-callout>
-        <traeger-overview-vue-component
-          v-else
-          class="full-width"
-          :details-url="traegerDetailsUrl"
-          :token="token"
-          @unknown-traeger="unknownTraeger = true"
-          @loading-error="loadingErrorTraeger = true"
-        >
-          <template #default>
-            <muc-callout
-              v-if="loadingErrorVorgaenge"
-              type="error"
-              style="width: 50%"
-            >
-              <template #content>
-                <p>
-                  Die Vorgänge können derzeit nicht geladen werden. Bitte
-                  versuchen Sie es zu einem späteren Zeitpunkt erneut.
-                </p>
-              </template>
-            </muc-callout>
-            <vorgang-overview-vue-component
-              v-else
-              class="full-width"
-              :list-url="vorgangListUrl"
-              :details-url="vorgangDetailsUrl"
-              :token="token"
-              @loading-error="loadingErrorVorgaenge = true"
-            />
-            <muc-callout
-              v-if="loadingErrorEinrichtungen"
-              type="error"
-              style="margin-top: 2.5rem"
-            >
-              <template #content>
-                <p>
-                  Die Einrichtungen können derzeit nicht geladen werden. Bitte
-                  versuchen Sie es zu einem späteren Zeitpunkt erneut.
-                </p>
-              </template>
-            </muc-callout>
-            <einrichtung-overview-vue-component
-              v-else
-              :details-url="einrichtungDetailsUrl"
-              :page-size="pageSize"
-              :token="token"
-              class="full-width"
-              @loading-error="loadingErrorEinrichtungen = true"
-            />
-          </template>
-        </traeger-overview-vue-component>
-      </div>
-    </div>
+  <!-- eslint-disable-next-line vue/no-v-html -->
+  <div v-html="mucIconsSprite" />
+  <!-- eslint-disable-next-line vue/no-v-html -->
+  <div v-html="customIconsSprite" />
+  <div v-if="loggedIn">
+    <muc-callout
+      v-if="unknownTraeger"
+      type="info"
+    >
+      <template #content>
+        <p>
+          Ihr Träger ist bei der Landeshauptstadt München noch nicht gemeldet.
+          Bitte registrieren Sie sich mit diesem Unternehmenskonto.
+        </p>
+      </template>
+    </muc-callout>
+    <muc-callout
+      v-if="loadingErrorAll"
+      type="error"
+    >
+      <template #content>
+        <p>
+          Die Schnittstelle ist nicht erreichbar. Bitte versuchen Sie es zu
+          einem späteren Zeitpunkt erneut.
+        </p>
+      </template>
+    </muc-callout>
     <div v-else>
-      <muc-callout type="info">
-        <template #content>
-          <p>Um diese Inhalte anzuzeigen, müssen Sie sich anmelden.</p>
+      <traeger-page
+        :token="token"
+        @unknown-traeger="unknownTraeger = true"
+        @loading-error="loadingErrorTraeger = true">
+        <template #intro-content="{ traeger }">
+          <muc-callout v-if="loadingErrorTraeger">
+            <template #content>
+              <p>
+                Die Trägerdaten können derzeit nicht geladen werden. Bitte
+                versuchen Sie es zu einem späteren Zeitpunkt erneut.
+              </p>
+            </template>
+          </muc-callout>
+          <a :href="traegerDetailsUrl">
+            <muc-button>
+              Trägerdaten ansehen
+              <muc-icon icon="arrow-right" />
+            </muc-button>
+          </a>
         </template>
-      </muc-callout>
+        <template #content="{ traeger }">
+          <muc-callout
+            v-if="loadingErrorVorgaenge"
+            type="error"
+            style="width: 50%"
+          >
+            <template #content>
+              <p>
+                Die Vorgänge können derzeit nicht geladen werden. Bitte
+                versuchen Sie es zu einem späteren Zeitpunkt erneut.
+              </p>
+            </template>
+          </muc-callout>
+          <vorgang-overview-vue-component
+            v-else
+            class="full-width"
+            :list-url="vorgangListUrl"
+            :details-url="vorgangDetailsUrl"
+            :token="token"
+            @loading-error="loadingErrorVorgaenge = true"
+          />
+          <muc-callout
+            v-if="loadingErrorEinrichtungen"
+            type="error"
+            style="margin-top: 2.5rem"
+          >
+            <template #content>
+              <p>
+                Die Einrichtungen können derzeit nicht geladen werden. Bitte
+                versuchen Sie es zu einem späteren Zeitpunkt erneut.
+              </p>
+            </template>
+          </muc-callout>
+          <einrichtung-overview-vue-component
+            v-else
+            :details-url="einrichtungDetailsUrl"
+            :page-size="pageSize"
+            :token="token"
+            class="full-width"
+            @loading-error="loadingErrorEinrichtungen = true"
+          />
+        </template>
+      </traeger-page>
     </div>
+  </div>
+  <div v-else>
+    <muc-callout type="info">
+      <template #content>
+        <p>Um diese Inhalte anzuzeigen, müssen Sie sich anmelden.</p>
+      </template>
+    </muc-callout>
   </div>
 </template>
 
 <script setup lang="ts">
-import { MucCallout } from "@muenchen/muc-patternlab-vue";
+import TraegerPage from "./components/TraegerPage.vue";
+
+import { MucCallout, MucIcon, MucButton } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref } from "vue";
 
 import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
-import TraegerOverviewVueComponent from "@/traeger-overview.ce.vue";
-import VorgangOverviewVueComponent from "@/vorgang-overview.ce.vue";
+import vorgangOverviewVueComponent from "./vorgang-overview.ce.vue";
 import { AuthService } from "./util/AuthService.ts";
 
 const { token, loggedIn } = new AuthService();
@@ -157,6 +157,10 @@ defineProps({
 @import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
 @import "@muenchen/muc-patternlab-vue/style.css";
 
+.m-intro {
+  margin-bottom: 0 !important;
+}
+
 .m-callout {
   padding-top: 1.5rem;
 }
@@ -179,12 +183,15 @@ defineProps({
   justify-content: left;
 }
 
-.bordered-area {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
 .bottom-area {
   width: 100%;
+}
+
+.m-intro-summary-text__text p {
+  margin-bottom: 0;
+}
+
+.m-intro-vertical__tagline {
+  margin-bottom: 0;
 }
 </style>

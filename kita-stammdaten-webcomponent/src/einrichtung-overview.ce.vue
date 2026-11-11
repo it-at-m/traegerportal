@@ -162,6 +162,7 @@ const currentPage = computed(() => {
 function displayMore() {
   pageNumber.value++;
 }
+
 const morePages = computed(() => {
   if (einrichtungen.value) {
     return props.pageSize * (pageNumber.value + 1) < einrichtungen.value.length;

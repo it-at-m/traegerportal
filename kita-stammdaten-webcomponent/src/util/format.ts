@@ -22,7 +22,7 @@ export function getPreceededStringOrEmptyString(stringParameter: string) {
 
 export function formatEinrichtungsart(art: string | undefined): string {
   if (!art) {
-    return noValueFallback;
+    return "";
   }
   const status = einrichtungsartenLhm.get(art) ?? ""; 
   return status;
