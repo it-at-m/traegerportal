@@ -97,6 +97,10 @@
                 <template #content>
                   <dl class="m-descriptionlist">
                     <div class="m-descriptionlist__group">
+                      <dt class="m-descriptionlist__term">Anrede</dt>
+                      <dd class="m-descriptionlist__description">{{ formatAnrede(ansprechpartner.anrede) }}</dd>
+                    </div>
+                    <div class="m-descriptionlist__group">
                       <dt class="m-descriptionlist__term">Telefonnummer</dt>
                       <dd class="m-descriptionlist__description">{{ textOrFallback(ansprechpartner.telefon) }}</dd>
                     </div>
@@ -107,10 +111,6 @@
                     <div class="m-descriptionlist__group">
                       <dt class="m-descriptionlist__term">Rollen</dt>
                       <dd class="m-descriptionlist__description">{{ formatTraegerRollen(ansprechpartner) }}</dd>
-                    </div>
-                    <div class="m-descriptionlist__group">
-                      <dt class="m-descriptionlist__term">Anrede</dt>
-                      <dd class="m-descriptionlist__description">{{ formatAnrede(ansprechpartner.anrede) }}</dd>
                     </div>
                     <a :href="hasLink ? traegerBearbeitenLink : undefined">
                       <muc-button>

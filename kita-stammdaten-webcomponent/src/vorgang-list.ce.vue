@@ -22,7 +22,7 @@
       v-else
       style="width: 100%"
     >
-      <traeger-page tagline="Meine Vorgänge" :token="token" :include-footer="false">
+      <traeger-page tagline="Meine Vorgänge" :token="token" :include-footer="true">
         <template #content>
           <h2 class="vorgaenge-ueberschrift"><muc-icon icon="file" />Meine Vorgänge ({{ vorgaenge?.length }})</h2>
           <muc-input
@@ -87,7 +87,7 @@ const props = defineProps({
   },
   pageSize: {
     type: Number,
-    default: 9,
+    default: 6,
   },
 });
 

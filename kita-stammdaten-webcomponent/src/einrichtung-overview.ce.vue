@@ -218,6 +218,7 @@ watch(
   border-radius: 12px;
   white-space: nowrap;
   user-select: none;
+  margin-bottom: 0.5rem;
 }
 
 .einrichtung-status.VORPLANUNG {

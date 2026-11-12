@@ -12,7 +12,7 @@
 
     <h2 class="vorgaenge-ueberschrift">
       <span>
-        <muc-icon icon="file" /> Meine Vorgänge ({{ vorgangCount }})
+        <muc-icon icon="file" /> Meine Vorgänge ({{ vorgangCount }}/{{vorgaenge?.length}})
       </span>
       <a :href="vorgangLink">
         <muc-button variant="ghost"
@@ -44,8 +44,8 @@ import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.
 import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
-import VorgangCard from "./components/VorgangCard.vue";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
+import VorgangCard from "./components/VorgangCard.vue";
 import VorgaengeDTO from "./types/VorgaengeDTO";
 
 const vorgangCount = ref<number>(0);
@@ -115,8 +115,13 @@ function loadData() {
             Object.setPrototypeOf(item, VorgaengeDTO.prototype);
           });
           // Sortiere neueste zuerst
+          // wenn ungelesen werden 20 Jahre abgezogen
           vorgaenge.value.sort(
-            (a, b) => new Date(b.letzteAenderung).getTime() - new Date(a.letzteAenderung).getTime()
+            (a, b) =>
+              new Date(b.letzteAenderung).getTime() -
+              (b.changedSinceLastExternalRead ? 0 : 630720000000) -
+              (new Date(a.letzteAenderung).getTime() -
+                (a.changedSinceLastExternalRead ? 0 : 630720000000))
           );
           dataLoadingError.value = false;
         });

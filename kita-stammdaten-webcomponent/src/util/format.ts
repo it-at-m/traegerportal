@@ -14,7 +14,7 @@ import {
   einrichtungsartenLhm,
 } from "@/util/enums.ts";
 
-export const noValueFallback = "Keine Daten hinterlegt";
+export const noValueFallback = "Keine Daten";
 
 export function getPreceededStringOrEmptyString(stringParameter: string) {
   return stringParameter ? " " + stringParameter : "";

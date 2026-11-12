@@ -59,6 +59,7 @@
               </dd>
             </div>
           </dl>
+          <muc-divider />
           <h2>Platzstruktur</h2>
           <dl class="m-descriptionlist">
             <div class="m-descriptionlist__group">
@@ -145,7 +146,7 @@
           </dl>
           <a :href="hasLink ? einrichtungBearbeitenLink : undefined">
             <muc-button>
-              Trägerdaten ändern
+              Einrichtungsdaten ändern
               <muc-icon icon="ext-link" />
             </muc-button>
           </a>
@@ -168,6 +169,7 @@ import TraegerportalPage from "./components/TraegerportalPage.vue";
 import {
   MucButton,
   MucCallout,
+  MucDivider,
   MucIcon,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";

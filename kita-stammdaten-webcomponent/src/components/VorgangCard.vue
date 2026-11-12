@@ -8,23 +8,26 @@
     :disabled="false"
   >
     <template #content>
-      <div class="statuszeile" :title="vorgang.changedSinceLastExternalRead ? 'Es liegen neue Änderungen vor' : ''">
-        <b class="vorgang-status">
+      <div class="statuszeile">
+        <b class="chip vorgang-status">
           {{ formatVorgangsstatus(vorgang.status) }}
         </b>
-        <muc-icon v-if="vorgang.changedSinceLastExternalRead" icon="bell" />
+
+        <b v-if="vorgang.changedSinceLastExternalRead" class="chip vorgang-notification">
+          ungelesen
+        </b>
       </div>
       <div>
         <span> <b>Aktenzeichen:</b> {{ vorgang.aktenzeichen }} </span>
       </div>
-      <div>
-        <span>
-          <b>Letzte Änderung:</b> {{ formatDate(vorgang.letzteAenderung) }}
-        </span>
-      </div>
       <div v-if="vorgang.vorgangsart=='EINRICHTUNGSDATEN_AENDERN'">
         <span>
           <b>Einrichtungsadresse:</b> {{ formatStrasse(vorgang.einrichtung?.adresse) }}
+        </span>
+      </div>
+      <div>
+        <span>
+          <b>Letzte Änderung:</b> {{ formatDate(vorgang.letzteAenderung) }}
         </span>
       </div>
     </template>
@@ -34,7 +37,6 @@
 <script setup lang="ts" generic="T extends object">
 
 import {
-  MucIcon,
   MucCard
 } from "@muenchen/muc-patternlab-vue";
 import type VorgaengeDTO from "@/types/VorgaengeDTO";
@@ -61,7 +63,7 @@ const fullVorgangLink = computed(() => {
 </script>
 
 <style scoped>
-.vorgang-status {
+.chip {
   display: inline-block;
   padding: 0.25em 0.75em;
   background-color: #d3d3d3;
@@ -70,10 +72,19 @@ const fullVorgangLink = computed(() => {
   user-select: none;
 }
 
+.vorgang-status {
+  background-color: #d3d3d3;
+}
+
+.vorgang-notification {
+  background-color: #edae7a;
+}
 .statuszeile {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
 }
 </style>
 ```
