@@ -22,6 +22,7 @@
           :key="einrichtung.id"
           :title="einrichtung.name"
           :href="getDetailsUrl(einrichtung.id)"
+          :disabled="false"
           :tagline="
             formatEinrichtungsart(einrichtung.merkmale?.einrichtungsartLhm)
           "

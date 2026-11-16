@@ -10,6 +10,7 @@
           :key="elementIndex"
           title="Lorem Ipsum"
           tagline="Dolor"
+          :disabled="false"
           href="https://www.muenchen.de"
         >
           <template #content>

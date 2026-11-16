@@ -4,13 +4,8 @@
   <!-- eslint-disable-next-line vue/no-v-html -->
   <div v-html="customIconsSprite" />
   <div v-if="loggedIn">
-    <muc-spinner
-      v-if="loading"
-      size="200px"
-      text="Lade Träger ..."
-    />
     <muc-callout
-      v-else-if="dataLoadingError"
+      v-if="dataLoadingError"
       type="error"
     >
       <template #content>
@@ -89,7 +84,7 @@
           </dl>
           <muc-divider />
           <h2>Ansprechpersonen</h2>
-          <a :href="hasLink ? traegerBearbeitenLink : undefined">
+          <a :href="traegerBearbeitenLink">
             <muc-button>
               Neue Ansprechperson erfassen
               <muc-icon icon="ext-link" />
@@ -100,15 +95,12 @@
             multiple
             :detail-page-margin="false"
           >
-            <template #default="{ onOpen, onClose, activeItems }">
+            <template #default>
               <muc-accordion-item
                 v-for="ansprechpartner in traeger?.ansprechpartner"
                 id="accordion-item-1"
                 :key="ansprechpartner.id"
                 :header="formatAnsprechpartnerFullname(ansprechpartner)"
-                :active-items="activeItems"
-                @open="onOpen"
-                @close="onClose"
               >
                 <template #content>
                   <dl class="m-descriptionlist">
@@ -136,7 +128,7 @@
                         {{ formatTraegerRollen(ansprechpartner) }}
                       </dd>
                     </div>
-                    <a :href="hasLink ? traegerBearbeitenLink : undefined">
+                    <a :href="traegerBearbeitenLink">
                       <muc-button>
                         Ansprechperson bearbeiten
                         <muc-icon icon="ext-link" />
@@ -168,11 +160,10 @@ import {
   MucCallout,
   MucDivider,
   MucIcon,
-  MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
 import TraegerPage from "./components/TraegerPage.vue";
@@ -193,6 +184,7 @@ const props = defineProps({
 });
 
 const { token, loggedIn } = new AuthService();
+const dataLoadingError = ref<boolean>();
 
 const traegerBearbeitenLink = computed(() => {
   return getUrlWithOriginAsBaseAndDefaultParams(props.bearbeitenUrl);
