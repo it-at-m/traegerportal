@@ -24,7 +24,12 @@
       v-else
       style="width: 100%"
     >
-      <traegerportal-page :title="einrichtung?.name ?? ''" :tagline="formatEinrichtungsart(einrichtung?.merkmale?.einrichtungsartLhm)">
+      <traegerportal-page
+        :title="einrichtung?.name ?? ''"
+        :tagline="
+          formatEinrichtungsart(einrichtung?.merkmale?.einrichtungsartLhm)
+        "
+      >
         <template #content>
           <h2>Kontaktdaten</h2>
           <dl class="m-descriptionlist">
@@ -164,8 +169,6 @@
 </template>
 
 <script setup lang="ts">
-import TraegerportalPage from "./components/TraegerportalPage.vue";
-
 import {
   MucButton,
   MucCallout,
@@ -180,6 +183,7 @@ import { computed, ref, watch } from "vue";
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
+import TraegerportalPage from "./components/TraegerportalPage.vue";
 import { AuthService } from "./util/AuthService.ts";
 import {
   formatAdresse,

@@ -1,10 +1,20 @@
 <template>
-  <traegerportal-page :title="traeger?.name" :tagline="tagline" :include-footer="includeFooter">
+  <traegerportal-page
+    :title="traeger?.name"
+    :tagline="tagline"
+    :include-footer="includeFooter"
+  >
     <template #content>
-      <slot name="content" :traeger="traeger" />
+      <slot
+        name="content"
+        :traeger="traeger"
+      />
     </template>
     <template #intro-content>
-      <slot name="intro-content" :traeger="traeger" />
+      <slot
+        name="intro-content"
+        :traeger="traeger"
+      />
     </template>
     <template #footer>
       <h2>Zuständiges RBS-Team</h2>
@@ -19,16 +29,18 @@
         }}</b>
       </a>
     </template>
-  </traegerportal-page>  
+  </traegerportal-page>
 </template>
 
 <script setup lang="ts" generic="T extends object">
-import StammdatenService from '@/api/einrichtungsverwaltung/StammdatenService';
-import type TraegerDTO from '@/types/TraegerDTO';
-import { textOrFallback } from '@/util/format';
-import { ref, watch } from 'vue';
-import { MucIcon } from '@muenchen/muc-patternlab-vue';
-import TraegerportalPage from './TraegerportalPage.vue';
+import type TraegerDTO from "@/types/TraegerDTO";
+
+import { MucIcon } from "@muenchen/muc-patternlab-vue";
+import { ref, watch } from "vue";
+
+import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
+import { textOrFallback } from "@/util/format";
+import TraegerportalPage from "./TraegerportalPage.vue";
 
 const traeger = ref<TraegerDTO>();
 
@@ -47,8 +59,8 @@ const props = defineProps({
   },
   includeFooter: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
 });
 
 function loadTraeger() {
@@ -107,6 +119,5 @@ watch(
 );
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
 ```

@@ -8,10 +8,10 @@ import type { VorgangsstatusDTO } from "@/types/VorgaengeDTO.ts";
 import {
   anrede,
   ansprechpartnerRollen,
+  einrichtungsartenLhm,
   einrichtungsstatus,
   vorgangsart,
   vorgangsstatus,
-  einrichtungsartenLhm,
 } from "@/util/enums.ts";
 
 export const noValueFallback = "Keine Daten";
@@ -20,9 +20,7 @@ export const noValueFallback = "Keine Daten";
  * Durchsucht ein Objekt rekursiv, formatiert dessen Werte
  * und gibt das Ergebnis als JSON-String zurück.
  */
-export function normalizeForSearch(
-  value: unknown
-): string {
+export function normalizeForSearch(value: unknown): string {
   const formatValue = (currentValue: unknown): unknown => {
     if (currentValue instanceof Date) {
       return currentValue.toLocaleDateString();
@@ -52,7 +50,9 @@ export function normalizeForSearch(
     }
 
     if (currentValue !== null && typeof currentValue === "object") {
-      return Object.values(currentValue).map((entryValue) => formatValue(entryValue)).join(" ");
+      return Object.values(currentValue)
+        .map((entryValue) => formatValue(entryValue))
+        .join(" ");
     }
 
     return currentValue;
@@ -69,7 +69,7 @@ export function formatEinrichtungsart(art: string | undefined): string {
   if (!art) {
     return "";
   }
-  const status = einrichtungsartenLhm.get(art) ?? ""; 
+  const status = einrichtungsartenLhm.get(art) ?? "";
   return status;
 }
 
@@ -112,7 +112,9 @@ export function formatVorgangsstatus(dto: VorgangsstatusDTO) {
   return _status;
 }
 
-export function formatEinrichtungsstatus(dto: EinrichtungsstatusDTO | null | undefined) {
+export function formatEinrichtungsstatus(
+  dto: EinrichtungsstatusDTO | null | undefined
+) {
   if (!dto || !dto.status) return noValueFallback;
   const _status = einrichtungsstatus.get(dto.status);
   if (!_status) return dto.status;

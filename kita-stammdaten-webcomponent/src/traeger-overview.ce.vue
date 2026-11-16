@@ -33,7 +33,7 @@
     </muc-intro>
     <div class="page-body">
       <div class="body-content container">
-      <slot />
+        <slot />
       </div>
     </div>
     <div

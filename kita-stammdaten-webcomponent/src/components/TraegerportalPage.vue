@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends object">
-import { MucIntro } from '@muenchen/muc-patternlab-vue';
+import { MucIntro } from "@muenchen/muc-patternlab-vue";
 
 defineProps({
   title: {
@@ -45,31 +45,31 @@ defineProps({
 </script>
 
 <style scoped>
-  .intro-wrapper {
-    --intro-bg-color: #e1d7ff !important;
-    margin-bottom: 0 !important;
-  }
+.intro-wrapper {
+  --intro-bg-color: #e1d7ff !important;
+  margin-bottom: 0 !important;
+}
 
-  .kita-banner {
-    background: #e1d7ff;
-    padding-top: 3rem;
-    padding-bottom: 3rem;
-    margin-top: 2rem;
-    text-align: center;
-  }
+.kita-banner {
+  background: #e1d7ff;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  margin-top: 2rem;
+  text-align: center;
+}
 
-  .kita-banner-content {
-    display: inline-block;
-    text-align: left;
-  }
+.kita-banner-content {
+  display: inline-block;
+  text-align: left;
+}
 
-  .body-content {
-    display: inline-block;
-    text-align: left;
-  }
+.body-content {
+  display: inline-block;
+  text-align: left;
+}
 
-  .page-body {
-    text-align: center;
-  }
+.page-body {
+  text-align: center;
+}
 </style>
 ```

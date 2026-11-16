@@ -12,7 +12,9 @@
 
     <h2 class="vorgaenge-ueberschrift">
       <span>
-        <muc-icon icon="file" /> Meine Vorgänge ({{ vorgangCount }}/{{vorgaenge?.length}})
+        <muc-icon icon="file" /> Meine Vorgänge ({{ vorgangCount }}/{{
+          vorgaenge?.length
+        }})
       </span>
       <a :href="vorgangLink">
         <muc-button variant="ghost"
@@ -45,9 +47,9 @@ import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
-import { normalizeForSearch } from "./util/format";
 import VorgangCard from "./components/VorgangCard.vue";
 import VorgaengeDTO from "./types/VorgaengeDTO";
+import { normalizeForSearch } from "./util/format";
 
 const vorgangCount = ref<number>(0);
 const vorgaenge = ref<VorgaengeDTO[]>();
@@ -67,8 +69,8 @@ const props = defineProps({
   },
   searchText: {
     type: String,
-    default: null
-  }
+    default: null,
+  },
 });
 
 const loading = ref<boolean>();
@@ -147,9 +149,11 @@ function loadData() {
     });
 }
 const filteredVorgaenge = computed(() => {
-  return vorgaenge.value instanceof Array ? vorgaenge.value.filter(v => {
-    return normalizeForSearch(v).includes(props.searchText?.toLowerCase());
-  }) : [];
+  return vorgaenge.value instanceof Array
+    ? vorgaenge.value.filter((v) => {
+        return normalizeForSearch(v).includes(props.searchText?.toLowerCase());
+      })
+    : [];
 });
 
 const vorgangLink = computed(() => {

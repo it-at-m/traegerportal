@@ -30,8 +30,9 @@
       <traeger-page
         :token="token"
         @unknown-traeger="unknownTraeger = true"
-        @loading-error="loadingErrorTraeger = true">
-        <template #intro-content="{ traeger }">
+        @loading-error="loadingErrorTraeger = true"
+      >
+        <template #intro-content>
           <muc-callout v-if="loadingErrorTraeger">
             <template #content>
               <p>
@@ -47,7 +48,7 @@
             </muc-button>
           </a>
         </template>
-        <template #content="{ traeger }">
+        <template #content>
           <search-button
             v-model:search-text="searchText"
             placeholder="Suche ..."
@@ -108,17 +109,16 @@
 </template>
 
 <script setup lang="ts">
-import SearchButton from "./components/SearchButton.vue";
-import TraegerPage from "./components/TraegerPage.vue";
-
-import { MucCallout, MucIcon, MucButton } from "@muenchen/muc-patternlab-vue";
+import { MucButton, MucCallout, MucIcon } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref } from "vue";
 
 import EinrichtungOverviewVueComponent from "@/einrichtung-overview.ce.vue";
-import vorgangOverviewVueComponent from "./vorgang-overview.ce.vue";
+import SearchButton from "./components/SearchButton.vue";
+import TraegerPage from "./components/TraegerPage.vue";
 import { AuthService } from "./util/AuthService.ts";
+import vorgangOverviewVueComponent from "./vorgang-overview.ce.vue";
 
 const { token, loggedIn } = new AuthService();
 

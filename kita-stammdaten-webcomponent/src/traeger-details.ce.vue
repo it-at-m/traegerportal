@@ -29,15 +29,21 @@
           <dl class="m-descriptionlist">
             <div class="m-descriptionlist__group">
               <dt class="m-descriptionlist__term">Träger-ID</dt>
-              <dd class="m-descriptionlist__description">{{ textOrFallback(traeger?.id) }}</dd>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(traeger?.id) }}
+              </dd>
             </div>
             <div class="m-descriptionlist__group">
               <dt class="m-descriptionlist__term">Adresse</dt>
-              <dd class="m-descriptionlist__description">{{ formatAdresse(traeger?.adresse) }}</dd>
+              <dd class="m-descriptionlist__description">
+                {{ formatAdresse(traeger?.adresse) }}
+              </dd>
             </div>
             <div class="m-descriptionlist__group">
               <dt class="m-descriptionlist__term">Rechtsform</dt>
-              <dd class="m-descriptionlist__description">{{ textOrFallback(traeger?.traegerform) }}</dd>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(traeger?.traegerform) }}
+              </dd>
             </div>
           </dl>
           <a :href="traegerBearbeitenLink">
@@ -52,23 +58,33 @@
           <dl class="m-descriptionlist">
             <div class="m-descriptionlist__group">
               <dt class="m-descriptionlist__term">Telefonnummer</dt>
-              <dd class="m-descriptionlist__description">{{ textOrFallback(traeger?.kontaktdaten?.telefon) }}</dd>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(traeger?.kontaktdaten?.telefon) }}
+              </dd>
             </div>
             <div class="m-descriptionlist__group">
               <dt class="m-descriptionlist__term">Faxnummer</dt>
-              <dd class="m-descriptionlist__description">{{ textOrFallback(traeger?.kontaktdaten?.fax) }}</dd>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(traeger?.kontaktdaten?.fax) }}
+              </dd>
             </div>
             <div class="m-descriptionlist__group">
               <dt class="m-descriptionlist__term">E-Mail-Adresse</dt>
-              <dd class="m-descriptionlist__description">{{ textOrFallback(traeger?.kontaktdaten?.email) }}</dd>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(traeger?.kontaktdaten?.email) }}
+              </dd>
             </div>
             <div class="m-descriptionlist__group">
               <dt class="m-descriptionlist__term">Webseite</dt>
-              <dd class="m-descriptionlist__description">{{ textOrFallback(traeger?.kontaktdaten?.homepageUrl) }}</dd>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(traeger?.kontaktdaten?.homepageUrl) }}
+              </dd>
             </div>
             <div class="m-descriptionlist__group">
               <dt class="m-descriptionlist__term">Notfall-Telefonnummer</dt>
-              <dd class="m-descriptionlist__description">{{ textOrFallback(traeger?.kontaktdaten?.notfallTelefon) }}</dd>
+              <dd class="m-descriptionlist__description">
+                {{ textOrFallback(traeger?.kontaktdaten?.notfallTelefon) }}
+              </dd>
             </div>
           </dl>
           <muc-divider />
@@ -84,7 +100,7 @@
             multiple
             :detail-page-margin="false"
           >
-            <template #default="{onOpen, onClose, activeItems}">
+            <template #default="{ onOpen, onClose, activeItems }">
               <muc-accordion-item
                 v-for="ansprechpartner in traeger?.ansprechpartner"
                 id="accordion-item-1"
@@ -98,19 +114,27 @@
                   <dl class="m-descriptionlist">
                     <div class="m-descriptionlist__group">
                       <dt class="m-descriptionlist__term">Anrede</dt>
-                      <dd class="m-descriptionlist__description">{{ formatAnrede(ansprechpartner.anrede) }}</dd>
+                      <dd class="m-descriptionlist__description">
+                        {{ formatAnrede(ansprechpartner.anrede) }}
+                      </dd>
                     </div>
                     <div class="m-descriptionlist__group">
                       <dt class="m-descriptionlist__term">Telefonnummer</dt>
-                      <dd class="m-descriptionlist__description">{{ textOrFallback(ansprechpartner.telefon) }}</dd>
+                      <dd class="m-descriptionlist__description">
+                        {{ textOrFallback(ansprechpartner.telefon) }}
+                      </dd>
                     </div>
                     <div class="m-descriptionlist__group">
                       <dt class="m-descriptionlist__term">E-Mail-Adresse</dt>
-                      <dd class="m-descriptionlist__description">{{ textOrFallback(ansprechpartner.email) }}</dd>
+                      <dd class="m-descriptionlist__description">
+                        {{ textOrFallback(ansprechpartner.email) }}
+                      </dd>
                     </div>
                     <div class="m-descriptionlist__group">
                       <dt class="m-descriptionlist__term">Rollen</dt>
-                      <dd class="m-descriptionlist__description">{{ formatTraegerRollen(ansprechpartner) }}</dd>
+                      <dd class="m-descriptionlist__description">
+                        {{ formatTraegerRollen(ansprechpartner) }}
+                      </dd>
                     </div>
                     <a :href="hasLink ? traegerBearbeitenLink : undefined">
                       <muc-button>
@@ -137,15 +161,13 @@
 </template>
 
 <script setup lang="ts">
-import TraegerPage from "./components/TraegerPage.vue";
-
 import {
+  MucAccordion,
+  MucAccordionItem,
   MucButton,
   MucCallout,
   MucDivider,
   MucIcon,
-  MucAccordion,
-  MucAccordionItem,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
@@ -153,6 +175,7 @@ import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.
 import { computed } from "vue";
 
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
+import TraegerPage from "./components/TraegerPage.vue";
 import { AuthService } from "./util/AuthService.ts";
 import {
   formatAdresse,

@@ -46,6 +46,6 @@ export default class VorgaengeDTO {
         return this.einrichtung?.name ?? this.aktenzeichen;
       default:
         return "";
-    };
+    }
   }
 }

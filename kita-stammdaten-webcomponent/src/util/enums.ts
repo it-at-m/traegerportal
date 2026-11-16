@@ -51,5 +51,5 @@ export const einrichtungsartenLhm = new Map<string, string>([
   ["KINDERGARTEN", "Kindergarten"],
   ["HORT", "Hort"],
   ["HAUS_FUER_KINDER", "Haus für Kinder"],
-  ["TAGESHEIM", "Tagesheim",],
+  ["TAGESHEIM", "Tagesheim"],
 ]);

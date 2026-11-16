@@ -13,16 +13,20 @@
           {{ formatVorgangsstatus(vorgang.status) }}
         </b>
 
-        <b v-if="vorgang.changedSinceLastExternalRead" class="chip vorgang-notification">
+        <b
+          v-if="vorgang.changedSinceLastExternalRead"
+          class="chip vorgang-notification"
+        >
           ungelesen
         </b>
       </div>
       <div>
         <span> <b>Aktenzeichen:</b> {{ vorgang.aktenzeichen }} </span>
       </div>
-      <div v-if="vorgang.vorgangsart=='EINRICHTUNGSDATEN_AENDERN'">
+      <div v-if="vorgang.vorgangsart == 'EINRICHTUNGSDATEN_AENDERN'">
         <span>
-          <b>Einrichtungsadresse:</b> {{ formatStrasse(vorgang.einrichtung?.adresse) }}
+          <b>Einrichtungsadresse:</b>
+          {{ formatStrasse(vorgang.einrichtung?.adresse) }}
         </span>
       </div>
       <div>
@@ -35,24 +39,22 @@
 </template>
 
 <script setup lang="ts" generic="T extends object">
-
-import {
-  MucCard
-} from "@muenchen/muc-patternlab-vue";
 import type VorgaengeDTO from "@/types/VorgaengeDTO";
+
+import { MucCard } from "@muenchen/muc-patternlab-vue";
+import { computed } from "vue";
+
+import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
 import {
   formatDate,
   formatStrasse,
   formatVorgangsart,
   formatVorgangsstatus,
 } from "../util/format";
-import { computed } from "vue";
-import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
-
 
 const props = defineProps<{
-  vorgang: VorgaengeDTO,
-  vorgangLink: string
+  vorgang: VorgaengeDTO;
+  vorgangLink: string;
 }>();
 
 const fullVorgangLink = computed(() => {

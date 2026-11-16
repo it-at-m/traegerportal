@@ -22,13 +22,19 @@
       v-else
       style="width: 100%"
     >
-      <traeger-page tagline="Meine Vorgänge" :token="token" :include-footer="true">
+      <traeger-page
+        tagline="Meine Vorgänge"
+        :token="token"
+        :include-footer="true"
+      >
         <template #content>
           <search-button
             v-model:search-text="searchText"
             @update:search-text="pageNumber = 0"
           />
-          <h2 class="vorgaenge-ueberschrift"><muc-icon icon="file" />Meine Vorgänge ({{ vorgaenge?.length }})</h2>
+          <h2 class="vorgaenge-ueberschrift">
+            <muc-icon icon="file" />Meine Vorgänge ({{ vorgaenge?.length }})
+          </h2>
           <muc-card-container>
             <vorgang-card
               v-for="vorgang in currentPage"
@@ -37,7 +43,11 @@
               :vorgang-link="detailsUrl"
             />
           </muc-card-container>
-          <muc-button v-if="morePages" class="action-button" @click="displayMore">
+          <muc-button
+            v-if="morePages"
+            class="action-button"
+            @click="displayMore"
+          >
             Mehr anzeigen
             <muc-icon icon="arrow-down" />
           </muc-button>
@@ -55,11 +65,6 @@
 </template>
 
 <script setup lang="ts">
-import SearchButton from "./components/SearchButton.vue";
-
-import VorgaengeDTO from "@/types/VorgaengeDTO";
-import TraegerPage from "./components/TraegerPage.vue";
-
 import {
   MucButton,
   MucCallout,
@@ -69,11 +74,13 @@ import {
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import {  computed, ref, watch } from "vue";
-
-import VorgangCard from "./components/VorgangCard.vue";
+import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
+import VorgaengeDTO from "@/types/VorgaengeDTO";
+import SearchButton from "./components/SearchButton.vue";
+import TraegerPage from "./components/TraegerPage.vue";
+import VorgangCard from "./components/VorgangCard.vue";
 import { AuthService } from "./util/AuthService.ts";
 import { normalizeForSearch } from "./util/format.ts";
 
@@ -117,7 +124,9 @@ function loadVorgaenge() {
           });
           // Sortiere neueste zuerst
           vorgaenge.value.sort(
-            (a, b) => new Date(b.letzteAenderung).getTime() - new Date(a.letzteAenderung).getTime()
+            (a, b) =>
+              new Date(b.letzteAenderung).getTime() -
+              new Date(a.letzteAenderung).getTime()
           );
           dataLoadingError.value = false;
         });
@@ -148,8 +157,10 @@ watch(
 );
 
 const filteredVorgaenge = computed(() => {
-  return vorgaenge.value.filter(v => {
-    return normalizeForSearch(v).includes(searchText.value?.toLowerCase() ?? '');
+  return vorgaenge.value.filter((v) => {
+    return normalizeForSearch(v).includes(
+      searchText.value?.toLowerCase() ?? ""
+    );
   });
 });
 
@@ -157,10 +168,7 @@ const pageNumber = ref<number>(0);
 
 const currentPage = computed(() => {
   return filteredVorgaenge.value instanceof Array
-    ? filteredVorgaenge.value.slice(
-        0,
-        (pageNumber.value + 1) * props.pageSize
-      )
+    ? filteredVorgaenge.value.slice(0, (pageNumber.value + 1) * props.pageSize)
     : [];
 });
 
@@ -170,7 +178,9 @@ function displayMore() {
 
 const morePages = computed(() => {
   if (filteredVorgaenge.value) {
-    return props.pageSize * (pageNumber.value + 1) < filteredVorgaenge.value.length;
+    return (
+      props.pageSize * (pageNumber.value + 1) < filteredVorgaenge.value.length
+    );
   } else {
     return false;
   }
@@ -200,7 +210,10 @@ const searchText = ref<string>();
   margin-top: 1rem;
 }
 
-.m-intro-summary-text__text p, .m-intro, .m-intro-summary-text__title, .m-intro-vertical__tagline {
+.m-intro-summary-text__text p,
+.m-intro,
+.m-intro-summary-text__title,
+.m-intro-vertical__tagline {
   margin-bottom: 0;
 }
 </style>

@@ -1,13 +1,16 @@
 <template>
   <muc-slider>
-    <muc-slider-item v-for="(page, index) in tripleElements" :key="index">
+    <muc-slider-item
+      v-for="(page, index) in tripleElements"
+      :key="index"
+    >
       <muc-card-container>
         <muc-card
-            v-for="(element, elementIndex) in page"
-            :key="elementIndex"
-            title="Lorem Ipsum"
-            tagline="Dolor"
-            href="https://www.muenchen.de"
+          v-for="(element, elementIndex) in page"
+          :key="elementIndex"
+          title="Lorem Ipsum"
+          tagline="Dolor"
+          href="https://www.muenchen.de"
         >
           <template #content>
             {{ element }}
@@ -19,7 +22,6 @@
 </template>
 
 <script setup lang="ts" generic="T extends object">
-
 import {
   MucCard,
   MucCardContainer,
@@ -28,9 +30,8 @@ import {
 } from "@muenchen/muc-patternlab-vue";
 import { computed } from "vue";
 
-
 const props = defineProps<{
-  values: string[]
+  values: string[];
 }>();
 
 const tripleElements = computed(() => {
@@ -42,7 +43,6 @@ const tripleElements = computed(() => {
 
   return chunks;
 });
-
 </script>
 
 <style scoped>

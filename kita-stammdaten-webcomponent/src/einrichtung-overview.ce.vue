@@ -10,7 +10,11 @@
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
     <div v-if="einrichtungenVorhanden">
-      <h2 class="einrichtungen-ueberschrift"><muc-icon icon="home" />Meine Einrichtungen ({{ einrichtungen?.length }})</h2>
+      <h2 class="einrichtungen-ueberschrift">
+        <muc-icon icon="home" />Meine Einrichtungen ({{
+          einrichtungen?.length
+        }})
+      </h2>
       <muc-card-container id="einrichtung-container">
         <muc-card
           v-for="einrichtung in currentPage"
@@ -18,11 +22,15 @@
           :key="einrichtung.id"
           :title="einrichtung.name"
           :href="getDetailsUrl(einrichtung.id)"
-          :tagline="formatEinrichtungsart(einrichtung.merkmale?.einrichtungsartLhm)"
+          :tagline="
+            formatEinrichtungsart(einrichtung.merkmale?.einrichtungsartLhm)
+          "
         >
           <template #content>
             <div>
-              <b :class="`einrichtung-status ${einrichtung.aktuellGueltigerStatus?.status}`">
+              <b
+                :class="`einrichtung-status ${einrichtung.aktuellGueltigerStatus?.status}`"
+              >
                 {{
                   formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus)
                 }}
@@ -42,7 +50,11 @@
           </template>
         </muc-card>
       </muc-card-container>
-      <muc-button v-if="morePages" class="action-button" @click="displayMore">
+      <muc-button
+        v-if="morePages"
+        class="action-button"
+        @click="displayMore"
+      >
         Mehr anzeigen
         <muc-icon icon="arrow-down" />
       </muc-button>
@@ -76,9 +88,9 @@ import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
 import {
-  formatStrasse,
   formatEinrichtungsart,
   formatEinrichtungsstatus,
+  formatStrasse,
   normalizeForSearch,
 } from "./util/format";
 
@@ -97,8 +109,8 @@ const props = defineProps({
   },
   searchText: {
     type: String,
-    default: null
-  }
+    default: null,
+  },
 });
 
 const loading = ref<boolean>();
@@ -130,9 +142,7 @@ function loadEinrichtungen() {
       if (resp.ok) {
         resp.json().then((response) => {
           einrichtungen.value = response.content as EinrichtungDTO[];
-          einrichtungen.value.sort((a, b) =>
-            a.name.localeCompare(b.name)
-          );
+          einrichtungen.value.sort((a, b) => a.name.localeCompare(b.name));
           dataLoadingError.value = false;
         });
       } else {
@@ -156,16 +166,18 @@ function loadEinrichtungen() {
 const pageNumber = ref<number>(0);
 
 const filteredResults = computed(() => {
-  return einrichtungen.value instanceof Array ? einrichtungen.value.filter(v => {
-    return normalizeForSearch(v).includes(props.searchText?.toLowerCase());
-  }) : [];
+  return einrichtungen.value instanceof Array
+    ? einrichtungen.value.filter((v) => {
+        return normalizeForSearch(v).includes(props.searchText?.toLowerCase());
+      })
+    : [];
 });
 
 const currentPage = computed(() => {
   return filteredResults.value.slice(
-        0,
-        (pageNumber.value + 1) * props.pageSize
-      );
+    0,
+    (pageNumber.value + 1) * props.pageSize
+  );
 });
 
 function displayMore() {
@@ -174,7 +186,9 @@ function displayMore() {
 
 const morePages = computed(() => {
   if (filteredResults.value) {
-    return props.pageSize * (pageNumber.value + 1) < filteredResults.value.length;
+    return (
+      props.pageSize * (pageNumber.value + 1) < filteredResults.value.length
+    );
   } else {
     return false;
   }
@@ -201,7 +215,7 @@ watch(
 watch(
   () => props.searchText,
   () => {
-    pageNumber.value = 0
+    pageNumber.value = 0;
   }
 );
 </script>
