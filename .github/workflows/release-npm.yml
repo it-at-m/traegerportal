@@ -16,7 +16,7 @@ on:
         type: choice
         description: "Select the node service to release"
         required: true
-        default: frontend
+        default: kita-stammdaten-webcomponent
         options:
           - kita-stammdaten-webcomponent
       skip-deployment:

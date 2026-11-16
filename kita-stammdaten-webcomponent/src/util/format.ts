@@ -16,6 +16,51 @@ import {
 
 export const noValueFallback = "Keine Daten";
 
+/**
+ * Durchsucht ein Objekt rekursiv, formatiert dessen Werte
+ * und gibt das Ergebnis als JSON-String zurück.
+ */
+export function normalizeForSearch(
+  value: unknown
+): string {
+  const formatValue = (currentValue: unknown): unknown => {
+    if (currentValue instanceof Date) {
+      return currentValue.toLocaleDateString();
+    }
+
+    if (typeof currentValue === "string") {
+      return currentValue
+        .replace(
+          /\b(\d{4})-(\d{2})-(\d{2})(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?\b/g,
+          (isoValue, year, month, day) => {
+            // Treat date-only ISO values as local dates (avoids timezone shifts).
+            const date = isoValue.includes("T")
+              ? new Date(isoValue)
+              : new Date(Number(year), Number(month) - 1, Number(day));
+
+            return Number.isNaN(date.getTime())
+              ? isoValue
+              : date.toLocaleDateString();
+          }
+        )
+        .toLowerCase()
+        .replace(/[_]/g, " ");
+    }
+
+    if (Array.isArray(currentValue)) {
+      return currentValue.map(formatValue);
+    }
+
+    if (currentValue !== null && typeof currentValue === "object") {
+      return Object.values(currentValue).map((entryValue) => formatValue(entryValue)).join(" ");
+    }
+
+    return currentValue;
+  };
+
+  return JSON.stringify(formatValue(value));
+}
+
 export function getPreceededStringOrEmptyString(stringParameter: string) {
   return stringParameter ? " " + stringParameter : "";
 }

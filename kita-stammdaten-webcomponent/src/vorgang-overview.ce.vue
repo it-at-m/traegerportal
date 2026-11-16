@@ -23,7 +23,7 @@
 
     <muc-card-container>
       <vorgang-card
-        v-for="vorgang in vorgaenge?.slice(0, 3)"
+        v-for="vorgang in filteredVorgaenge?.slice(0, 3)"
         :key="vorgang.aktenzeichen"
         :vorgang="vorgang"
         :vorgang-link="detailsUrl"
@@ -45,6 +45,7 @@ import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
+import { normalizeForSearch } from "./util/format";
 import VorgangCard from "./components/VorgangCard.vue";
 import VorgaengeDTO from "./types/VorgaengeDTO";
 
@@ -64,6 +65,10 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  searchText: {
+    type: String,
+    default: null
+  }
 });
 
 const loading = ref<boolean>();
@@ -141,6 +146,11 @@ function loadData() {
       loading.value = false;
     });
 }
+const filteredVorgaenge = computed(() => {
+  return vorgaenge.value instanceof Array ? vorgaenge.value.filter(v => {
+    return normalizeForSearch(v).includes(props.searchText?.toLowerCase());
+  }) : [];
+});
 
 const vorgangLink = computed(() => {
   return getUrlWithOriginAsBaseAndDefaultParams(props.listUrl);

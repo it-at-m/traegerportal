@@ -24,16 +24,11 @@
     >
       <traeger-page tagline="Meine Vorgänge" :token="token" :include-footer="true">
         <template #content>
+          <search-button
+            v-model:search-text="searchText"
+            @update:search-text="pageNumber = 0"
+          />
           <h2 class="vorgaenge-ueberschrift"><muc-icon icon="file" />Meine Vorgänge ({{ vorgaenge?.length }})</h2>
-          <muc-input
-            id="vorgang-search-input"
-            v-model="searchText"
-            class="search-button"
-            name="Suche"
-            placeholder="Suche nach Vorgängen"
-            type="search"
-            suffix-icon="search">
-          </muc-input>
           <muc-card-container>
             <vorgang-card
               v-for="vorgang in currentPage"
@@ -60,6 +55,8 @@
 </template>
 
 <script setup lang="ts">
+import SearchButton from "./components/SearchButton.vue";
+
 import VorgaengeDTO from "@/types/VorgaengeDTO";
 import TraegerPage from "./components/TraegerPage.vue";
 
@@ -68,7 +65,6 @@ import {
   MucCallout,
   MucCardContainer,
   MucIcon,
-  MucInput,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
@@ -79,6 +75,7 @@ import VorgangCard from "./components/VorgangCard.vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
 import { AuthService } from "./util/AuthService.ts";
+import { normalizeForSearch } from "./util/format.ts";
 
 const props = defineProps({
   detailsUrl: {
@@ -152,8 +149,7 @@ watch(
 
 const filteredVorgaenge = computed(() => {
   return vorgaenge.value.filter(v => {
-    // TODO: robustere Suche einbauen
-    return Object.values(v).some(value => JSON.stringify(value).toLowerCase().includes(searchText.value?.toLowerCase() ?? ''));
+    return normalizeForSearch(v).includes(searchText.value?.toLowerCase() ?? '');
   });
 });
 
@@ -181,20 +177,6 @@ const morePages = computed(() => {
 });
 
 const searchText = ref<string>();
-watch(
-  searchText,
-  (newValue) => {
-    const _url = new URL(window.location.href);
-    if(newValue) {
-      _url.searchParams.set("q", newValue);
-    } else {
-      _url.searchParams.delete("q");
-    }
-    window.history.replaceState({}, '', _url);
-    pageNumber.value = 0;
-  },
-  { immediate: true }
-);
 </script>
 
 <style>
@@ -220,9 +202,5 @@ watch(
 
 .m-intro-summary-text__text p, .m-intro, .m-intro-summary-text__title, .m-intro-vertical__tagline {
   margin-bottom: 0;
-}
-
-.search-button {
-  margin-bottom: 2rem;
 }
 </style>

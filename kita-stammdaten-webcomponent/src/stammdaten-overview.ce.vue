@@ -48,6 +48,10 @@
           </a>
         </template>
         <template #content="{ traeger }">
+          <search-button
+            v-model:search-text="searchText"
+            placeholder="Suche ..."
+          />
           <muc-callout
             v-if="loadingErrorVorgaenge"
             type="error"
@@ -66,6 +70,7 @@
             :list-url="vorgangListUrl"
             :details-url="vorgangDetailsUrl"
             :token="token"
+            :search-text="searchText"
             @loading-error="loadingErrorVorgaenge = true"
           />
           <muc-callout
@@ -86,6 +91,7 @@
             :page-size="pageSize"
             :token="token"
             class="full-width"
+            :search-text="searchText"
             @loading-error="loadingErrorEinrichtungen = true"
           />
         </template>
@@ -102,6 +108,7 @@
 </template>
 
 <script setup lang="ts">
+import SearchButton from "./components/SearchButton.vue";
 import TraegerPage from "./components/TraegerPage.vue";
 
 import { MucCallout, MucIcon, MucButton } from "@muenchen/muc-patternlab-vue";
@@ -119,6 +126,7 @@ const unknownTraeger = ref<boolean>(false);
 const loadingErrorTraeger = ref<boolean>(false);
 const loadingErrorEinrichtungen = ref<boolean>(false);
 const loadingErrorVorgaenge = ref<boolean>(false);
+const searchText = ref<string>("");
 
 const loadingErrorAll = computed(() => {
   return (

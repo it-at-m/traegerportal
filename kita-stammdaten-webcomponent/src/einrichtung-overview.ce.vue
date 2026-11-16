@@ -79,6 +79,7 @@ import {
   formatStrasse,
   formatEinrichtungsart,
   formatEinrichtungsstatus,
+  normalizeForSearch,
 } from "./util/format";
 
 const props = defineProps({
@@ -94,6 +95,10 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  searchText: {
+    type: String,
+    default: null
+  }
 });
 
 const loading = ref<boolean>();
@@ -150,13 +155,17 @@ function loadEinrichtungen() {
 
 const pageNumber = ref<number>(0);
 
+const filteredResults = computed(() => {
+  return einrichtungen.value instanceof Array ? einrichtungen.value.filter(v => {
+    return normalizeForSearch(v).includes(props.searchText?.toLowerCase());
+  }) : [];
+});
+
 const currentPage = computed(() => {
-  return einrichtungen.value instanceof Array
-    ? einrichtungen.value.slice(
+  return filteredResults.value.slice(
         0,
         (pageNumber.value + 1) * props.pageSize
-      )
-    : [];
+      );
 });
 
 function displayMore() {
@@ -164,8 +173,8 @@ function displayMore() {
 }
 
 const morePages = computed(() => {
-  if (einrichtungen.value) {
-    return props.pageSize * (pageNumber.value + 1) < einrichtungen.value.length;
+  if (filteredResults.value) {
+    return props.pageSize * (pageNumber.value + 1) < filteredResults.value.length;
   } else {
     return false;
   }
@@ -187,6 +196,13 @@ watch(
     }
   },
   { immediate: true }
+);
+
+watch(
+  () => props.searchText,
+  () => {
+    pageNumber.value = 0
+  }
 );
 </script>
 
