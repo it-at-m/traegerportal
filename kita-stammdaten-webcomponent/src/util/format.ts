@@ -17,8 +17,8 @@ import {
 export const noValueFallback = "Keine Daten";
 
 /**
- * Durchsucht ein Objekt rekursiv, formatiert dessen Werte
- * und gibt das Ergebnis als JSON-String zurück.
+ * recursively transforms the given object into a searchable string.
+ * All keys are omitted and all parsable values included in localized form whereever possible. 
  */
 export function normalizeForSearch(value: unknown): string {
   const formatValue = (currentValue: unknown): unknown => {
