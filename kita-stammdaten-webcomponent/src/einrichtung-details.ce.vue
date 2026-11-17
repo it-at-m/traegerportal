@@ -29,90 +29,8 @@
         :tagline="
           formatEinrichtungsart(einrichtung?.merkmale?.einrichtungsartLhm)
         "
+        include-footer
       >
-        <template #content>
-          <h2>Kontaktdaten</h2>
-          <dl class="m-descriptionlist">
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Telefonnummer</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(einrichtung?.kontaktdaten?.telefon) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Faxnummer</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(einrichtung?.kontaktdaten?.fax) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">E-Mail-Adresse</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(einrichtung?.kontaktdaten?.email) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Webseite</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(einrichtung?.kontaktdaten?.homepageUrl) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Notfall-Telefonnummer</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(einrichtung?.kontaktdaten?.notfallTelefon) }}
-              </dd>
-            </div>
-          </dl>
-          <muc-divider />
-          <h2>Platzstruktur</h2>
-          <dl class="m-descriptionlist">
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Plätze Gesamt</dt>
-              <dd class="m-descriptionlist__description">
-                {{
-                  textOrFallback(
-                    einrichtung?.aktuellGueltigeBetriebserlaubnis
-                      ?.aktuellGueltigeSollbelegung?.plaetzeGesamt
-                  )
-                }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Plätze Kinderkrippe</dt>
-              <dd class="m-descriptionlist__description">
-                {{
-                  textOrFallback(
-                    einrichtung?.aktuellGueltigeBetriebserlaubnis
-                      ?.aktuellGueltigeSollbelegung?.plaetzeKinderkrippe
-                  )
-                }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Plätze Kindergarten</dt>
-              <dd class="m-descriptionlist__description">
-                {{
-                  textOrFallback(
-                    einrichtung?.aktuellGueltigeBetriebserlaubnis
-                      ?.aktuellGueltigeSollbelegung?.plaetzeKindergarten
-                  )
-                }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Plätze Hort</dt>
-              <dd class="m-descriptionlist__description">
-                {{
-                  textOrFallback(
-                    einrichtung?.aktuellGueltigeBetriebserlaubnis
-                      ?.aktuellGueltigeSollbelegung?.plaetzeHort
-                  )
-                }}
-              </dd>
-            </div>
-          </dl>
-        </template>
         <template #intro-content>
           <div>
             <b
@@ -123,38 +41,88 @@
               }}
             </b>
           </div>
-          <dl class="m-descriptionlist">
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">KIBIG.web-Nummer</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(einrichtung?.merkmale?.kibigWebId) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Adresse</dt>
-              <dd class="m-descriptionlist__description">
-                {{ formatAdresse(einrichtung?.adresse) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Stadtbezirk</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(einrichtung?.stadtbezirk?.name) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Schulsprengel</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(einrichtung?.schulsprengel?.schule) }}
-              </dd>
-            </div>
-          </dl>
+          <muc-label-value-display
+            label="KIBIG.web-Nummer"
+            :value="einrichtung?.merkmale?.kibigWebId"
+          />
+          <muc-label-value-display
+            label="Adresse"
+            :value="formatAdresse(einrichtung?.adresse)"
+          />
+          <muc-label-value-display
+            label="Stadtbezirk"
+            :value="einrichtung?.stadtbezirk?.name"
+          />
+          <muc-label-value-display
+            label="Schulsprengel"
+            :value="einrichtung?.schulsprengel?.schule"
+          />
           <a :href="hasLink ? einrichtungBearbeitenLink : undefined">
-            <muc-button>
+            <muc-button class="link-button">
               Einrichtungsdaten ändern
               <muc-icon icon="ext-link" />
             </muc-button>
           </a>
+        </template>
+        <template #content>
+          <h2>Kontaktdaten</h2>
+          <dl class="m-descriptionlist">
+            <muc-descriptionlist-element
+              term="Telefonnummer"
+              :description="einrichtung?.kontaktdaten?.telefon"
+            />
+            <muc-descriptionlist-element
+              term="Faxnummer"
+              :description="einrichtung?.kontaktdaten?.fax"
+            />
+            <muc-descriptionlist-element
+              term="E-Mail-Adresse"
+              :description="einrichtung?.kontaktdaten?.email"
+            />
+            <muc-descriptionlist-element
+              term="Webseite"
+              :description="einrichtung?.kontaktdaten?.homepageUrl"
+            />
+            <muc-descriptionlist-element
+              term="Notfall-Telefonnummer"
+              :description="einrichtung?.kontaktdaten?.notfallTelefon"
+            />
+          </dl>
+          <muc-divider />
+          <h2>Platzstruktur</h2>
+          <dl class="m-descriptionlist">
+            <muc-descriptionlist-element
+              term="Plätze Gesamt"
+              :description="
+                einrichtung?.aktuellGueltigeBetriebserlaubnis
+                  ?.aktuellGueltigeSollbelegung?.plaetzeGesamt
+              "
+            />
+            <muc-descriptionlist-element
+              term="Plätze Kinderkrippe"
+              :description="
+                einrichtung?.aktuellGueltigeBetriebserlaubnis
+                  ?.aktuellGueltigeSollbelegung?.plaetzeKinderkrippe
+              "
+            />
+            <muc-descriptionlist-element
+              term="Plätze Kindergarten"
+              :description="
+                einrichtung?.aktuellGueltigeBetriebserlaubnis
+                  ?.aktuellGueltigeSollbelegung?.plaetzeKindergarten
+              "
+            />
+            <muc-descriptionlist-element
+              term="Plätze Hort"
+              :description="
+                einrichtung?.aktuellGueltigeBetriebserlaubnis
+                  ?.aktuellGueltigeSollbelegung?.plaetzeHort
+              "
+            />
+          </dl>
+        </template>
+        <template #footer>
+          <einrichtungen-slider :token="token ?? ''"></einrichtungen-slider>
         </template>
       </traegerportal-page>
     </div>
@@ -183,13 +151,15 @@ import { computed, ref, watch } from "vue";
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
+import EinrichtungenSlider from "./components/EinrichtungenSlider.vue";
+import MucDescriptionlistElement from "./components/MucDescriptionlistElement.vue";
+import MucLabelValueDisplay from "./components/MucLabelValueDisplay.vue";
 import TraegerportalPage from "./components/TraegerportalPage.vue";
 import { AuthService } from "./util/AuthService.ts";
 import {
   formatAdresse,
   formatEinrichtungsart,
   formatEinrichtungsstatus,
-  textOrFallback,
 } from "./util/format";
 
 const props = defineProps({
@@ -272,74 +242,14 @@ const hasLink = computed(() => {
 </script>
 
 <style>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
-
-.m-intro {
-  --intro-bg-color: #e1d7ff;
-  background: var(--intro-bg-color);
-  margin-bottom: 0 !important;
-}
-
-.kita-intro {
-  --intro-bg-color: #e1d7ff;
-  background: var(--intro-bg-color);
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-  margin-top: 2rem;
-}
-
-.page-body {
-  margin-left: 1.5rem;
-  margin-top: 1rem;
-}
-
-.m-descriptionlist {
-  margin-bottom: 1rem;
-}
-
-.muc-divider {
-  margin-bottom: 1rem;
-}
-
-h2 {
-  padding-bottom: 1rem;
-  align-items: center;
-  gap: 2rem;
-  display: flex;
-}
+@import "../public/style.css";
 
 .einrichtung-status {
-  display: inline-block;
-  padding: 0.25em 0.75em;
-  background-color: #d3d3d3;
-  border-radius: 12px;
-  white-space: nowrap;
-  user-select: none;
   border: 1px solid;
-  margin-bottom: 1rem;
 }
 
-.einrichtung-status.VORPLANUNG {
-  background-color: #f9e79f; /* light yellow */
-}
-
-.einrichtung-status.VOR_BETRIEB {
-  background-color: #aed6f1; /* light blue */
-}
-
-.einrichtung-status.IN_BETRIEB {
-  background-color: #a9dfbf; /* light green */
-}
-
-.m-intro-summary-text__text p {
-  margin-bottom: 0;
-}
-
-.m-intro-vertical__tagline {
-  margin-bottom: 0;
+.kita-banner-content {
+  width: 100%;
+  max-width: 100%;
 }
 </style>

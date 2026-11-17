@@ -155,37 +155,5 @@ watch(
 </script>
 
 <style>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
-
-.m-intro {
-  --intro-bg-color: #e1d7ff !important;
-  background: var(--intro-bg-color);
-  margin-bottom: 0 !important;
-}
-
-.kita-banner {
-  --intro-bg-color: #e1d7ff !important;
-  background: var(--intro-bg-color);
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-  margin-top: 2rem;
-  text-align: center;
-}
-
-.kita-banner-content {
-  display: inline-block;
-  text-align: left;
-}
-
-.body-content {
-  display: inline-block;
-  text-align: left;
-}
-
-.page-body {
-  margin-top: 1rem;
-  text-align: center;
-}
+@import "../public/style.css";
 </style>

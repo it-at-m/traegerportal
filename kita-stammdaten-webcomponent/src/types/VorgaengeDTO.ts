@@ -44,6 +44,8 @@ export default class VorgaengeDTO {
     switch (this.vorgangsart) {
       case "EINRICHTUNGSDATEN_AENDERN":
         return this.einrichtung?.name ?? this.aktenzeichen;
+      case "TRAEGERDATEN_AENDERN":
+        return "Mein Träger";
       default:
         return "";
     }

@@ -20,20 +20,19 @@
           ungelesen
         </b>
       </div>
-      <div>
-        <span> <b>Aktenzeichen:</b> {{ vorgang.aktenzeichen }} </span>
-      </div>
-      <div v-if="vorgang.vorgangsart == 'EINRICHTUNGSDATEN_AENDERN'">
-        <span>
-          <b>Einrichtungsadresse:</b>
-          {{ formatStrasse(vorgang.einrichtung?.adresse) }}
-        </span>
-      </div>
-      <div>
-        <span>
-          <b>Letzte Änderung:</b> {{ formatDate(vorgang.letzteAenderung) }}
-        </span>
-      </div>
+      <muc-label-value-display
+        label="Aktenzeichen"
+        :value="vorgang.aktenzeichen"
+      />
+      <muc-label-value-display
+        v-if="vorgang.vorgangsart == 'EINRICHTUNGSDATEN_AENDERN'"
+        label="Einrichtungsadresse"
+        :value="formatStrasse(vorgang.einrichtung?.adresse)"
+      />
+      <muc-label-value-display
+        label="Letzte Änderung"
+        :value="formatDate(vorgang.letzteAenderung)"
+      />
     </template>
   </muc-card>
 </template>
@@ -51,6 +50,7 @@ import {
   formatVorgangsart,
   formatVorgangsstatus,
 } from "../util/format";
+import MucLabelValueDisplay from "./MucLabelValueDisplay.vue";
 
 const props = defineProps<{
   vorgang: VorgaengeDTO;

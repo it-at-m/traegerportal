@@ -1,11 +1,10 @@
-<!-- VorgangSearch.vue -->
 <template>
   <muc-input
-    id="vorgang-search-input"
+    id="search-input"
     v-model="searchTextModel"
     class="search-button"
     name="Suche"
-    :placeholder="placeholder ?? 'Suche nach Vorgängen'"
+    :placeholder="placeholder ?? 'Inhalte durchsuchen'"
     type="search"
     suffix-icon="search"
   />

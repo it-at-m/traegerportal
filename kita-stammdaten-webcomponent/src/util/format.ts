@@ -18,7 +18,7 @@ export const noValueFallback = "Keine Daten";
 
 /**
  * recursively transforms the given object into a searchable string.
- * All keys are omitted and all parsable values included in localized form whereever possible. 
+ * All keys are omitted and all parsable values included in localized form whereever possible.
  */
 export function normalizeForSearch(value: unknown): string {
   const formatValue = (currentValue: unknown): unknown => {
@@ -69,8 +69,8 @@ export function formatEinrichtungsart(art: string | undefined): string {
   if (!art) {
     return "";
   }
-  const status = einrichtungsartenLhm.get(art) ?? "";
-  return status;
+  const resolved = einrichtungsartenLhm.get(art) ?? "";
+  return resolved;
 }
 
 export function formatStrasse(adresse: AdresseDTO | null | undefined): string {

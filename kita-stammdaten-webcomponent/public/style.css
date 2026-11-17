@@ -1,0 +1,180 @@
+@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
+@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
+@import "@muenchen/muc-patternlab-vue/style.css";
+
+.action-button {
+  margin-top: 2rem;
+}
+
+.link-button {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.m-intro-summary-text__text p,
+.m-intro,
+.m-intro-summary-text__title,
+.m-intro-vertical__tagline {
+  margin-bottom: 0;
+}
+
+.traegerportal-ueberschrift {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  align-items: center;
+  width: 100%;
+}
+
+.card-content {
+  padding: 1rem !important;
+}
+.card {
+  background: white;
+}
+
+.card-action-button {
+  position: absolute;
+  bottom: 1rem;
+  right: 1.5rem;
+}
+
+#vorgaenge-card {
+  position: relative;
+}
+
+.m-intro {
+  --intro-bg-color: #e1d7ff !important;
+  background: var(--intro-bg-color);
+  margin-bottom: 0 !important;
+}
+
+.kita-banner {
+  --intro-bg-color: #e1d7ff !important;
+  background: var(--intro-bg-color);
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.page-body {
+  margin-left: 1.5rem;
+  margin-top: 1rem;
+}
+
+.m-descriptionlist {
+  margin-bottom: 1rem;
+}
+
+.muc-divider {
+  margin-bottom: 1rem;
+}
+
+h2 {
+  padding-bottom: 1rem;
+  align-items: center;
+  gap: 2rem;
+  display: flex;
+}
+
+.kita-banner-content {
+  display: inline-block;
+  text-align: left;
+}
+
+.body-content {
+  display: inline-block;
+  text-align: left;
+}
+
+.page-body {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.m-descriptionlist {
+  margin-bottom: 1rem;
+}
+
+.muc-divider {
+  margin-bottom: 1rem;
+}
+
+.m-component-accordion {
+  padding-top: 0;
+}
+
+.m-accordion__section {
+  margin-bottom: 0;
+  --accordion-border-color: #bdd4ea;
+}
+
+.m-accordion__section-button {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.m-component-accordion .container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.m-intro-summary-text__text p {
+  margin-bottom: 0;
+}
+
+.m-intro-vertical__tagline {
+  margin-bottom: 0;
+}
+
+.m-callout {
+  padding-top: 1.5rem;
+}
+
+.flex-container {
+  display: flex;
+  margin-bottom: 1rem;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Each top area */
+.flex-area {
+  flex: 1;
+  display: flex;
+  justify-content: left;
+}
+
+.bottom-area {
+  width: 100%;
+}
+
+.einrichtung-status {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  background-color: #d3d3d3;
+  border-radius: 12px;
+  white-space: nowrap;
+  user-select: none;
+  margin-bottom: 0.5rem;
+}
+
+.einrichtung-status.VORPLANUNG {
+  background-color: #f9e79f; /* light yellow */
+}
+
+.einrichtung-status.VOR_BETRIEB {
+  background-color: #aed6f1; /* light blue */
+}
+
+.einrichtung-status.IN_BETRIEB {
+  background-color: #a9dfbf; /* light green */
+}

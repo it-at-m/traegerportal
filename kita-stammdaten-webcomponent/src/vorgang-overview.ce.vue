@@ -10,11 +10,12 @@
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
 
-    <h2 class="vorgaenge-ueberschrift">
+    <h2 class="traegerportal-ueberschrift">
       <span>
-        <muc-icon icon="file" /> Meine Vorgänge ({{ vorgangCount }}/{{
+        <muc-icon icon="file" /> Meine Vorgänge ({{ vorgangCount }} ungelesen/{{
           vorgaenge?.length
-        }})
+        }}
+        gesamt)
       </span>
       <a :href="vorgangLink">
         <muc-button variant="ghost"
@@ -151,7 +152,10 @@ function loadData() {
 const filteredVorgaenge = computed(() => {
   return vorgaenge.value instanceof Array
     ? vorgaenge.value.filter((v) => {
-        return normalizeForSearch(v).includes(props.searchText?.toLowerCase());
+        return (
+          v.changedSinceLastExternalRead &&
+          normalizeForSearch(v).includes(props.searchText?.toLowerCase())
+        );
       })
     : [];
 });
@@ -172,31 +176,9 @@ watch(
 </script>
 
 <style scoped>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
+@import "../public/style.css";
 
-.vorgaenge-ueberschrift {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
+.traegerportal-ueberschrift {
   justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.card-content {
-  padding: 1rem !important;
-}
-
-.card-action-button {
-  position: absolute;
-  bottom: 1rem;
-  right: 1.5rem;
-}
-
-#vorgaenge-card {
-  position: relative;
 }
 </style>

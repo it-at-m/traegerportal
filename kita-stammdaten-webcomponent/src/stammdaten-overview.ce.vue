@@ -49,10 +49,7 @@
           </a>
         </template>
         <template #content>
-          <search-button
-            v-model:search-text="searchText"
-            placeholder="Suche ..."
-          />
+          <search-button v-model:search-text="searchText" />
           <muc-callout
             v-if="loadingErrorVorgaenge"
             type="error"
@@ -161,45 +158,5 @@ defineProps({
 </script>
 
 <style>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
-
-.m-intro {
-  margin-bottom: 0 !important;
-}
-
-.m-callout {
-  padding-top: 1.5rem;
-}
-
-.flex-container {
-  display: flex;
-  margin-bottom: 1rem;
-  gap: 2rem;
-  align-items: stretch;
-}
-
-.full-width {
-  width: 100%;
-}
-
-/* Each top area */
-.flex-area {
-  flex: 1;
-  display: flex;
-  justify-content: left;
-}
-
-.bottom-area {
-  width: 100%;
-}
-
-.m-intro-summary-text__text p {
-  margin-bottom: 0;
-}
-
-.m-intro-vertical__tagline {
-  margin-bottom: 0;
-}
+@import "../public/style.css";
 </style>

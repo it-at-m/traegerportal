@@ -10,46 +10,17 @@
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
     <div v-if="einrichtungenVorhanden">
-      <h2 class="einrichtungen-ueberschrift">
-        <muc-icon icon="home" />Meine Einrichtungen ({{
-          einrichtungen?.length
-        }})
+      <h2 class="traegerportal-ueberschrift">
+        <muc-icon icon="home" />Meine Einrichtungen ({{ einrichtungen?.length }}
+        gesamt)
       </h2>
       <muc-card-container id="einrichtung-container">
-        <muc-card
+        <einrichtung-card
           v-for="einrichtung in currentPage"
-          :id="'einrichtung-item-' + einrichtung.id"
           :key="einrichtung.id"
-          :title="einrichtung.name"
-          :href="getDetailsUrl(einrichtung.id)"
-          :disabled="false"
-          :tagline="
-            formatEinrichtungsart(einrichtung.merkmale?.einrichtungsartLhm)
-          "
-        >
-          <template #content>
-            <div>
-              <b
-                :class="`einrichtung-status ${einrichtung.aktuellGueltigerStatus?.status}`"
-              >
-                {{
-                  formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus)
-                }}
-              </b>
-            </div>
-            <div>
-              <span class="einrichtung-attribute"
-                ><b>Adresse:</b> {{ formatStrasse(einrichtung.adresse) }}</span
-              >
-            </div>
-            <div>
-              <span class="einrichtung-attribute"
-                ><b>KIGIB.web-Nummer:</b>
-                {{ einrichtung.merkmale.kibigWebId }}</span
-              >
-            </div>
-          </template>
-        </muc-card>
+          :einrichtung="einrichtung"
+          :einrichtung-link="detailsUrl"
+        />
       </muc-card-container>
       <muc-button
         v-if="morePages"
@@ -76,7 +47,6 @@
 import {
   MucButton,
   MucCallout,
-  MucCard,
   MucCardContainer,
   MucIcon,
   MucSpinner,
@@ -87,13 +57,8 @@ import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
-import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
-import {
-  formatEinrichtungsart,
-  formatEinrichtungsstatus,
-  formatStrasse,
-  normalizeForSearch,
-} from "./util/format";
+import EinrichtungCard from "./components/EinrichtungCard.vue";
+import { normalizeForSearch } from "./util/format";
 
 const props = defineProps({
   detailsUrl: {
@@ -116,12 +81,6 @@ const props = defineProps({
 
 const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
-
-function getDetailsUrl(einrichtungId: string): string | undefined {
-  return getUrlWithOriginAsBaseAndDefaultParams(props.detailsUrl, {
-    einrichtungId: einrichtungId,
-  });
-}
 
 const einrichtungen = ref<EinrichtungDTO[]>();
 
@@ -222,51 +181,7 @@ watch(
 </script>
 
 <style>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
-
-.einrichtungen-ueberschrift {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-}
-
-.action-button {
-  margin-top: 2rem;
-}
-
-.einrichtung-attribute {
-  padding-right: 1rem;
-}
-
-.einrichtung-status {
-  display: inline-block;
-  padding: 0.25em 0.75em;
-  background-color: #d3d3d3;
-  border-radius: 12px;
-  white-space: nowrap;
-  user-select: none;
-  margin-bottom: 0.5rem;
-}
-
-.einrichtung-status.VORPLANUNG {
-  background-color: #f9e79f; /* light yellow */
-}
-
-.einrichtung-status.VOR_BETRIEB {
-  background-color: #aed6f1; /* light blue */
-}
-
-.einrichtung-status.IN_BETRIEB {
-  background-color: #a9dfbf; /* light green */
-}
-
-.content-width {
-  width: 100% !important;
-}
+@import "../public/style.css";
 
 .no-einrichtungen-callout {
   padding-left: 0;

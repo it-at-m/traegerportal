@@ -32,8 +32,11 @@
             v-model:search-text="searchText"
             @update:search-text="pageNumber = 0"
           />
-          <h2 class="vorgaenge-ueberschrift">
-            <muc-icon icon="file" />Meine Vorgänge ({{ vorgaenge?.length }})
+          <h2 class="traegerportal-ueberschrift">
+            <muc-icon icon="file" />Meine Vorgänge ({{
+              vorgaenge?.length
+            }}
+            gesamt)
           </h2>
           <muc-card-container>
             <vorgang-card
@@ -190,30 +193,9 @@ const searchText = ref<string>();
 </script>
 
 <style>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
-
-.vorgaenge-ueberschrift {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-}
-
-.action-button {
-  margin-top: 2rem;
-}
+@import "../public/style.css";
 
 .no-vorgaenge-callout {
   margin-top: 1rem;
-}
-
-.m-intro-summary-text__text p,
-.m-intro,
-.m-intro-summary-text__title,
-.m-intro-vertical__tagline {
-  margin-bottom: 0;
 }
 </style>

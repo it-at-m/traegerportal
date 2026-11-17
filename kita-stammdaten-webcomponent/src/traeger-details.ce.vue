@@ -22,27 +22,21 @@
       <traeger-page :token="token">
         <template #intro-content="{ traeger }">
           <dl class="m-descriptionlist">
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Träger-ID</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(traeger?.id) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Adresse</dt>
-              <dd class="m-descriptionlist__description">
-                {{ formatAdresse(traeger?.adresse) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Rechtsform</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(traeger?.traegerform) }}
-              </dd>
-            </div>
+            <muc-label-value-display
+              label="Träger-ID"
+              :value="traeger?.id"
+            />
+            <muc-label-value-display
+              label="Adresse"
+              :value="formatAdresse(traeger?.adresse)"
+            />
+            <muc-label-value-display
+              label="Rechtsform"
+              :value="traeger?.traegerform"
+            />
           </dl>
           <a :href="traegerBearbeitenLink">
-            <muc-button>
+            <muc-button class="link-button">
               Trägerdaten ändern
               <muc-icon icon="ext-link" />
             </muc-button>
@@ -51,41 +45,31 @@
         <template #content="{ traeger }">
           <h2>Kontaktdaten</h2>
           <dl class="m-descriptionlist">
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Telefonnummer</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(traeger?.kontaktdaten?.telefon) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Faxnummer</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(traeger?.kontaktdaten?.fax) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">E-Mail-Adresse</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(traeger?.kontaktdaten?.email) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Webseite</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(traeger?.kontaktdaten?.homepageUrl) }}
-              </dd>
-            </div>
-            <div class="m-descriptionlist__group">
-              <dt class="m-descriptionlist__term">Notfall-Telefonnummer</dt>
-              <dd class="m-descriptionlist__description">
-                {{ textOrFallback(traeger?.kontaktdaten?.notfallTelefon) }}
-              </dd>
-            </div>
+            <muc-descriptionlist-element
+              term="Telefonnummer"
+              :description="traeger?.kontaktdaten?.telefon"
+            />
+            <muc-descriptionlist-element
+              term="Faxnummer"
+              :description="traeger?.kontaktdaten?.fax"
+            />
+            <muc-descriptionlist-element
+              term="E-Mail-Adresse"
+              :description="traeger?.kontaktdaten?.email"
+            />
+            <muc-descriptionlist-element
+              term="Webseite"
+              :description="traeger?.kontaktdaten?.homepageUrl"
+            />
+            <muc-descriptionlist-element
+              term="Notfall-Telefonnummer"
+              :description="traeger?.kontaktdaten?.notfallTelefon"
+            />
           </dl>
           <muc-divider />
           <h2>Ansprechpersonen</h2>
           <a :href="traegerBearbeitenLink">
-            <muc-button>
+            <muc-button class="link-button">
               Neue Ansprechperson erfassen
               <muc-icon icon="ext-link" />
             </muc-button>
@@ -104,32 +88,24 @@
               >
                 <template #content>
                   <dl class="m-descriptionlist">
-                    <div class="m-descriptionlist__group">
-                      <dt class="m-descriptionlist__term">Anrede</dt>
-                      <dd class="m-descriptionlist__description">
-                        {{ formatAnrede(ansprechpartner.anrede) }}
-                      </dd>
-                    </div>
-                    <div class="m-descriptionlist__group">
-                      <dt class="m-descriptionlist__term">Telefonnummer</dt>
-                      <dd class="m-descriptionlist__description">
-                        {{ textOrFallback(ansprechpartner.telefon) }}
-                      </dd>
-                    </div>
-                    <div class="m-descriptionlist__group">
-                      <dt class="m-descriptionlist__term">E-Mail-Adresse</dt>
-                      <dd class="m-descriptionlist__description">
-                        {{ textOrFallback(ansprechpartner.email) }}
-                      </dd>
-                    </div>
-                    <div class="m-descriptionlist__group">
-                      <dt class="m-descriptionlist__term">Rollen</dt>
-                      <dd class="m-descriptionlist__description">
-                        {{ formatTraegerRollen(ansprechpartner) }}
-                      </dd>
-                    </div>
-                    <a :href="traegerBearbeitenLink">
-                      <muc-button>
+                    <muc-descriptionlist-element
+                      term="Anrede"
+                      :description="formatAnrede(ansprechpartner.anrede)"
+                    />
+                    <muc-descriptionlist-element
+                      term="Telefonnummer"
+                      :description="ansprechpartner.telefon"
+                    />
+                    <muc-descriptionlist-element
+                      term="E-Mail-Adresse"
+                      :description="ansprechpartner.email"
+                    />
+                    <muc-descriptionlist-element
+                      term="Rollen"
+                      :description="formatTraegerRollen(ansprechpartner)"
+                    />
+                    <a :href="ansprechpartnerBearbeitenLink(ansprechpartner)">
+                      <muc-button class="link-button">
                         Ansprechperson bearbeiten
                         <muc-icon icon="ext-link" />
                       </muc-button>
@@ -166,18 +142,24 @@ import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.
 import { computed, ref } from "vue";
 
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
+import MucDescriptionlistElement from "./components/MucDescriptionlistElement.vue";
+import MucLabelValueDisplay from "./components/MucLabelValueDisplay.vue";
 import TraegerPage from "./components/TraegerPage.vue";
+import { AnsprechpartnerDTO } from "./types/TraegerDTO.ts";
 import { AuthService } from "./util/AuthService.ts";
 import {
   formatAdresse,
   formatAnrede,
   formatAnsprechpartnerFullname,
   formatTraegerRollen,
-  textOrFallback,
 } from "./util/format";
 
 const props = defineProps({
   bearbeitenUrl: {
+    type: String,
+    default: null,
+  },
+  ansprechpartnerBearbeitenUrl: {
     type: String,
     default: null,
   },
@@ -189,45 +171,17 @@ const dataLoadingError = ref<boolean>();
 const traegerBearbeitenLink = computed(() => {
   return getUrlWithOriginAsBaseAndDefaultParams(props.bearbeitenUrl);
 });
+
+const ansprechpartnerBearbeitenLink = function (ap: AnsprechpartnerDTO) {
+  return getUrlWithOriginAsBaseAndDefaultParams(
+    props.ansprechpartnerBearbeitenUrl,
+    {
+      ansprechpartnerId: String(ap.id),
+    }
+  );
+};
 </script>
 
 <style>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
-
-.m-descriptionlist {
-  margin-bottom: 1rem;
-}
-
-.muc-divider {
-  margin-bottom: 1rem;
-}
-
-.m-component-accordion {
-  padding-top: 0;
-}
-
-.m-accordion__section {
-  margin-bottom: 0;
-  --accordion-border-color: #bdd4ea;
-}
-
-.m-accordion__section-button {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
-.m-component-accordion .container {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.m-intro-summary-text__text p {
-  margin-bottom: 0;
-}
-
-.m-intro-vertical__tagline {
-  margin-bottom: 0;
-}
+@import "../public/style.css";
 </style>
