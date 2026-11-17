@@ -12,6 +12,20 @@ spring:
                 - "Path=/api/sso/userinfo"
               filters:
                 - RewritePath=/api/sso/userinfo, /auth/realms/local_realm/protocol/openid-connect/userinfo
+            - id: eogov-for-traeger
+              uri: http://localhost:8083
+              predicates:
+                - Path=traeger
+                - Method=GET
+              filters:
+                - name: QueryToPath
+                  args:
+                    template: /users/{userId}/orders/{orderId}
+                    parameters:
+                      userId: userId
+                      orderId: orderId
+            - id: eogov-for-einrichtung
+            - id: eogov-for-ansprechpartner
 
   security:
     oauth2:
@@ -36,6 +50,9 @@ adapter:
     cache-seconds: 280
   webcomponents:
     base-url: http://localhost:8443
+  eogovfor:
+    sso:
+      client-id: example-client
 
 logging:
   include-application-group: false # disabled because application group is only relevant when deployed

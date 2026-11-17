@@ -11,8 +11,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
@@ -63,14 +66,18 @@ public class SecurityConfiguration {
 
     @Bean
     @Order(3)
-    public SecurityWebFilterChain directApiFilterChain(final ServerHttpSecurity http) {
+    public SecurityWebFilterChain eogovforApiFilterChain(
+            final ServerHttpSecurity http,
+            @Value("adapter.eogovfor.sso.client-id") final String clientId) {
         return http
                 .securityMatcher(ServerWebExchangeMatchers.pathMatchers(
-                        "/traeger/by-unternehmenskontoid/**"
+                        "/eogovfor/**"
                 ))
                 .authorizeExchange(exchanges -> exchanges
                         .anyExchange()
-                        .hasAuthority("CLIENT_VALIDIERUNGSEAI")
+                        .access((authentication, _) -> authentication
+                                .map(auth -> isClientAuthorized(auth, clientId)
+                                ))
                 )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(Customizer.withDefaults())
@@ -78,6 +85,15 @@ public class SecurityConfiguration {
                         .jwt(Customizer.withDefaults())
                 )
                 .build();
+    }
+
+    private static AuthorizationDecision isClientAuthorized(Authentication auth, String allowedClientId) {
+        if (auth instanceof JwtAuthenticationToken jwtAuth) {
+            String clientId = jwtAuth.getToken().getClaimAsString("client_id");
+            boolean allowed = allowedClientId.equals(clientId);
+            return new AuthorizationDecision(allowed);
+        }
+        return new AuthorizationDecision(false);
     }
 
     @Bean

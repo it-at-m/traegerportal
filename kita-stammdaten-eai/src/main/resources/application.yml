@@ -54,6 +54,9 @@ adapter:
     cache-seconds: 60
   webcomponents:
     base-url: https://kita-traegerportal-webcomponents-test.muenchen.de/
+  eogovfor:
+    sso:
+      client-id: example-client
 
 management:
   endpoints:
