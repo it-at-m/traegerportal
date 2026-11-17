@@ -39,4 +39,15 @@ export default class VorgaengeDTO {
     this.letzteAenderung = letzteAenderung;
     this.changedSinceLastExternalRead = changedSinceLastExternalRead;
   }
+
+  getBetreff(): string {
+    switch (this.vorgangsart) {
+      case "EINRICHTUNGSDATEN_AENDERN":
+        return this.einrichtung?.name ?? this.aktenzeichen;
+      case "TRAEGERDATEN_AENDERN":
+        return "Mein Träger";
+      default:
+        return "";
+    }
+  }
 }

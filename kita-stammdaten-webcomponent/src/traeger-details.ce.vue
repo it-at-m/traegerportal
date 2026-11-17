@@ -4,13 +4,8 @@
   <!-- eslint-disable-next-line vue/no-v-html -->
   <div v-html="customIconsSprite" />
   <div v-if="loggedIn">
-    <muc-spinner
-      v-if="loading"
-      size="200px"
-      text="Lade Träger ..."
-    />
     <muc-callout
-      v-else-if="dataLoadingError"
+      v-if="dataLoadingError"
       type="error"
     >
       <template #content>
@@ -24,87 +19,107 @@
       v-else
       style="width: 100%"
     >
-      <h2 v-if="traeger">
-        {{ textOrFallback(traeger.name) }}
-      </h2>
-      <muc-link
-        label="Trägerdaten ändern"
-        href="https://test81-k2.muenchen.de/intelliform/forms/integration/05/05/2277/index?eid=2"
-        prepend-icon="pencil"
-      />
-      <muc-card
-        v-if="traeger"
-        id="traeger-card-allgemein"
-        title="Allgemeines"
-        :disabled="false"
+      <traeger-page
+        :token="token"
+        @loading-error="dataLoadingError = true"
       >
-        <template #content>
-          <div>
-            <muc-icon icon="lock" /><b>Träger-ID:</b>
-            {{ textOrFallback(traeger.id) }}
-          </div>
-          <div><b>Name:</b> {{ textOrFallback(traeger.name) }}</div>
-          <div>
-            <b>Rechtsform:</b> {{ textOrFallback(traeger.traegerform) }}
-          </div>
-          <div><b>Adresse: </b>{{ formatAdresse(traeger.adresse) }}</div>
-          <div>
-            <muc-icon icon="lock" /><b>Zugeordnetes Team:</b>
-            {{ formatTraegerTeam(traeger.team) }}
-          </div>
+        <template #intro-content="{ traeger }">
+          <dl class="m-descriptionlist">
+            <muc-label-value-display
+              label="Träger-ID"
+              :value="traeger?.id"
+            />
+            <muc-label-value-display
+              label="Adresse"
+              :value="formatAdresse(traeger?.adresse)"
+            />
+            <muc-label-value-display
+              label="Rechtsform"
+              :value="traeger?.traegerform"
+            />
+          </dl>
+          <a :href="traegerBearbeitenLink">
+            <muc-button class="link-button">
+              Trägerdaten ändern
+              <muc-icon icon="ext-link" />
+            </muc-button>
+          </a>
         </template>
-      </muc-card>
-      <muc-card
-        v-if="traeger"
-        id="traeger-card-kontakt"
-        title="Kontaktdaten des Trägers"
-        :disabled="false"
-      >
-        <template #content>
-          <div>
-            <b>Telefonnummer:</b>
-            {{ textOrFallback(traeger.kontaktdaten?.telefon) }}
-          </div>
-          <div>
-            <b>Faxnummer:</b> {{ textOrFallback(traeger.kontaktdaten?.fax) }}
-          </div>
-          <div>
-            <b>E-Mail-Adresse:</b>
-            {{ textOrFallback(traeger.kontaktdaten?.email) }}
-          </div>
-          <div>
-            <b>Homepage:</b>
-            {{ textOrFallback(traeger.kontaktdaten?.homepageUrl) }}
-          </div>
-          <div>
-            <b>Notfall-Telefonnummer:</b>
-            {{ textOrFallback(traeger.kontaktdaten?.notfallTelefon) }}
-          </div>
-        </template>
-      </muc-card>
-      <muc-card
-        v-if="traeger"
-        id="traeger-card-ansprechpartner"
-        title="Ansprechpersonen"
-        :disabled="false"
-      >
-        <template #content>
-          <data-table
-            :items="traeger.ansprechpartner"
-            :columns="columns"
-            row-key="id"
-            :pagination="false"
-            caption="Ansprechpersonen"
+        <template #content="{ traeger }">
+          <h2>Kontaktdaten</h2>
+          <dl class="m-descriptionlist">
+            <muc-descriptionlist-element
+              term="Telefonnummer"
+              :description="traeger?.kontaktdaten?.telefon"
+            />
+            <muc-descriptionlist-element
+              term="Faxnummer"
+              :description="traeger?.kontaktdaten?.fax"
+            />
+            <muc-descriptionlist-element
+              term="E-Mail-Adresse"
+              :description="traeger?.kontaktdaten?.email"
+            />
+            <muc-descriptionlist-element
+              term="Webseite"
+              :description="traeger?.kontaktdaten?.homepageUrl"
+            />
+            <muc-descriptionlist-element
+              term="Notfall-Telefonnummer"
+              :description="traeger?.kontaktdaten?.notfallTelefon"
+            />
+          </dl>
+          <muc-divider />
+          <h2>Ansprechpersonen</h2>
+          <a :href="traegerBearbeitenLink">
+            <muc-button class="link-button">
+              Neue Ansprechperson erfassen
+              <muc-icon icon="ext-link" />
+            </muc-button>
+          </a>
+          <muc-accordion
+            id="ansprechpartner"
+            multiple
+            :detail-page-margin="false"
           >
-            <template #cell-anrede="{ row }">
-              {{ formatAnrede(row.anrede) }}
+            <template #default>
+              <muc-accordion-item
+                v-for="ansprechpartner in traeger?.ansprechpartner"
+                id="accordion-item-1"
+                :key="ansprechpartner.id"
+                :header="formatAnsprechpartnerFullname(ansprechpartner)"
+              >
+                <template #content>
+                  <dl class="m-descriptionlist">
+                    <muc-descriptionlist-element
+                      term="Anrede"
+                      :description="formatAnrede(ansprechpartner.anrede)"
+                    />
+                    <muc-descriptionlist-element
+                      term="Telefonnummer"
+                      :description="ansprechpartner.telefon"
+                    />
+                    <muc-descriptionlist-element
+                      term="E-Mail-Adresse"
+                      :description="ansprechpartner.email"
+                    />
+                    <muc-descriptionlist-element
+                      term="Rollen"
+                      :description="formatTraegerRollen(ansprechpartner)"
+                    />
+                    <a :href="ansprechpartnerBearbeitenLink(ansprechpartner)">
+                      <muc-button class="link-button">
+                        Ansprechperson bearbeiten
+                        <muc-icon icon="ext-link" />
+                      </muc-button>
+                    </a>
+                  </dl>
+                </template>
+              </muc-accordion-item>
             </template>
-            <template #cell-rollen="{ row }">
-              {{ formatTraegerRollen(row) }}
-            </template>
-          </data-table>
+          </muc-accordion>
         </template>
-      </muc-card>
+      </traeger-page>
     </div>
   </div>
   <div v-else>
@@ -118,118 +133,58 @@
 
 <script setup lang="ts">
 import {
+  MucAccordion,
+  MucAccordionItem,
+  MucButton,
   MucCallout,
-  MucCard,
+  MucDivider,
   MucIcon,
-  MucLink,
-  MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 
-import type { TableColumn } from "./components/data-table/types.ts";
-import type { AnsprechpartnerDTO } from "./types/TraegerDTO";
-
-import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
-import DataTable from "./components/DataTable.vue";
-import TraegerDTO from "./types/TraegerDTO";
+import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
+import MucDescriptionlistElement from "./components/MucDescriptionlistElement.vue";
+import MucLabelValueDisplay from "./components/MucLabelValueDisplay.vue";
+import TraegerPage from "./components/TraegerPage.vue";
+import { AnsprechpartnerDTO } from "./types/TraegerDTO.ts";
 import { AuthService } from "./util/AuthService.ts";
 import {
   formatAdresse,
   formatAnrede,
+  formatAnsprechpartnerFullname,
   formatTraegerRollen,
-  formatTraegerTeam,
-  textOrFallback,
 } from "./util/format";
 
-const columns = computed<TableColumn<AnsprechpartnerDTO>[]>(() => [
-  {
-    key: "anrede",
-    label: "Anrede",
+const props = defineProps({
+  bearbeitenUrl: {
+    type: String,
+    default: null,
   },
-  {
-    key: "vorname",
-    label: "Vorname",
+  ansprechpartnerBearbeitenUrl: {
+    type: String,
+    default: null,
   },
-  {
-    key: "nachname",
-    label: "Nachname",
-  },
-  {
-    key: "telefon",
-    label: "Telefonnummer",
-  },
-  {
-    key: "email",
-    label: "E-Mail-Adresse",
-  },
-  {
-    key: "rollen",
-    label: "Rollen",
-    value: (ansprechperson) => formatTraegerRollen(ansprechperson),
-    sortable: false,
-  },
-]);
+});
 
 const { token, loggedIn } = new AuthService();
-
-const traeger = ref<TraegerDTO>();
-
-const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
 
-function loadTraeger() {
-  console.debug("Loading traeger data...");
+const traegerBearbeitenLink = computed(() => {
+  return getUrlWithOriginAsBaseAndDefaultParams(props.bearbeitenUrl);
+});
 
-  if (!token.value) {
-    console.debug("Skipping, because no token is known yet.");
-    return;
-  }
-
-  loading.value = true;
-  const service = new StammdatenService();
-  service
-    .getTraeger(token.value)
-    .then((resp) => {
-      if (resp.ok) {
-        resp.json().then((response: TraegerDTO) => {
-          traeger.value = response;
-          dataLoadingError.value = false;
-        });
-      } else {
-        resp.text().then((errBody) => {
-          dataLoadingError.value = true;
-          throw Error(errBody);
-        });
-      }
-    })
-    .catch((error) => {
-      dataLoadingError.value = true;
-      console.debug(error);
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-}
-
-watch(
-  token,
-  (newToken) => {
-    if (newToken) {
-      loadTraeger();
+const ansprechpartnerBearbeitenLink = function (ap: AnsprechpartnerDTO) {
+  return getUrlWithOriginAsBaseAndDefaultParams(
+    props.ansprechpartnerBearbeitenUrl,
+    {
+      ansprechpartnerId: String(ap.id),
     }
-  },
-  { immediate: true }
-);
+  );
+};
 </script>
 
 <style>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
-
-.card {
-  margin-bottom: 1rem;
-}
+@import "../public/style.css";
 </style>

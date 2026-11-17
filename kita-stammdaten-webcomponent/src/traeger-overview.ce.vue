@@ -4,56 +4,65 @@
     size="200px"
     text="Lade Träger ..."
   />
-  <div v-else-if="!dataLoadingError">
+  <div v-else>
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
-    <muc-card
-      v-if="traeger"
-      id="traeger-card"
-      :title="textOrFallback(traeger.name)"
-      :href="hasLink ? traegerLink : undefined"
-      :disabled="!traeger"
-      style="width: 100%"
+    <muc-intro
+      :title="traeger?.name ?? 'Mein Träger'"
+      tagline="Mein Bereich"
+      :divider="false"
     >
-      <template #content>
-        <div>
-          <muc-icon icon="account" /><b>Träger-ID:</b>
-          {{ textOrFallback(traeger?.id) }}
-        </div>
-        <div>
-          <muc-icon icon="home" /><b>Name:</b>
-          {{ textOrFallback(traeger?.name) }}
-        </div>
-        <div>
-          <muc-icon icon="web" /><b>Form:</b>
-          {{ textOrFallback(traeger?.traegerform) }}
-        </div>
-        <div>
-          <muc-icon icon="map-pin" /><b>Adresse:</b>
-          {{ formatAdresse(traeger.adresse) }}
-        </div>
-        <div>
-          <muc-icon icon="user-group" /><b>Team:</b>
-          {{ formatTraegerTeam(traeger.team) }}
-        </div>
-        <muc-button
-          variant="ghost"
-          class="card-action-button"
-        >
-          Trägerdetails<muc-icon icon="arrow-right" />
-        </muc-button>
+      <template #default>
+        <muc-callout v-if="dataLoadingError">
+          <template #content>
+            <p>
+              Die Trägerdaten können derzeit nicht geladen werden. Bitte
+              versuchen Sie es zu einem späteren Zeitpunkt erneut.
+            </p>
+          </template>
+        </muc-callout>
+        <a :href="hasLink ? traegerLink : undefined">
+          <muc-button>
+            Trägerdaten ansehen
+            <muc-icon icon="arrow-right" />
+          </muc-button>
+        </a>
       </template>
-    </muc-card>
+    </muc-intro>
+    <div class="page-body">
+      <div class="body-content container">
+        <slot />
+      </div>
+    </div>
+    <div
+      v-if="traeger?.team && !dataLoadingError"
+      class="kita-banner"
+    >
+      <div class="kita-banner-content container">
+        <h2>Zuständiges RBS-Team</h2>
+        <div>
+          <muc-icon icon="account" /><b>{{
+            textOrFallback(traeger?.team?.name)
+          }}</b>
+        </div>
+        <a :href="`mailto:${traeger?.team?.postfach}`">
+          <muc-icon icon="mail" /><b>{{
+            textOrFallback(traeger?.team?.postfach)
+          }}</b>
+        </a>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import {
   MucButton,
-  MucCard,
+  MucCallout,
   MucIcon,
+  MucIntro,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
@@ -63,13 +72,7 @@ import { computed, ref, watch } from "vue";
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import TraegerDTO from "@/types/TraegerDTO";
 import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
-import {
-  formatAdresse,
-  formatTraegerTeam,
-  textOrFallback,
-} from "./util/format";
-
-const traeger = ref<TraegerDTO>();
+import { textOrFallback } from "./util/format";
 
 const props = defineProps({
   detailsUrl: {
@@ -81,6 +84,8 @@ const props = defineProps({
     default: null,
   },
 });
+
+const traeger = ref<TraegerDTO>();
 
 const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
@@ -149,21 +154,6 @@ watch(
 );
 </script>
 
-<style scoped>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
-
-.card-content {
-  padding: 1rem !important;
-}
-
-.card-action-button {
-  float: right;
-  margin-bottom: 1rem;
-}
-
-#traeger-card {
-  position: relative;
-}
+<style>
+@import "../public/style.css";
 </style>
