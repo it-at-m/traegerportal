@@ -33,9 +33,7 @@
             @update:search-text="pageNumber = 0"
           />
           <h2 class="traegerportal-ueberschrift">
-            <muc-icon icon="file" />Meine Vorgänge ({{
-              vorgaenge?.length
-            }}
+            <muc-icon icon="file" />Meine Vorgänge ({{ vorgaenge?.length }}
             gesamt)
           </h2>
           <muc-card-container>

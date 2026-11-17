@@ -19,7 +19,10 @@
       v-else
       style="width: 100%"
     >
-      <traeger-page :token="token" @loading-error="dataLoadingError=true">
+      <traeger-page
+        :token="token"
+        @loading-error="dataLoadingError = true"
+      >
         <template #intro-content="{ traeger }">
           <dl class="m-descriptionlist">
             <muc-label-value-display
