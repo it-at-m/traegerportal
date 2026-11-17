@@ -45,31 +45,6 @@ defineProps({
 </script>
 
 <style scoped>
-.intro-wrapper {
-  --intro-bg-color: #e1d7ff !important;
-  margin-bottom: 0 !important;
-}
-
-.kita-banner {
-  background: #e1d7ff;
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-  margin-top: 2rem;
-  text-align: center;
-}
-
-.kita-banner-content {
-  display: inline-block;
-  text-align: left;
-}
-
-.body-content {
-  display: inline-block;
-  text-align: left;
-}
-
-.page-body {
-  text-align: center;
-}
+@import "../../public/style.css";
 </style>
 ```

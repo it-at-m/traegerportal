@@ -185,7 +185,8 @@ export function formatAnrede(value: string) {
 }
 
 export function formatAnsprechpartnerFullname(value: AnsprechpartnerDTO) {
-  return `${value.vorname} ${value.nachname}`;
+  const fullname = `${value.vorname} ${value.nachname}`;
+  return fullname.trim();
 }
 
 export function formatBetreff(dto?: VorgaengeDTO): string | undefined {
