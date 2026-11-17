@@ -21,6 +21,7 @@ defineProps<{
 }
 .label-value-label {
   font-weight: 700;
+  word-break: keep-all;
 }
 .label-value-value:empty::before {
   content: "Keine Daten";
