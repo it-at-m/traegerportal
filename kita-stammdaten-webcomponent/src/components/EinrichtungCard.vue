@@ -48,7 +48,7 @@ const props = defineProps<{
 
 const fullEinrichtungLink = computed(() => {
   return getUrlWithOriginAsBaseAndDefaultParams(props.einrichtungLink, {
-    vorgangId: props.einrichtung.id,
+    einrichtungId: props.einrichtung.id,
   });
 });
 </script>
