@@ -46,6 +46,8 @@ export default class VorgaengeDTO {
         return this.einrichtung?.name ?? this.aktenzeichen;
       case "TRAEGERDATEN_AENDERN":
         return "Mein Träger";
+      case "TRAEGERANSPRECHPARTNER_AENDERN":
+        return "Mein Träger";
       default:
         return "";
     }

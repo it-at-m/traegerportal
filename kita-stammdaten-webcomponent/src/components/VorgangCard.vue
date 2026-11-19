@@ -26,7 +26,7 @@
       />
       <muc-label-value-display
         v-if="vorgang.vorgangsart == 'EINRICHTUNGSDATEN_AENDERN'"
-        label="Einrichtungsadresse"
+        label="Adresse"
         :value="formatStrasse(vorgang.einrichtung?.adresse)"
       />
       <muc-label-value-display

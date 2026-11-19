@@ -144,7 +144,6 @@ export function formatTraegerRollen(
   }
   return [...ansprechpartner.rollen]
     .sort((a, b) => a.localeCompare(b))
-    .filter((rolle) => rolle != "SAEULE1")
     .map((rolle) => {
       const _rolle = formatRolle(rolle);
 

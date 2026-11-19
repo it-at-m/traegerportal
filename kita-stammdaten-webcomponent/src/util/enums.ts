@@ -19,6 +19,7 @@ export const vorgangsart = new Map<string, string>([
   ["UNTERNEHMENSKONTO", "Unternehmenskonto"],
   ["EINRICHTUNGSDATEN_AENDERN", "Einrichtungsdaten ändern"],
   ["TRAEGERDATEN_AENDERN", "Trägerdaten ändern"],
+  ["TRAEGERANSPRECHPARTNER_AENDERN", "Ansprechpartner ändern"],
 ]);
 
 export const vorgangsstatus = new Map<string, string>([
