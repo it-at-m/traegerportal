@@ -179,7 +179,7 @@ const ansprechpartnerBearbeitenLink = function (ap?: AnsprechpartnerDTO) {
   return getUrlWithOriginAsBaseAndDefaultParams(
     props.ansprechpartnerBearbeitenUrl,
     {
-      ansprechpartnerId: String(ap?.id ?? ''),
+      ansprechpartnerId: String(ap?.id ?? ""),
     }
   );
 };
