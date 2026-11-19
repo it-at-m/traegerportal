@@ -12,7 +12,7 @@
 
     <h2 class="traegerportal-ueberschrift">
       <span>
-        <muc-icon icon="file" /> Meine Vorgänge ({{ vorgangCount }} ungelesen/{{
+        <muc-icon icon="file" /> Meine Vorgänge ({{ vorgangCount }} ungelesen / {{
           vorgaenge?.length
         }}
         gesamt)

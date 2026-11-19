@@ -71,7 +71,7 @@
           </dl>
           <muc-divider />
           <h2>Ansprechpersonen</h2>
-          <a :href="traegerBearbeitenLink">
+          <a :href="ansprechpartnerBearbeitenLink(null)">
             <muc-button class="link-button">
               Neue Ansprechperson erfassen
               <muc-icon icon="ext-link" />
@@ -175,11 +175,11 @@ const traegerBearbeitenLink = computed(() => {
   return getUrlWithOriginAsBaseAndDefaultParams(props.bearbeitenUrl);
 });
 
-const ansprechpartnerBearbeitenLink = function (ap: AnsprechpartnerDTO) {
+const ansprechpartnerBearbeitenLink = function (ap?: AnsprechpartnerDTO) {
   return getUrlWithOriginAsBaseAndDefaultParams(
     props.ansprechpartnerBearbeitenUrl,
     {
-      ansprechpartnerId: String(ap.id),
+      ansprechpartnerId: String(ap?.id ?? ''),
     }
   );
 };
