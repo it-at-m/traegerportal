@@ -23,14 +23,9 @@ public class TraegerIdApiRestServiceConfiguration {
             final ClientCredentialsAccessTokenProvider tokenProvider,
             @Value("${adapter.einrichtungsverwaltung.cache-expires-after-write}") final Duration cacheExpiresAfterWrite,
             @Value("${adapter.einrichtungsverwaltung.cache-maximum-size}") final int cacheMaximumSize) {
-        final WebClient webClient = webClientBuilder
-                .baseUrl(evUrl)
-                .build();
+        final WebClient webClient = getWebClient(webClientBuilder, evUrl);
 
-        final Cache<String, Long> idCache = Caffeine.newBuilder()
-                .expireAfterWrite(cacheExpiresAfterWrite)
-                .maximumSize(cacheMaximumSize)
-                .build();
+        final Cache<String, Long> idCache = getCache(cacheExpiresAfterWrite, cacheMaximumSize);
 
         final TraegerIdApiRestService traegerIdApiRestService = new TraegerIdApiRestService(
                 webClient,
@@ -46,6 +41,19 @@ public class TraegerIdApiRestServiceConfiguration {
                 cacheMaximumSize);
 
         return traegerIdApiRestService;
+    }
+
+    public static WebClient getWebClient(final WebClient.Builder webClientBuilder, final String evUrl) {
+        return webClientBuilder
+                .baseUrl(evUrl)
+                .build();
+    }
+
+    public static Cache<String, Long> getCache(final Duration cacheExpiresAfterWrite, final int cacheMaximumSize) {
+        return Caffeine.newBuilder()
+                .expireAfterWrite(cacheExpiresAfterWrite)
+                .maximumSize(cacheMaximumSize)
+                .build();
     }
 
 }
