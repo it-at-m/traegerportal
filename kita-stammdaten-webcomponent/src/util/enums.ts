@@ -19,6 +19,7 @@ export const vorgangsart = new Map<string, string>([
   ["UNTERNEHMENSKONTO", "Unternehmenskonto"],
   ["EINRICHTUNGSDATEN_AENDERN", "Einrichtungsdaten ändern"],
   ["TRAEGERDATEN_AENDERN", "Trägerdaten ändern"],
+  ["TRAEGERANSPRECHPARTNER_AENDERN", "Ansprechpartner ändern"],
 ]);
 
 export const vorgangsstatus = new Map<string, string>([
@@ -31,7 +32,7 @@ export const vorgangsstatus = new Map<string, string>([
   ["ANTRAG_WIDERSPRUCH", "Antrag Widerspruch"],
   ["ANTRAG_KLAGE", "Antrag Klage"],
   ["IN_BEARBEITUNG", "In Bearbeitung"],
-  ["RUECKFRAGE", "Rückfrage"],
+  ["RUECKFRAGE", "Informationen angefragt"],
 ]);
 
 export const ansprechpartnerRollen = new Map<string, string>([
@@ -44,4 +45,12 @@ export const ansprechpartnerRollen = new Map<string, string>([
     "(Ansprechpartner*in für) Belegung der Einrichtung",
   ],
   ["SONSTIGE", "Sonstige"],
+]);
+
+export const einrichtungsartenLhm = new Map<string, string>([
+  ["KINDERKRIPPE", "Kinderkrippe"],
+  ["KINDERGARTEN", "Kindergarten"],
+  ["HORT", "Hort"],
+  ["HAUS_FUER_KINDER", "Haus für Kinder"],
+  ["TAGESHEIM", "Tagesheim"],
 ]);

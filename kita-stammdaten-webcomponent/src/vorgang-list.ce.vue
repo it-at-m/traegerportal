@@ -3,6 +3,7 @@
   <div v-html="mucIconsSprite" />
   <!-- eslint-disable-next-line vue/no-v-html -->
   <div v-html="customIconsSprite" />
+
   <div v-if="loggedIn">
     <muc-spinner
       v-if="loading"
@@ -21,70 +22,38 @@
       v-else
       style="width: 100%"
     >
-      <muc-card
-        id="vorgaenge-card-details"
-        title="Vorgänge zum Träger"
-        :disabled="false"
+      <traeger-page
+        tagline="Meine Vorgänge"
+        :token="token"
+        :include-footer="true"
       >
         <template #content>
-          <data-table
-            :items="vorgaenge"
-            :columns="columns"
-            row-key="aktenzeichen"
-            :page-size="pageSize"
-            :page-size-options="pageSizeOptions"
-            default-sort-key="letzteAenderung"
-            default-sort-direction="desc"
-            caption="Vorgänge zum Träger"
-            empty-message="Es liegen aktuell keine Vorgänge vor."
+          <search-button
+            v-model:search-text="searchText"
+            @update:search-text="pageNumber = 0"
+          />
+          <h2 class="traegerportal-ueberschrift">
+            <muc-icon icon="file" />Meine Vorgänge ({{ vorgaenge?.length }}
+            gesamt)
+          </h2>
+          <muc-card-container>
+            <vorgang-card
+              v-for="vorgang in currentPage"
+              :key="vorgang.aktenzeichen"
+              :vorgang="vorgang"
+              :vorgang-link="detailsUrl"
+            />
+          </muc-card-container>
+          <muc-button
+            v-if="morePages"
+            class="action-button"
+            @click="displayMore"
           >
-            <template #cell-aktenzeichen="{ row }">
-              {{ row.aktenzeichen }}
-            </template>
-
-            <template #cell-einrichtungsadresse="{ row }">
-              <div>{{ row.einrichtung?.name }}</div>
-              <div>{{ formatAdresse(row.einrichtung?.adresse) }}</div>
-            </template>
-
-            <template #cell-vorgangsart="{ row }">
-              {{ formatVorgangsart(row) }}
-            </template>
-
-            <template #cell-status="{ row }">
-              {{ formatVorgangsstatus(row.status) }}
-            </template>
-
-            <template #cell-letzteAenderung="{ row }">
-              {{ formatDate(row.letzteAenderung) }}
-            </template>
-
-            <template #cell-aktionen="{ row }">
-              <div class="actions">
-                <div class="actions-cols">
-                  <muc-icon
-                    v-if="row.changedSinceLastExternalRead"
-                    icon="bell"
-                    aria-label="Aktualisierungen"
-                  />
-                </div>
-                <div class="actions-cols">
-                  <a
-                    class="details-link"
-                    :href="getDetailsUrl(row.aktenzeichen)"
-                    aria-label="Vorgangsdetails"
-                  >
-                    <muc-icon
-                      icon="arrow-right"
-                      aria-hidden="true"
-                    />
-                  </a>
-                </div>
-              </div>
-            </template>
-          </data-table>
+            Mehr anzeigen
+            <muc-icon icon="arrow-down" />
+          </muc-button>
         </template>
-      </muc-card>
+      </traeger-page>
     </div>
   </div>
   <div v-else>
@@ -97,12 +66,10 @@
 </template>
 
 <script setup lang="ts">
-import type VorgaengeDTO from "@/types/VorgaengeDTO";
-import type { PropType } from "vue";
-
 import {
+  MucButton,
   MucCallout,
-  MucCard,
+  MucCardContainer,
   MucIcon,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
@@ -110,18 +77,13 @@ import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
 import { computed, ref, watch } from "vue";
 
-import type { TableColumn } from "./components/data-table/types.ts";
-
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
-import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
-import DataTable from "./components/DataTable.vue";
+import VorgaengeDTO from "@/types/VorgaengeDTO";
+import SearchButton from "./components/SearchButton.vue";
+import TraegerPage from "./components/TraegerPage.vue";
+import VorgangCard from "./components/VorgangCard.vue";
 import { AuthService } from "./util/AuthService.ts";
-import {
-  formatAdresse,
-  formatDate,
-  formatVorgangsart,
-  formatVorgangsstatus,
-} from "./util/format";
+import { normalizeForSearch } from "./util/format.ts";
 
 const props = defineProps({
   detailsUrl: {
@@ -130,48 +92,9 @@ const props = defineProps({
   },
   pageSize: {
     type: Number,
-    default: 5,
-  },
-  pageSizeOptions: {
-    type: Array as PropType<number[]>,
-    default: () => [10, 20, 30, 50],
+    default: 6,
   },
 });
-
-const columns = computed<TableColumn<VorgaengeDTO>[]>(() => [
-  {
-    key: "aktenzeichen",
-    label: "Aktenzeichen",
-  },
-  {
-    key: "einrichtungsadresse",
-    label: "Einrichtungsadresse",
-    value: (vorgang) => vorgang.einrichtung?.name ?? "",
-  },
-  {
-    key: "vorgangsart",
-    label: "Vorgangsart",
-  },
-  {
-    key: "kibigWebId",
-    label: "KiBiG.web-Nummer",
-    value: (vorgang) => vorgang.einrichtung?.kibigWebId ?? "",
-  },
-  {
-    key: "status",
-    label: "Status",
-    value: (vorgang) => vorgang.status?.status ?? "",
-  },
-  {
-    key: "letzteAenderung",
-    label: "Aktualisiert",
-  },
-  {
-    key: "aktionen",
-    label: "",
-    sortable: false,
-  },
-]);
 
 const { token, loggedIn } = new AuthService();
 
@@ -179,12 +102,6 @@ const vorgaenge = ref<VorgaengeDTO[]>([]);
 
 const loading = ref(false);
 const dataLoadingError = ref(false);
-
-function getDetailsUrl(aktenzeichen: string): string | undefined {
-  return getUrlWithOriginAsBaseAndDefaultParams(props.detailsUrl, {
-    id: aktenzeichen,
-  });
-}
 
 function loadVorgaenge() {
   console.debug("Loading Vorgänge...");
@@ -202,6 +119,16 @@ function loadVorgaenge() {
       if (resp.ok) {
         return resp.json().then((response) => {
           vorgaenge.value = response.content as VorgaengeDTO[];
+          // Assigne den Typen VorgaengeDTO, damit Methoden verwendet werden können
+          vorgaenge.value.forEach((item: VorgaengeDTO) => {
+            Object.setPrototypeOf(item, VorgaengeDTO.prototype);
+          });
+          // Sortiere neueste zuerst
+          vorgaenge.value.sort(
+            (a, b) =>
+              new Date(b.letzteAenderung).getTime() -
+              new Date(a.letzteAenderung).getTime()
+          );
           dataLoadingError.value = false;
         });
       } else {
@@ -229,28 +156,42 @@ watch(
   },
   { immediate: true }
 );
+
+const filteredVorgaenge = computed(() => {
+  return vorgaenge.value.filter((v) => {
+    return normalizeForSearch(v).includes(
+      searchText.value?.toLowerCase() ?? ""
+    );
+  });
+});
+
+const pageNumber = ref<number>(0);
+
+const currentPage = computed(() => {
+  return filteredVorgaenge.value instanceof Array
+    ? filteredVorgaenge.value.slice(0, (pageNumber.value + 1) * props.pageSize)
+    : [];
+});
+
+function displayMore() {
+  pageNumber.value++;
+}
+
+const morePages = computed(() => {
+  if (filteredVorgaenge.value) {
+    return (
+      props.pageSize * (pageNumber.value + 1) < filteredVorgaenge.value.length
+    );
+  } else {
+    return false;
+  }
+});
+
+const searchText = ref<string>();
 </script>
 
 <style>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
-
-.actions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 8px;
-  width: 100%;
-  height: 100%;
-}
-
-.actions-cols {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  height: 100%;
-}
+@import "../public/style.css";
 
 .no-vorgaenge-callout {
   margin-top: 1rem;

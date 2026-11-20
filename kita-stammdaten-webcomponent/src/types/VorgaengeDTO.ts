@@ -1,4 +1,5 @@
 import type FallbearbeitungEinrichtungDTO from "@/types/FallbearbeitungEinrichtungDTO.ts";
+import type FallbearbeitungTraegerDTO from "@/types/FallbearbeitungTraegerDTO.ts";
 
 export class VorgangsstatusDTO {
   status: string;
@@ -14,6 +15,7 @@ export class VorgangsstatusDTO {
 
 export default class VorgaengeDTO {
   aktenzeichen: string;
+  traeger: FallbearbeitungTraegerDTO;
   einrichtung: FallbearbeitungEinrichtungDTO;
   vorgangsart: string;
   status: VorgangsstatusDTO;
@@ -22,6 +24,7 @@ export default class VorgaengeDTO {
 
   constructor(
     aktenzeichen: string,
+    traeger: FallbearbeitungTraegerDTO,
     einrichtung: FallbearbeitungEinrichtungDTO,
     vorgangsart: string,
     status: VorgangsstatusDTO,
@@ -29,10 +32,24 @@ export default class VorgaengeDTO {
     changedSinceLastExternalRead: boolean
   ) {
     this.aktenzeichen = aktenzeichen;
+    this.traeger = traeger;
     this.einrichtung = einrichtung;
     this.vorgangsart = vorgangsart;
     this.status = status;
     this.letzteAenderung = letzteAenderung;
     this.changedSinceLastExternalRead = changedSinceLastExternalRead;
+  }
+
+  getBetreff(): string {
+    switch (this.vorgangsart) {
+      case "EINRICHTUNGSDATEN_AENDERN":
+        return this.einrichtung?.name ?? this.aktenzeichen;
+      case "TRAEGERDATEN_AENDERN":
+        return "Mein Träger";
+      case "TRAEGERANSPRECHPARTNER_AENDERN":
+        return "Mein Träger";
+      default:
+        return "";
+    }
   }
 }

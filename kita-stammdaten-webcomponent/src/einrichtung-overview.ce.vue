@@ -9,51 +9,28 @@
     <div v-html="mucIconsSprite" />
     <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-html="customIconsSprite" />
-    <muc-accordion
-      v-if="einrichtungenVorhanden"
-      id="einrichtung-accordion"
-      multiple
-    >
-      <muc-accordion-item
-        v-for="einrichtung in currentPage"
-        :id="'einrichtung-accordion-item-' + einrichtung.id"
-        :key="einrichtung.id"
-        :header="formatEinrichtungTitle(einrichtung)"
+    <div v-if="einrichtungenVorhanden">
+      <h2 class="traegerportal-ueberschrift">
+        <muc-icon icon="home" />Meine Einrichtungen ({{ einrichtungen?.length }}
+        gesamt)
+      </h2>
+      <muc-card-container id="einrichtung-container">
+        <einrichtung-card
+          v-for="einrichtung in currentPage"
+          :key="einrichtung.id"
+          :einrichtung="einrichtung"
+          :einrichtung-link="detailsUrl"
+        />
+      </muc-card-container>
+      <muc-button
+        v-if="morePages"
+        class="action-button"
+        @click="displayMore"
       >
-        <template #subtitle>
-          <a
-            :href="getDetailsUrl(einrichtung.id)"
-            @click.stop
-          >
-            <muc-button variant="ghost">
-              Einrichtungsdetails
-              <muc-icon icon="arrow-right" />
-            </muc-button>
-          </a>
-        </template>
-        <template #content>
-          <div>
-            <span class="einrichtung-attribute"
-              ><b>KIGIB.web-Nummer:</b>
-              {{ einrichtung.merkmale.kibigWebId }}</span
-            >
-          </div>
-          <div>
-            <span class="einrichtung-attribute"
-              ><b>Status:</b>
-              {{
-                formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus)
-              }}</span
-            >
-          </div>
-          <div>
-            <span class="einrichtung-attribute"
-              ><b>Adresse:</b> {{ formatAdresse(einrichtung.adresse) }}</span
-            >
-          </div>
-        </template>
-      </muc-accordion-item>
-    </muc-accordion>
+        Mehr anzeigen
+        <muc-icon icon="arrow-down" />
+      </muc-button>
+    </div>
     <muc-callout
       v-else
       type="info"
@@ -63,21 +40,14 @@
         <p>Keine Einrichtungen hinterlegt</p>
       </template>
     </muc-callout>
-    <simple-pagination
-      v-if="!!einrichtungen && multiplePages"
-      v-model="pageNumber"
-      :total-items="einrichtungen.length"
-      :items-per-page="pageSize"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
 import {
-  MucAccordion,
-  MucAccordionItem,
   MucButton,
   MucCallout,
+  MucCardContainer,
   MucIcon,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
@@ -86,14 +56,9 @@ import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.
 import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService";
-import SimplePagination from "@/components/SimplePagination.vue";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
-import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
-import {
-  formatAdresse,
-  formatEinrichtungsstatus,
-  formatEinrichtungTitle,
-} from "./util/format";
+import EinrichtungCard from "./components/EinrichtungCard.vue";
+import { normalizeForSearch } from "./util/format";
 
 const props = defineProps({
   detailsUrl: {
@@ -108,16 +73,14 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  searchText: {
+    type: String,
+    default: null,
+  },
 });
 
 const loading = ref<boolean>();
 const dataLoadingError = ref<boolean>();
-
-function getDetailsUrl(einrichtungId: string): string | undefined {
-  return getUrlWithOriginAsBaseAndDefaultParams(props.detailsUrl, {
-    einrichtungId: einrichtungId,
-  });
-}
 
 const einrichtungen = ref<EinrichtungDTO[]>();
 
@@ -139,9 +102,7 @@ function loadEinrichtungen() {
       if (resp.ok) {
         resp.json().then((response) => {
           einrichtungen.value = response.content as EinrichtungDTO[];
-          einrichtungen.value.sort((a, b) =>
-            formatEinrichtungTitle(a).localeCompare(formatEinrichtungTitle(b))
-          );
+          einrichtungen.value.sort((a, b) => a.name.localeCompare(b.name));
           dataLoadingError.value = false;
         });
       } else {
@@ -163,17 +124,31 @@ function loadEinrichtungen() {
 }
 
 const pageNumber = ref<number>(0);
-const currentPage = computed(() => {
+
+const filteredResults = computed(() => {
   return einrichtungen.value instanceof Array
-    ? einrichtungen.value.slice(
-        pageNumber.value * props.pageSize,
-        (pageNumber.value + 1) * props.pageSize
-      )
+    ? einrichtungen.value.filter((v) => {
+        return normalizeForSearch(v).includes(props.searchText?.toLowerCase());
+      })
     : [];
 });
-const multiplePages = computed(() => {
-  if (einrichtungen.value) {
-    return props.pageSize < einrichtungen.value.length;
+
+const currentPage = computed(() => {
+  return filteredResults.value.slice(
+    0,
+    (pageNumber.value + 1) * props.pageSize
+  );
+});
+
+function displayMore() {
+  pageNumber.value++;
+}
+
+const morePages = computed(() => {
+  if (filteredResults.value) {
+    return (
+      props.pageSize * (pageNumber.value + 1) < filteredResults.value.length
+    );
   } else {
     return false;
   }
@@ -196,45 +171,17 @@ watch(
   },
   { immediate: true }
 );
+
+watch(
+  () => props.searchText,
+  () => {
+    pageNumber.value = 0;
+  }
+);
 </script>
 
 <style>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
-
-.m-component-accordion {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  padding-right: 0 !important;
-}
-
-.m-component-accordion .container {
-  padding-left: 0;
-  padding-right: 0;
-  max-width: 100%;
-}
-
-.m-accordion__section {
-  border: solid 1px var(--color-neutrals-blue);
-  border-bottom: solid 5px var(--color-brand-main-blue) !important;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  margin-bottom: 16px;
-}
-
-.m-accordion__section-button {
-  padding-top: 16px;
-  padding-bottom: 16px;
-}
-
-.einrichtung-attribute {
-  padding-right: 1rem;
-}
-
-.content-width {
-  width: 100% !important;
-}
+@import "../public/style.css";
 
 .no-einrichtungen-callout {
   padding-left: 0;

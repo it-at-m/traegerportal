@@ -24,119 +24,107 @@
       v-else
       style="width: 100%"
     >
-      <h2 v-if="einrichtung">
-        {{ formatEinrichtungTitle(einrichtung) }} -
-        {{ formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus) }}
-      </h2>
-      <muc-link
-        label="Einrichtungsdaten ändern"
-        href="https://test81-k2.muenchen.de/intelliform/forms/integration/05/05/2277/index?eid=2"
-        prepend-icon="pencil"
-      />
-      <muc-card
-        v-if="einrichtung"
-        id="einrichtung-card-allgemein"
-        title="Allgemeines"
-        :disabled="false"
+      <traegerportal-page
+        :title="einrichtung?.name ?? ''"
+        :tagline="
+          formatEinrichtungsart(einrichtung?.merkmale?.einrichtungsartLhm)
+        "
+        include-footer
       >
-        <template #content>
-          <div><b>Name:</b> {{ textOrFallback(einrichtung.name) }}</div>
+        <template #intro-content>
           <div>
-            <muc-icon icon="lock" /><b>Status:</b>
-            {{ formatEinrichtungsstatus(einrichtung.aktuellGueltigerStatus) }}
+            <b
+              :class="`einrichtung-status ${einrichtung?.aktuellGueltigerStatus?.status}`"
+            >
+              {{
+                formatEinrichtungsstatus(einrichtung?.aktuellGueltigerStatus)
+              }}
+            </b>
           </div>
-          <div>
-            <muc-icon icon="lock" /><b>KIGIB.web-Nummer:</b>
-            {{ textOrFallback(einrichtung.merkmale?.kibigWebId) }}
-          </div>
-          <div>
-            <muc-icon icon="lock" /><b>Adresse: </b
-            >{{ formatAdresse(einrichtung.adresse) }}
-          </div>
-          <div>
-            <muc-icon icon="lock" /><b>Stadtbezirk: </b
-            >{{ textOrFallback(einrichtung.stadtbezirk?.name) }}
-          </div>
-          <div>
-            <muc-icon icon="lock" /><b>Schulsprengel: </b
-            >{{ textOrFallback(einrichtung.schulsprengel?.schule) }}
-          </div>
+          <muc-label-value-display
+            label="KIBIG.web-Nummer"
+            :value="einrichtung?.merkmale?.kibigWebId"
+          />
+          <muc-label-value-display
+            label="Adresse"
+            :value="formatAdresse(einrichtung?.adresse)"
+          />
+          <muc-label-value-display
+            label="Stadtbezirk"
+            :value="einrichtung?.stadtbezirk?.name"
+          />
+          <muc-label-value-display
+            label="Schulsprengel"
+            :value="einrichtung?.schulsprengel?.schule"
+          />
+          <a :href="hasLink ? einrichtungBearbeitenLink : undefined">
+            <muc-button class="link-button">
+              Einrichtungsdaten ändern
+              <muc-icon icon="ext-link" />
+            </muc-button>
+          </a>
         </template>
-      </muc-card>
-      <muc-card
-        v-if="einrichtung"
-        id="einrichtung-card-kontakt"
-        title="Kontaktdaten der Einrichtung"
-        :disabled="false"
-      >
         <template #content>
-          <div>
-            <b>Telefonnummer:</b>
-            {{ textOrFallback(einrichtung.kontaktdaten?.telefon) }}
-          </div>
-          <div>
-            <b>Faxnummer:</b>
-            {{ textOrFallback(einrichtung.kontaktdaten?.fax) }}
-          </div>
-          <div>
-            <b>E-Mail-Adresse:</b>
-            {{ textOrFallback(einrichtung.kontaktdaten?.email) }}
-          </div>
-          <div>
-            <b>Homepage:</b>
-            {{ textOrFallback(einrichtung.kontaktdaten?.homepageUrl) }}
-          </div>
-          <div>
-            <b>Notfall-Telefonnummer:</b>
-            {{ textOrFallback(einrichtung.kontaktdaten?.notfallTelefon) }}
-          </div>
-        </template>
-      </muc-card>
-      <muc-card
-        v-if="einrichtung"
-        id="einrichtung-card-plaetze"
-        title="Platzstruktur der Einrichtung"
-        :disabled="true"
-      >
-        <template #content>
-          <div>
-            <muc-icon icon="lock" /><b>Gesamt: </b>
-            {{
-              textOrFallback(
-                einrichtung.aktuellGueltigeBetriebserlaubnis
+          <h2>Kontaktdaten</h2>
+          <dl class="m-descriptionlist">
+            <muc-descriptionlist-element
+              term="Telefonnummer"
+              :description="einrichtung?.kontaktdaten?.telefon"
+            />
+            <muc-descriptionlist-element
+              term="Faxnummer"
+              :description="einrichtung?.kontaktdaten?.fax"
+            />
+            <muc-descriptionlist-element
+              term="E-Mail-Adresse"
+              :description="einrichtung?.kontaktdaten?.email"
+            />
+            <muc-descriptionlist-element
+              term="Webseite"
+              :description="einrichtung?.kontaktdaten?.homepageUrl"
+            />
+            <muc-descriptionlist-element
+              term="Notfall-Telefonnummer"
+              :description="einrichtung?.kontaktdaten?.notfallTelefon"
+            />
+          </dl>
+          <muc-divider />
+          <h2>Platzstruktur</h2>
+          <dl class="m-descriptionlist">
+            <muc-descriptionlist-element
+              term="Plätze Gesamt"
+              :description="
+                einrichtung?.aktuellGueltigeBetriebserlaubnis
                   ?.aktuellGueltigeSollbelegung?.plaetzeGesamt
-              )
-            }}
-          </div>
-          <div>
-            <muc-icon icon="lock" /><b>Kinderkrippe: </b>
-            {{
-              textOrFallback(
-                einrichtung.aktuellGueltigeBetriebserlaubnis
+              "
+            />
+            <muc-descriptionlist-element
+              term="Plätze Kinderkrippe"
+              :description="
+                einrichtung?.aktuellGueltigeBetriebserlaubnis
                   ?.aktuellGueltigeSollbelegung?.plaetzeKinderkrippe
-              )
-            }}
-          </div>
-          <div>
-            <muc-icon icon="lock" /><b>kindergarten: </b>
-            {{
-              textOrFallback(
-                einrichtung.aktuellGueltigeBetriebserlaubnis
+              "
+            />
+            <muc-descriptionlist-element
+              term="Plätze Kindergarten"
+              :description="
+                einrichtung?.aktuellGueltigeBetriebserlaubnis
                   ?.aktuellGueltigeSollbelegung?.plaetzeKindergarten
-              )
-            }}
-          </div>
-          <div>
-            <muc-icon icon="lock" /><b>Hort: </b>
-            {{
-              textOrFallback(
-                einrichtung.aktuellGueltigeBetriebserlaubnis
+              "
+            />
+            <muc-descriptionlist-element
+              term="Plätze Hort"
+              :description="
+                einrichtung?.aktuellGueltigeBetriebserlaubnis
                   ?.aktuellGueltigeSollbelegung?.plaetzeHort
-              )
-            }}
-          </div>
+              "
+            />
+          </dl>
         </template>
-      </muc-card>
+        <template #footer>
+          <einrichtungen-slider :token="token ?? ''"></einrichtungen-slider>
+        </template>
+      </traegerportal-page>
     </div>
   </div>
   <div v-else>
@@ -150,25 +138,36 @@
 
 <script setup lang="ts">
 import {
+  MucButton,
   MucCallout,
-  MucCard,
+  MucDivider,
   MucIcon,
-  MucLink,
   MucSpinner,
 } from "@muenchen/muc-patternlab-vue";
 import customIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/custom-icons.svg?raw";
 import mucIconsSprite from "@muenchen/muc-patternlab-vue/assets/icons/muc-icons.svg?raw";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 
 import StammdatenService from "@/api/einrichtungsverwaltung/StammdatenService.ts";
 import EinrichtungDTO from "@/types/EinrichtungDTO";
+import { getUrlWithOriginAsBaseAndDefaultParams } from "@/util/constants.ts";
+import EinrichtungenSlider from "./components/EinrichtungenSlider.vue";
+import MucDescriptionlistElement from "./components/MucDescriptionlistElement.vue";
+import MucLabelValueDisplay from "./components/MucLabelValueDisplay.vue";
+import TraegerportalPage from "./components/TraegerportalPage.vue";
 import { AuthService } from "./util/AuthService.ts";
 import {
   formatAdresse,
+  formatEinrichtungsart,
   formatEinrichtungsstatus,
-  formatEinrichtungTitle,
-  textOrFallback,
 } from "./util/format";
+
+const props = defineProps({
+  bearbeitenUrl: {
+    type: String,
+    default: null,
+  },
+});
 
 const { token, loggedIn } = new AuthService();
 
@@ -232,14 +231,25 @@ watch(
   },
   { immediate: true }
 );
+
+const einrichtungBearbeitenLink = computed(() => {
+  return getUrlWithOriginAsBaseAndDefaultParams(props.bearbeitenUrl);
+});
+
+const hasLink = computed(() => {
+  return props.bearbeitenUrl && einrichtung.value;
+});
 </script>
 
 <style>
-@import url("https://assets.muenchen.de/mde/1.1.19/css/style.css");
-@import "@muenchen/muc-patternlab-vue/assets/css/custom-style.css";
-@import "@muenchen/muc-patternlab-vue/style.css";
+@import "../public/style.css";
 
-.card {
-  margin-bottom: 1rem;
+.einrichtung-status {
+  border: 1px solid;
+}
+
+.kita-banner-content {
+  width: 100%;
+  max-width: 100%;
 }
 </style>
