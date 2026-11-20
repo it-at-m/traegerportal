@@ -20,43 +20,129 @@ spring:
             cors-configurations:
               '[/**]':
                 allowedOrigins:
-                - https://stadt-i.muenchen.de
+                  - https://stadt-i.muenchen.de
                 allowedMethods:
-                - GET
-                - POST
-                - OPTIONS
+                  - GET
+                  - POST
+                  - OPTIONS
                 allowedHeaders:
-                - "*"
+                  - "*"
                 allowCredentials: true
+          routes:
+
+            - id: sso
+              uri: ${resourceserver.sso.base-url}
+              predicates:
+                - Path=/api/sso/userinfo
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: '/api/sso/userinfo'
+                    replacement: '/auth/realms/local_realm/protocol/openid-connect/userinfo'
+
+            - id: meintraeger
+              uri: ${adapter.einrichtungsverwaltung.base-url}
+              predicates:
+                - Path=/meintraeger,/meintraeger/**
+                - Method=GET
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: '^/meintraeger'
+                    replacement: '${adapter.einrichtungsverwaltung.base-path}'
+                - RemoveRequestHeader=Origin
+                - name: StammdatenSecurity
+
+            - id: meinevorgaenge
+              uri: ${adapter.fallbearbeitung.base-url}
+              predicates:
+                - Path=/meinevorgaenge,/meinevorgaenge/**
+                - Method=GET
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: '^/meinevorgaenge'
+                    replacement: '${adapter.fallbearbeitung.base-path}'
+                - RemoveRequestHeader=Origin
+                - name: StammdatenSecurity
+
+            - id: webcomponents
+              uri: ${adapter.webcomponents.base-url}
+              predicates:
+                - Path=/webcomponents/**
+                - Method=GET
+              filters:
+                - StripPrefix=1
+
+            - id: eogovfor-traeger
+              uri: ${adapter.einrichtungsverwaltung.base-url}
+              predicates:
+                - Path=clients/egovfor-validierungs-eai/search/traeger
+                - Method=GET
+              filters:
+                - RemoveRequestHeader=Origin
+                - name: QueryParamsToPath
+                  args:
+                    targetPath: '${adapter.einrichtungsverwaltung.base-path}/{traegerId}'
+                - name: StammdatenSecurity
+
+            - id: eogovfor-einrichtung
+              uri: ${adapter.einrichtungsverwaltung.base-url}
+              predicates:
+                - Path=clients/egovfor-validierungs-eai/search/einrichtung
+                - Method=GET
+              filters:
+                - RemoveRequestHeader=Origin
+                - name: QueryParamsToPath
+                  args:
+                    targetPath: '${adapter.einrichtungsverwaltung.base-path}/{traegerId}/einrichtung/{einrichtungId}'
+                - name: StammdatenSecurity
+
+            - id: eogovfor-ansprechpartner
+              uri: ${adapter.einrichtungsverwaltung.base-url}
+              predicates:
+                - Path=clients/egovfor-validierungs-eai/search/ansprechpartner
+                - Method=GET
+              filters:
+                - RemoveRequestHeader=Origin
+                - name: QueryParamsToPath
+                  args:
+                    targetPath: '${adapter.einrichtungsverwaltung.base-path}/{traegerId}/ansprechpartner/{ansprechpartnerId}'
+                - name: StammdatenSecurity
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://sso.muenchen.de/auth/realms/public
-          jwk-set-uri: https://sso.muenchen.de/auth/realms/public/protocol/openid-connect/certs
+          issuer-uri: ${resourceserver.sso.base-url}/auth/realms/${resourceserver.sso.realm}
+          jwk-set-uri: ${resourceserver.sso.base-url}/auth/realms/${resourceserver.sso.realm}/protocol/openid-connect/certs
 
-cors:
-  allowedOrigins: https://stadt-i.muenchen.de
+resourceserver:
+  sso:
+    base-url: https://sso.muenchen.de
+    realm: public
+  client-access-rules:
+    - path-pattern: /clients/example-client/**
+      client-id: example-client
 
 adapter:
   fallbearbeitung:
-    base-url: https://kita-fallbearbeitung.muenchen.de/
+    base-url: https://kita-fallbearbeitung.muenchen.de
     base-path: /api/fallbearbeitung-backend/external/traeger/(id)/vorgaenge
   einrichtungsverwaltung:
-    base-url: https://kita-einrichtung.muenchen.de/
+    base-url: https://kita-einrichtung.muenchen.de
     base-path: /api/einrichtungsverwaltung-backend/external/traeger/(id)
     id-path: /api/einrichtungsverwaltung-backend/external/traeger/by-unternehmenskontoid/{ukid}/id
+    cache-expires-after-write: PT600S
+    cache-maximum-size: 1000
   security:
     token-url: https://sso.muenchen.de/auth/realms/muenchen.de/protocol/openid-connect/token
     client-id: rbseinr-traegerportal
     client-secret: client_secret
     scope: LHM_Extended
-    cache-seconds: 60
+    cache-expires-after-write: PT60S
+    cache-maximum-size: 1000
   webcomponents:
-    base-url: https://kita-traegerportal-webcomponents-test.muenchen.de/
-  eogovfor:
-    sso:
-      client-id: example-client
+    base-url: https://kita-traegerportal-webcomponents-test.muenchen.de
 
 management:
   endpoints:

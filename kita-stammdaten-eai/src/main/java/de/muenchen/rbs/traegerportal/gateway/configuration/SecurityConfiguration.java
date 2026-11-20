@@ -1,5 +1,6 @@
 package de.muenchen.rbs.traegerportal.gateway.configuration;
 
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +20,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
-import java.time.Duration;
-
 @Slf4j
 @Configuration
 @Profile("!no-security")
@@ -34,11 +33,9 @@ public class SecurityConfiguration {
     public SecurityWebFilterChain webcomponentsFilterChain(final ServerHttpSecurity http) {
         return http
                 .securityMatcher(ServerWebExchangeMatchers.pathMatchers(
-                        "/webcomponents/**"
-                ))
+                        "/webcomponents/**"))
                 .authorizeExchange(exchanges -> exchanges
-                        .anyExchange().permitAll()
-                )
+                        .anyExchange().permitAll())
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(Customizer.withDefaults())
                 .build();
@@ -50,47 +47,48 @@ public class SecurityConfiguration {
         return http
                 .securityMatcher(ServerWebExchangeMatchers.pathMatchers(
                         "/meintraeger/**",
-                        "/meinevorgaenge/**"
-                ))
+                        "/meinevorgaenge/**"))
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .anyExchange().authenticated()
-                )
+                        .anyExchange().authenticated())
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(Customizer.withDefaults())
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(Customizer.withDefaults())
-                )
+                        .jwt(Customizer.withDefaults()))
                 .build();
     }
 
     @Bean
     @Order(3)
-    public SecurityWebFilterChain eogovforApiFilterChain(
+    public SecurityWebFilterChain clientAccessRulesFilterChain(
             final ServerHttpSecurity http,
-            @Value("adapter.eogovfor.sso.client-id") final String clientId) {
-        return http
-                .securityMatcher(ServerWebExchangeMatchers.pathMatchers(
-                        "/eogovfor/**"
-                ))
-                .authorizeExchange(exchanges -> exchanges
-                        .anyExchange()
-                        .access((authentication, _) -> authentication
-                                .map(auth -> isClientAuthorized(auth, clientId)
-                                ))
-                )
-                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .cors(Customizer.withDefaults())
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(Customizer.withDefaults())
-                )
-                .build();
+            final ResourceserverProperties resourceserverProperties) {
+
+        resourceserverProperties.getClientAccessRules().forEach(clientEndpoint -> {
+            http
+                    .securityMatcher(ServerWebExchangeMatchers.pathMatchers(
+                            clientEndpoint.pathPattern()))
+                    .authorizeExchange(exchanges -> exchanges
+                            .anyExchange()
+                            .access((authentication, _) -> authentication
+                                    .map(auth -> checkClientAuthorization(auth, clientEndpoint.clientId()))))
+                    .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                    .cors(Customizer.withDefaults())
+                    .oauth2ResourceServer(oauth2 -> oauth2
+                            .jwt(Customizer.withDefaults()));
+        }
+
+        );
+
+        return http.build();
     }
 
-    private static AuthorizationDecision isClientAuthorized(Authentication auth, String allowedClientId) {
+    private static AuthorizationDecision checkClientAuthorization(
+            final Authentication auth,
+            final String allowedClientId) {
         if (auth instanceof JwtAuthenticationToken jwtAuth) {
-            String clientId = jwtAuth.getToken().getClaimAsString("client_id");
-            boolean allowed = allowedClientId.equals(clientId);
+            final String clientId = jwtAuth.getToken().getClaimAsString("client_id");
+            final boolean allowed = allowedClientId.equals(clientId);
             return new AuthorizationDecision(allowed);
         }
         return new AuthorizationDecision(false);
@@ -105,10 +103,8 @@ public class SecurityConfiguration {
         log.info("Initializing security with issuer URI {} and jwk set uri {}", issuerUri, jwkSetUri);
 
         // security config
-        return http.
-                securityMatcher(ServerWebExchangeMatchers.pathMatchers(
-                        "/**"
-                ))
+        return http.securityMatcher(ServerWebExchangeMatchers.pathMatchers(
+                "/**"))
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(
                                 "/api/*/actuator/info",
@@ -119,8 +115,7 @@ public class SecurityConfiguration {
                                 "/actuator/metrics",
                                 "/actuator/sbom",
                                 "/actuator/sbom/application")
-                        .permitAll()
-                )
+                        .permitAll())
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .cors(ServerHttpSecurity.CorsSpec::disable)
                 .build();
@@ -129,12 +124,14 @@ public class SecurityConfiguration {
     /**
      * Returns the session timeout determined by Spring Boot.
      * <p>
-     * Prior to Spring Boot 4, the timeout was resolved explicitly using {@link SessionProperties} with {@link ServerProperties#getServlet()} as a fallback,
+     * Prior to Spring Boot 4, the timeout was resolved explicitly using {@link SessionProperties} with
+     * {@link ServerProperties#getServlet()} as a fallback,
      * mirroring the timeout resolution described in the
      * <a href="https://docs.spring.io/spring-boot/reference/web/spring-session.html">Spring
      * Session</a> documentation.
      * <p>
-     * Since Spring Boot 4, this resolution is encapsulated by {@link SessionTimeout}. An {@link IllegalStateException} is thrown if no session timeout could be
+     * Since Spring Boot 4, this resolution is encapsulated by {@link SessionTimeout}. An
+     * {@link IllegalStateException} is thrown if no session timeout could be
      * determined.
      *
      * @return the resolved session timeout

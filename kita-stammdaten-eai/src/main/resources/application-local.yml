@@ -1,38 +1,10 @@
 server:
   port: 8083
-spring:
-  cloud:
-    gateway:
-      server:
-        webflux:
-          routes:
-            - id: sso
-              uri: http://keycloak:8100/
-              predicates:
-                - "Path=/api/sso/userinfo"
-              filters:
-                - RewritePath=/api/sso/userinfo, /auth/realms/local_realm/protocol/openid-connect/userinfo
-            - id: eogov-for-traeger
-              uri: http://localhost:8083
-              predicates:
-                - Path=traeger
-                - Method=GET
-              filters:
-                - name: QueryToPath
-                  args:
-                    template: /users/{userId}/orders/{orderId}
-                    parameters:
-                      userId: userId
-                      orderId: orderId
-            - id: eogov-for-einrichtung
-            - id: eogov-for-ansprechpartner
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://keycloak:8100/auth/realms/local_realm
-          jwk-set-uri: http://keycloak:8100/auth/realms/local_realm/protocol/openid-connect/certs
+resourceserver:
+  sso:
+    base-url: http://keycloak:8100
+    realm: local_realm
 
 adapter:
   fallbearbeitung:
@@ -47,12 +19,9 @@ adapter:
     client-id: traegerportal-eai
     client-secret: # add when running
     scope: lhm-core openid
-    cache-seconds: 280
+    cache-expires-after-write: PT280S
   webcomponents:
     base-url: http://localhost:8443
-  eogovfor:
-    sso:
-      client-id: example-client
 
 logging:
   include-application-group: false # disabled because application group is only relevant when deployed

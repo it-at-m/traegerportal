@@ -5,10 +5,10 @@
  */
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -27,45 +27,14 @@ import reactor.core.publisher.Mono;
  *      "https://auth0.com/docs/flows/client-credentials-flow">https://auth0.com/docs/flows/client-credentials-flow</a>
  */
 @Slf4j
+@RequiredArgsConstructor
 public class ClientCredentialsAccessTokenProvider {
 
     private final WebClient webClient;
-    private final String tokenUrl;
     private final String clientId;
     private final String clientSecret;
     private final String scope;
-    private final int tokenCacheInSeconds;
     private final Cache<String, String> tokenCache;
-
-    /**
-     * Erstellt einen ClientCredentialsAccessTokenProvider
-     *
-     * @param webClientBuilder zum Initialisieren des WebClient
-     * @param tokenUrl URL, an der Auth-Tokens abgeholt werden sollen
-     * @param clientId client-id mit der Auth-Tokens abgeholt werden sollen
-     * @param clientSecret client-secret, mit dem Auth-Tokens abgeholt werden sollen
-     * @param scope scope für die Anmeldung
-     * @param tokenCacheInSeconds Aufbewahrungszeit für Tokens
-     */
-    public ClientCredentialsAccessTokenProvider(final WebClient.Builder webClientBuilder, final String tokenUrl, final String clientId,
-            final String clientSecret, final String scope, final int tokenCacheInSeconds) {
-        this.webClient = webClientBuilder.baseUrl(tokenUrl).build();
-        this.tokenUrl = tokenUrl;
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.scope = scope;
-        this.tokenCacheInSeconds = tokenCacheInSeconds;
-        log.info("Initialized with tokenUrl='{}', client-id: '{}' and scope '{}'.", this.tokenUrl, this.clientId,
-                this.scope);
-
-        tokenCache = CacheBuilder.newBuilder().maximumSize(1)
-                .expireAfterWrite(this.tokenCacheInSeconds, TimeUnit.SECONDS)
-                .build();
-
-        this.getAccessToken();
-
-        log.info("Retrieved initial access token, caching for {} seconds...", this.tokenCacheInSeconds);
-    }
 
     /**
      * @return retrieves an access token using client credentials flow
@@ -104,11 +73,17 @@ public class ClientCredentialsAccessTokenProvider {
             final String accessToken = response.get("access_token");
             final int expiresInSeconds = Integer.parseInt(response.get("expires_in"));
             log.debug("Aquired access token (expires in: {} s)", expiresInSeconds);
-            if (expiresInSeconds <= this.tokenCacheInSeconds) {
+
+            final long expiresAfterWrite = tokenCache.policy()
+                    .expireAfterWrite()
+                    .orElseThrow()
+                    .getExpiresAfter(TimeUnit.SECONDS);
+
+            if (expiresInSeconds <= expiresAfterWrite) {
                 log.error(
                         "New access token expires in {} seconds, but it will be cached and used for the next {} seconds!" +
                                 "Consider configuring a shorter token cache duration!",
-                        expiresInSeconds, this.tokenCacheInSeconds);
+                        expiresInSeconds, expiresAfterWrite);
             }
             tokenCache.put(this.clientId, accessToken);
             return Mono.just(accessToken);

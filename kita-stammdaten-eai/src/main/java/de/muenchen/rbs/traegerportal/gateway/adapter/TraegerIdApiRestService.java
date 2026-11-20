@@ -4,12 +4,9 @@
  */
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import java.util.concurrent.TimeUnit;
+import com.github.benmanes.caffeine.cache.Cache;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -22,38 +19,18 @@ import reactor.core.publisher.Mono;
  *      "https://auth0.com/docs/flows/client-credentials-flow">https://auth0.com/docs/flows/client-credentials-flow</a>
  */
 @Slf4j
-@Component
+@RequiredArgsConstructor
 public class TraegerIdApiRestService {
 
     private final WebClient webClient;
-    private final ClientCredentialsAccessTokenProvider clientCredentialsAccessTokenProvider;
     private final String idPath;
-
-    private static final int ID_CACHE_IN_SECONDS = 600;
     private final Cache<String, Long> idCache;
+    private final ClientCredentialsAccessTokenProvider clientCredentialsAccessTokenProvider;
 
     /**
-     * Creates a TraegerIdApiRestService
-     *
-     * @param webClientBuilder to initialize the RestClient
-     * @param evUrl URL for making calls to Kita-Einrichtungsverwaltung
-     */
-    public TraegerIdApiRestService(final WebClient.Builder webClientBuilder, @Value("${adapter.einrichtungsverwaltung.base-url}") final String evUrl,
-            @Value("${adapter.einrichtungsverwaltung.id-path}") final String idPath,
-            final ClientCredentialsAccessTokenProvider tokenProvider) {
-        this.webClient = webClientBuilder.baseUrl(evUrl).build();
-        this.clientCredentialsAccessTokenProvider = tokenProvider;
-        this.idPath = idPath;
-        this.idCache = CacheBuilder.newBuilder().maximumSize(1)
-                .expireAfterWrite(ID_CACHE_IN_SECONDS, TimeUnit.SECONDS)
-                .build();
-        log.info("Initialized with evUrl='{}' and idPath='{}'", evUrl, idPath);
-    }
-
-    /**
-     * Returns the corresponding internal id given a unternehmenskonto id.
-     * This is needed to ensure each traeger can only access his own data and we can query for it in
-     * all related systems.
+     * Returns the corresponding internal id given a unternehmenskonto id. This is needed to ensure each
+     * traeger can only access his own data and we can query
+     * for it in all related systems.
      *
      * @param unternehmenskontoId unternehmenskontoId to query for
      * @return retrieves an id for a traeger given its unternehmenskonto id

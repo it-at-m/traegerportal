@@ -1,5 +1,6 @@
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -17,17 +18,11 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class StammdatenSecurityGatewayFilterFactory extends AbstractGatewayFilterFactory<StammdatenSecurityGatewayFilterFactory.Config> {
 
     private final ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider;
     private final TraegerIdApiRestService traegerIdApiRestService;
-
-    public StammdatenSecurityGatewayFilterFactory(final ClientCredentialsAccessTokenProvider stammdatenAccessTokenProvider,
-            final TraegerIdApiRestService traegerIdApiRestService) {
-        super(Config.class);
-        this.stammdatenAccessTokenProvider = stammdatenAccessTokenProvider;
-        this.traegerIdApiRestService = traegerIdApiRestService;
-    }
 
     @Override
     @NullMarked
