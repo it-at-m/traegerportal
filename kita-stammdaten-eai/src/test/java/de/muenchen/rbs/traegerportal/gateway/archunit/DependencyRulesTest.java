@@ -1,10 +1,10 @@
 package de.muenchen.rbs.traegerportal.gateway.archunit;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
+
 import com.github.benmanes.caffeine.cache.Cache;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import org.junit.jupiter.api.Test;
-
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
 
 class DependencyRulesTest {
 
