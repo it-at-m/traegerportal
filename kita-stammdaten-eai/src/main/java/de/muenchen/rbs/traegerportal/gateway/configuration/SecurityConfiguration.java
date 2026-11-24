@@ -96,7 +96,7 @@ public class SecurityConfiguration {
 
     @Bean
     @Order(4)
-    public SecurityWebFilterChain clientAccessFilterChain(
+    public SecurityWebFilterChain actuatorFilterChain(
             final ServerHttpSecurity http,
             @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") final String issuerUri,
             @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") final String jwkSetUri) {

@@ -38,7 +38,7 @@ spring:
                 - name: RewritePath
                   args:
                     regexp: '/api/sso/userinfo'
-                    replacement: '/auth/realms/local_realm/protocol/openid-connect/userinfo'
+                    replacement: '/auth/realms/${resourceserver.sso.realm}/protocol/openid-connect/userinfo'
 
             - id: meintraeger
               uri: ${adapter.einrichtungsverwaltung.base-url}
