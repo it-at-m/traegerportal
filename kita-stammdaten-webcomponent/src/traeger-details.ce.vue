@@ -175,7 +175,9 @@ const traegerBearbeitenLink = computed(() => {
   return getUrlWithOriginAsBaseAndDefaultParams(props.bearbeitenUrl);
 });
 
-const ansprechpartnerBearbeitenLink = function (ap?: AnsprechpartnerDTO) {
+const ansprechpartnerBearbeitenLink = function (
+  ap: AnsprechpartnerDTO | null | undefined
+) {
   return getUrlWithOriginAsBaseAndDefaultParams(
     props.ansprechpartnerBearbeitenUrl,
     {
