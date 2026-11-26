@@ -70,7 +70,7 @@
         <p2.mirror>download.eclipse.org</p2.mirror>
 
         <!-- TEMPORARY TRANSITIVE DEPENDENCY OVERRIDES FOR SECURITY FIXES -->
-        <bcprov-jdk18on.version>1.84</bcprov-jdk18on.version> <!-- Added to fix CVE-2026-0636 -->
+        <bcprov-jdk18on.version>1.85</bcprov-jdk18on.version> <!-- Added to fix CVE-2026-0636 -->
     </properties>
 
     <dependencyManagement>
