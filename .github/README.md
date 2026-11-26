@@ -4,8 +4,6 @@
 
 # Traegerportal
 
-[![Made with love by it@M][made-with-love-shield]][itm-opensource]
-
 This project provides a central digital portal for independent, non-profit and other childcare providers in Munich, including parent initiatives (EKIs), as well as prospective providers.
 
 The portal enables providers to:
