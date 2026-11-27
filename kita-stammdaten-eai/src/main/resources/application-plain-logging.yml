@@ -1,0 +1,6 @@
+logging:
+  structured:
+    format:
+      console: ""
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(%level) %clr([%thread]){faint} %clr(%logger{36}){cyan} %clr(:){faint} %msg%n"

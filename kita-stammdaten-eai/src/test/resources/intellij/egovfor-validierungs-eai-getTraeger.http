@@ -1,0 +1,3 @@
+GET http://localhost:8080/clients/egovfor-validierungs-eai/search/traeger?
+    unternehmenskontoId={{UNTERNEHMENSKONTO_ID}}
+Authorization: Bearer {{$auth.token("keycloak")}}

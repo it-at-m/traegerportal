@@ -1,3 +1,25 @@
+/*
+ * The MIT License
+ * Copyright © 2026 Landeshauptstadt München | it@M
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
 import java.net.URI;
@@ -20,26 +42,44 @@ import org.springframework.web.util.UriTemplate;
 import reactor.core.publisher.Mono;
 
 /**
- * Converts query parameters into URL path variables.
+ * Gateway filter factory that Converts query parameters to URL path variables and removes them from
+ * the request.
  *
  * @author felix.haala
  */
 @Slf4j
 @Component
-public class QueryParamsToPathGatewayFilterFactory extends AbstractGatewayFilterFactory<QueryParamsToPathGatewayFilterFactory.Config> {
+public class RewriteQueryParamsToPathGatewayFilterFactory extends AbstractGatewayFilterFactory<RewriteQueryParamsToPathGatewayFilterFactory.Config> {
 
+    /**
+     * Creates the gateway filter.
+     *
+     * @param config the filter configuration
+     * @return the gateway filter that rewrites the request URI
+     * @throws IllegalArgumentException if the target path is missing or not absolute
+     */
     @Override
     @NullMarked
     public GatewayFilter apply(final Config config) {
-        if (config.getTargetPath() == null || !config.getTargetPath().startsWith("/")) {
+        if (config.getTargetPath() == null || !config.getTargetPath().toString().startsWith("/")) {
             throw new IllegalArgumentException("targetPath must be an absolute path");
         }
 
-        final UriTemplate pathTemplate = new UriTemplate(config.getTargetPath());
+        final UriTemplate pathTemplate = config.getTargetPath();
 
         return (exchange, chain) -> filterRequest(exchange, chain, pathTemplate);
     }
 
+    /**
+     * Expands the target path template using query parameter values and removes the consumed parameters
+     * while preserving all remaining query parameters. Returns HTTP 400 (Bad Request) if any required
+     * query parameter is missing.
+     *
+     * @param exchange the current server web exchange
+     * @param chain the gateway filter chain
+     * @param pathTemplate the target path template
+     * @return a Mono that completes when the filter chain processing is finished
+     */
     private Mono<Void> filterRequest(
             final ServerWebExchange exchange,
             final GatewayFilterChain chain,
@@ -74,17 +114,15 @@ public class QueryParamsToPathGatewayFilterFactory extends AbstractGatewayFilter
 
         final URI newUri = uriBuilder.build(true).toUri();
 
-        // create a new request with the updated URI
-        final ServerHttpRequest newRequest = request.mutate()
+        // update the request URI
+        final ServerHttpRequest modifiedRequest = request.mutate()
                 .uri(newUri)
                 .build();
 
-        final ServerWebExchange newExchange = exchange.mutate()
-                .request(newRequest)
-                .build();
-
         // continue the filter chain with the modified request
-        return chain.filter(newExchange);
+        return chain.filter(exchange.mutate()
+                .request(modifiedRequest)
+                .build());
     }
 
     @Override
@@ -96,6 +134,11 @@ public class QueryParamsToPathGatewayFilterFactory extends AbstractGatewayFilter
     @Getter
     @RequiredArgsConstructor
     public static class Config {
-        private final String targetPath;
+
+        /**
+         * Absolute path template with placeholders resolved from query parameters. Used query parameters
+         * are removed from the request. Example: /traeger/{traegerId}/vorgaenge/{vorgangId}
+         */
+        private final UriTemplate targetPath;
     }
 }

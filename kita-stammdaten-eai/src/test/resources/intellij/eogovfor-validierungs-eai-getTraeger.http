@@ -1,2 +1,0 @@
-GET http://localhost:8083/clients/example-client/search/traeger?unternehmenskontoId=abc-def-ghi-jkl
-Authorization: Bearer {{$auth.token("keycloak")}}

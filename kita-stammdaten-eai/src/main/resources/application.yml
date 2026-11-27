@@ -30,41 +30,13 @@ spring:
                 allowCredentials: true
           routes:
 
-            - id: sso
-              uri: ${resourceserver.sso.base-url}
+            - id: userinfo
+              uri: ${resourceserver.main.user-info}
               predicates:
                 - Path=/api/sso/userinfo
-              filters:
-                - name: RewritePath
-                  args:
-                    regexp: '/api/sso/userinfo'
-                    replacement: '/auth/realms/${resourceserver.sso.realm}/protocol/openid-connect/userinfo'
-
-            - id: meintraeger
-              uri: ${adapter.einrichtungsverwaltung.base-url}
-              predicates:
-                - Path=/meintraeger,/meintraeger/**
                 - Method=GET
               filters:
-                - name: RewritePath
-                  args:
-                    regexp: '^/meintraeger'
-                    replacement: '${adapter.einrichtungsverwaltung.base-path}'
-                - RemoveRequestHeader=Origin
-                - name: StammdatenSecurity
-
-            - id: meinevorgaenge
-              uri: ${adapter.fallbearbeitung.base-url}
-              predicates:
-                - Path=/meinevorgaenge,/meinevorgaenge/**
-                - Method=GET
-              filters:
-                - name: RewritePath
-                  args:
-                    regexp: '^/meinevorgaenge'
-                    replacement: '${adapter.fallbearbeitung.base-path}'
-                - RemoveRequestHeader=Origin
-                - name: StammdatenSecurity
+                - name: SetRequestUri
 
             - id: webcomponents
               uri: ${adapter.webcomponents.base-url}
@@ -74,73 +46,145 @@ spring:
               filters:
                 - StripPrefix=1
 
-            - id: eogovfor-traeger
+            - id: meintraeger
               uri: ${adapter.einrichtungsverwaltung.base-url}
               predicates:
-                - Path=clients/egovfor-validierungs-eai/search/traeger
+                - Path=/meintraeger/**
                 - Method=GET
               filters:
-                - RemoveRequestHeader=Origin
-                - name: QueryParamsToPath
+                - name: RewritePathWithTraegerIdFromJwt
                   args:
-                    targetPath: '${adapter.einrichtungsverwaltung.base-path}/{traegerId}'
-                - name: StammdatenSecurity
+                    claimsToForwardAsHeaders: preferred_username
+                    pathPrefixToReplace: /meintraeger
+                    targetPathTemplateByJwtClaim: /traeger/{datenuebermittlerPseudonymId}
+                - name: RemoveRequestHeader
+                  args:
+                    name: Origin
+                - name: ReplaceAuthorizationWithStammdatenToken
+                - name: PrefixPath
+                  args:
+                    prefix: ${adapter.einrichtungsverwaltung.prefix-path}
 
-            - id: eogovfor-einrichtung
-              uri: ${adapter.einrichtungsverwaltung.base-url}
+            - id: meinevorgaenge
+              uri: ${adapter.fallbearbeitung.base-url}
               predicates:
-                - Path=clients/egovfor-validierungs-eai/search/einrichtung
+                - Path=/meinevorgaenge/**
                 - Method=GET
               filters:
-                - RemoveRequestHeader=Origin
-                - name: QueryParamsToPath
+                - name: RewritePathWithTraegerIdFromJwt
                   args:
-                    targetPath: '${adapter.einrichtungsverwaltung.base-path}/{traegerId}/einrichtung/{einrichtungId}'
-                - name: StammdatenSecurity
+                    claimsToForwardAsHeaders: preferred_username
+                    pathPrefixToReplace: /meinevorgaenge
+                    targetPathTemplateByJwtClaim: /traeger/{datenuebermittlerPseudonymId}/vorgaenge
+                - name: RemoveRequestHeader
+                  args:
+                    name: Origin
+                - name: ReplaceAuthorizationWithStammdatenToken
+                - name: PrefixPath
+                  args:
+                    prefix: ${adapter.fallbearbeitung.prefix-path}
 
-            - id: eogovfor-ansprechpartner
+            - id: egovfor-traeger
               uri: ${adapter.einrichtungsverwaltung.base-url}
               predicates:
-                - Path=clients/egovfor-validierungs-eai/search/ansprechpartner
+                - Path=/clients/egovfor-validierungs-eai/search/traeger
                 - Method=GET
               filters:
-                - RemoveRequestHeader=Origin
-                - name: QueryParamsToPath
+                - name: RewriteQueryParamWithTraegerId
                   args:
-                    targetPath: '${adapter.einrichtungsverwaltung.base-path}/{traegerId}/ansprechpartner/{ansprechpartnerId}'
-                - name: StammdatenSecurity
+                    sourceQueryParam: unternehmenskontoId
+                    targetQueryParam: traegerId
+                - name: RewriteQueryParamsToPath
+                  args:
+                    targetPath: /traeger/{traegerId}
+                - name: RemoveRequestHeader
+                  args:
+                    name: Origin
+                - name: ReplaceAuthorizationWithStammdatenToken
+                - name: PrefixPath
+                  args:
+                    prefix: ${adapter.einrichtungsverwaltung.prefix-path}
+
+            - id: egovfor-einrichtung
+              uri: ${adapter.einrichtungsverwaltung.base-url}
+              predicates:
+                - Path=/clients/egovfor-validierungs-eai/search/einrichtung
+                - Method=GET
+              filters:
+                - name: RewriteQueryParamWithTraegerId
+                  args:
+                    sourceQueryParam: unternehmenskontoId
+                    targetQueryParam: traegerId
+                - name: RewriteQueryParamsToPath
+                  args:
+                    targetPath: /traeger/{traegerId}/einrichtungen/{einrichtungId}
+                - name: RemoveRequestHeader
+                  args:
+                    name: Origin
+                - name: ReplaceAuthorizationWithStammdatenToken
+                - name: PrefixPath
+                  args:
+                    prefix: ${adapter.einrichtungsverwaltung.prefix-path}
+
+            - id: egovfor-ansprechpartner
+              uri: ${adapter.einrichtungsverwaltung.base-url}
+              predicates:
+                - Path=/clients/egovfor-validierungs-eai/search/ansprechpartner
+                - Method=GET
+              filters:
+                - name: RewriteQueryParamWithTraegerId
+                  args:
+                    sourceQueryParam: unternehmenskontoId
+                    targetQueryParam: traegerId
+                - name: RewriteQueryParamsToPath
+                  args:
+                    targetPath: /traeger/{traegerId}/ansprechpartner/{ansprechpartnerId}
+                - name: RemoveRequestHeader
+                  args:
+                    name: Origin
+                - name: ReplaceAuthorizationWithStammdatenToken
+                - name: PrefixPath
+                  args:
+                    prefix: ${adapter.einrichtungsverwaltung.prefix-path}
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${resourceserver.sso.base-url}/auth/realms/${resourceserver.sso.realm}
-          jwk-set-uri: ${resourceserver.sso.base-url}/auth/realms/${resourceserver.sso.realm}/protocol/openid-connect/certs
+          issuer-uri: ${resourceserver.main.issuer-uri}
+          jwk-set-uri: ${resourceserver.main.jwk-set-uri}
 
 resourceserver:
-  sso:
-    base-url: https://sso.muenchen.de
-    realm: public
+  main:
+    user-info: https://sso.muenchen.de/auth/realms/public/protocol/openid-connect/userinfo
+    issuer-uri: https://sso.muenchen.de/auth/realms/public
+    jwk-set-uri: https://sso.muenchen.de/auth/realms/public/protocol/openid-connect/certs
+    security-matcher:
+      path-matchers: /meintraeger/**, /meinevorgaenge/**
   client-access-rules:
-    - path-pattern: /clients/example-client/**
+    - path-matchers: /clients/egovfor-validierungs-eai/**
       client-id: example-client
+      jwt:
+        issuer-uri: https://ssotest.muenchen.de/auth/realms/intrap
+        jwk-set-uri: https://ssotest.muenchen.de/auth/realms/intrap/protocol/openid-connect/certs
 
 adapter:
   fallbearbeitung:
     base-url: https://kita-fallbearbeitung.muenchen.de
-    base-path: /api/fallbearbeitung-backend/external/traeger/(id)/vorgaenge
+    prefix-path: /api/fallbearbeitung-backend/external
   einrichtungsverwaltung:
     base-url: https://kita-einrichtung.muenchen.de
-    base-path: /api/einrichtungsverwaltung-backend/external/traeger/(id)
-    id-path: /api/einrichtungsverwaltung-backend/external/traeger/by-unternehmenskontoid/{ukid}/id
-    cache-expires-after-write: PT600S
-    cache-maximum-size: 1000
+    prefix-path: /api/einrichtungsverwaltung-backend/external
+    id-resolver:
+      path: ${adapter.einrichtungsverwaltung.prefix-path}/traeger/by-unternehmenskontoid/{unternehmenskontoId}/id
+      cache-expires-after-write: PT10M
+      cache-maximum-size: 1000
   security:
     token-url: https://sso.muenchen.de/auth/realms/muenchen.de/protocol/openid-connect/token
-    client-id: rbseinr-traegerportal
-    client-secret: client_secret
-    scope: LHM_Extended
-    cache-expires-after-write: PT60S
-    cache-maximum-size: 1000
+    client-id: example-client
+    client-secret: example-secret
+    scope: lhm-core openid
+    cache-expires-after-write: PT1M
+    cache-maximum-size: 1
   webcomponents:
     base-url: https://kita-traegerportal-webcomponents-test.muenchen.de
 

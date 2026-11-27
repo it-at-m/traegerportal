@@ -1,0 +1,3 @@
+GET http://localhost:8080/clients/egovfor-validierungs-eai/search/einrichtung?
+    unternehmenskontoId={{UNTERNEHMENSKONTO_ID}}&id=13674&einrichtungId={{EINRICHTUNG_ID}}
+Authorization: Bearer {{$auth.token("keycloak")}}

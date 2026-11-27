@@ -2,29 +2,35 @@ server:
   port: 8083
 
 resourceserver:
-  sso:
-    base-url: http://keycloak:8100
-    realm: local_realm
+  main:
+    user-info: http://keycloak:8100/auth/realms/local_realm/protocol/openid-connect/userinfo
+    issuer-uri: http://keycloak:8100/auth/realms/local_realm
+    jwk-set-uri: http://keycloak:8100/auth/realms/local_realm/protocol/openid-connect/certs
+  client-access-rules:
+    - path-matchers: /clients/egovfor-validierungs-eai/**
+      client-id: egovfor-validierungs-eai
+      jwt:
+        issuer-uri: http://keycloak:8100/auth/realms/local_realm
+        jwk-set-uri: http://keycloak:8100/auth/realms/local_realm/protocol/openid-connect/certs
 
 adapter:
   fallbearbeitung:
     base-url: http://localhost:8084
-    base-path: /external/traeger/(id)/vorgaenge
+    prefix-path: /external
   einrichtungsverwaltung:
     base-url: http://localhost:8080
-    base-path: /external/traeger/(id)
-    id-path: /external/traeger/by-unternehmenskontoid/{ukid}/id
+    prefix-path: /external
   security:
     token-url: https://ssodev.muenchen.de/auth/realms/A23/protocol/openid-connect/token
     client-id: traegerportal-eai
     client-secret: # add when running
     scope: lhm-core openid
-    cache-expires-after-write: PT280S
   webcomponents:
     base-url: http://localhost:8443
 
 logging:
-  include-application-group: false # disabled because application group is only relevant when deployed
+  # disabled because application group is only relevant when deployed
+  include-application-group: false
   structured:
     format:
       console:

@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/external/traeger/by-unternehmenskontoid/32443223/id"
+    "urlPathPattern": "/api/einrichtungsverwaltung-backend/external/traeger/by-unternehmenskontoid/32443223/id"
   },
   "response": {
     "status": 200,
