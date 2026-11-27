@@ -1,12 +1,12 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/external/traeger/32443223",
+    "urlPathPattern": "/api/einrichtungsverwaltung-backend/external/traeger/32443223",
     "headers": {
-      "Original-Authorization": {
+      "ORIGINAL_HEADER_AUTHORIZATION": {
         "equalTo": "Bearer test-token"
       },
-      "Original-Username": {
+      "ORIGINAL_CLAIM_PREFERRED_USERNAME": {
         "equalTo": "max.mustermann"
       }
     }

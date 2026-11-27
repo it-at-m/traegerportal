@@ -20,40 +20,173 @@ spring:
             cors-configurations:
               '[/**]':
                 allowedOrigins:
-                - https://stadt-i.muenchen.de
+                  - https://stadt-i.muenchen.de
                 allowedMethods:
-                - GET
-                - POST
-                - OPTIONS
+                  - GET
+                  - POST
+                  - OPTIONS
                 allowedHeaders:
-                - "*"
+                  - "*"
                 allowCredentials: true
+          routes:
+
+            - id: userinfo
+              uri: ${resourceserver.main.user-info}
+              predicates:
+                - Path=/api/sso/userinfo
+                - Method=GET
+              filters:
+                - name: SetRequestUri
+
+            - id: webcomponents
+              uri: ${adapter.webcomponents.base-url}
+              predicates:
+                - Path=/webcomponents/**
+                - Method=GET
+              filters:
+                - StripPrefix=1
+
+            - id: meintraeger
+              uri: ${adapter.einrichtungsverwaltung.base-url}
+              predicates:
+                - Path=/meintraeger/**
+                - Method=GET
+              filters:
+                - name: RewritePathWithTraegerIdFromJwt
+                  args:
+                    claimsToForwardAsHeaders: preferred_username
+                    pathPrefixToReplace: /meintraeger
+                    targetPathTemplateByJwtClaim: /traeger/{datenuebermittlerPseudonymId}
+                - name: RemoveRequestHeader
+                  args:
+                    name: Origin
+                - name: ReplaceAuthorizationWithStammdatenToken
+                - name: PrefixPath
+                  args:
+                    prefix: ${adapter.einrichtungsverwaltung.prefix-path}
+
+            - id: meinevorgaenge
+              uri: ${adapter.fallbearbeitung.base-url}
+              predicates:
+                - Path=/meinevorgaenge/**
+                - Method=GET
+              filters:
+                - name: RewritePathWithTraegerIdFromJwt
+                  args:
+                    claimsToForwardAsHeaders: preferred_username
+                    pathPrefixToReplace: /meinevorgaenge
+                    targetPathTemplateByJwtClaim: /traeger/{datenuebermittlerPseudonymId}/vorgaenge
+                - name: RemoveRequestHeader
+                  args:
+                    name: Origin
+                - name: ReplaceAuthorizationWithStammdatenToken
+                - name: PrefixPath
+                  args:
+                    prefix: ${adapter.fallbearbeitung.prefix-path}
+
+            - id: egovfor-traeger
+              uri: ${adapter.einrichtungsverwaltung.base-url}
+              predicates:
+                - Path=/clients/egovfor-validierungs-eai/search/traeger
+                - Method=GET
+              filters:
+                - name: RewriteQueryParamWithTraegerId
+                  args:
+                    sourceQueryParam: unternehmenskontoId
+                    targetQueryParam: traegerId
+                - name: RewriteQueryParamsToPath
+                  args:
+                    targetPath: /traeger/{traegerId}
+                - name: RemoveRequestHeader
+                  args:
+                    name: Origin
+                - name: ReplaceAuthorizationWithStammdatenToken
+                - name: PrefixPath
+                  args:
+                    prefix: ${adapter.einrichtungsverwaltung.prefix-path}
+
+            - id: egovfor-einrichtung
+              uri: ${adapter.einrichtungsverwaltung.base-url}
+              predicates:
+                - Path=/clients/egovfor-validierungs-eai/search/einrichtung
+                - Method=GET
+              filters:
+                - name: RewriteQueryParamWithTraegerId
+                  args:
+                    sourceQueryParam: unternehmenskontoId
+                    targetQueryParam: traegerId
+                - name: RewriteQueryParamsToPath
+                  args:
+                    targetPath: /traeger/{traegerId}/einrichtungen/{einrichtungId}
+                - name: RemoveRequestHeader
+                  args:
+                    name: Origin
+                - name: ReplaceAuthorizationWithStammdatenToken
+                - name: PrefixPath
+                  args:
+                    prefix: ${adapter.einrichtungsverwaltung.prefix-path}
+
+            - id: egovfor-ansprechpartner
+              uri: ${adapter.einrichtungsverwaltung.base-url}
+              predicates:
+                - Path=/clients/egovfor-validierungs-eai/search/ansprechpartner
+                - Method=GET
+              filters:
+                - name: RewriteQueryParamWithTraegerId
+                  args:
+                    sourceQueryParam: unternehmenskontoId
+                    targetQueryParam: traegerId
+                - name: RewriteQueryParamsToPath
+                  args:
+                    targetPath: /traeger/{traegerId}/ansprechpartner/{ansprechpartnerId}
+                - name: RemoveRequestHeader
+                  args:
+                    name: Origin
+                - name: ReplaceAuthorizationWithStammdatenToken
+                - name: PrefixPath
+                  args:
+                    prefix: ${adapter.einrichtungsverwaltung.prefix-path}
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://sso.muenchen.de/auth/realms/public
-          jwk-set-uri: https://sso.muenchen.de/auth/realms/public/protocol/openid-connect/certs
+          issuer-uri: ${resourceserver.main.issuer-uri}
+          jwk-set-uri: ${resourceserver.main.jwk-set-uri}
 
-cors:
-  allowedOrigins: https://stadt-i.muenchen.de
+resourceserver:
+  main:
+    user-info: https://sso.muenchen.de/auth/realms/public/protocol/openid-connect/userinfo
+    issuer-uri: https://sso.muenchen.de/auth/realms/public
+    jwk-set-uri: https://sso.muenchen.de/auth/realms/public/protocol/openid-connect/certs
+    security-matcher:
+      path-matchers: /meintraeger/**, /meinevorgaenge/**
+  client-access-rules:
+    - path-matchers: /clients/egovfor-validierungs-eai/**
+      client-id: example-client
+      jwt:
+        issuer-uri: https://ssotest.muenchen.de/auth/realms/intrap
+        jwk-set-uri: https://ssotest.muenchen.de/auth/realms/intrap/protocol/openid-connect/certs
 
 adapter:
   fallbearbeitung:
-    base-url: https://kita-fallbearbeitung.muenchen.de/
-    base-path: /api/fallbearbeitung-backend/external/traeger/(id)/vorgaenge
+    base-url: https://kita-fallbearbeitung.muenchen.de
+    prefix-path: /api/fallbearbeitung-backend/external
   einrichtungsverwaltung:
-    base-url: https://kita-einrichtung.muenchen.de/
-    base-path: /api/einrichtungsverwaltung-backend/external/traeger/(id)
-    id-path: /api/einrichtungsverwaltung-backend/external/traeger/by-unternehmenskontoid/{ukid}/id
+    base-url: https://kita-einrichtung.muenchen.de
+    prefix-path: /api/einrichtungsverwaltung-backend/external
+    id-resolver:
+      path: ${adapter.einrichtungsverwaltung.prefix-path}/traeger/by-unternehmenskontoid/{unternehmenskontoId}/id
+      cache-expires-after-write: PT10M
+      cache-maximum-size: 1000
   security:
     token-url: https://sso.muenchen.de/auth/realms/muenchen.de/protocol/openid-connect/token
-    client-id: rbseinr-traegerportal
-    client-secret: client_secret
-    scope: LHM_Extended
-    cache-seconds: 60
+    client-id: example-client
+    client-secret: example-secret
+    scope: lhm-core openid
+    cache-expires-after-write: PT1M
+    cache-maximum-size: 1
   webcomponents:
-    base-url: https://kita-traegerportal-webcomponents-test.muenchen.de/
+    base-url: https://kita-traegerportal-webcomponents-test.muenchen.de
 
 management:
   endpoints:

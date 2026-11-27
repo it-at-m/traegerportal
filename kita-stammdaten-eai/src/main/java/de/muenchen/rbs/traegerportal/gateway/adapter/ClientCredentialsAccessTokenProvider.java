@@ -1,14 +1,31 @@
 /*
-
- * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2022
+ * The MIT License
+ * Copyright © 2026 Landeshauptstadt München | it@M
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package de.muenchen.rbs.traegerportal.gateway.adapter;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -27,45 +44,14 @@ import reactor.core.publisher.Mono;
  *      "https://auth0.com/docs/flows/client-credentials-flow">https://auth0.com/docs/flows/client-credentials-flow</a>
  */
 @Slf4j
+@RequiredArgsConstructor
 public class ClientCredentialsAccessTokenProvider {
 
     private final WebClient webClient;
-    private final String tokenUrl;
     private final String clientId;
     private final String clientSecret;
     private final String scope;
-    private final int tokenCacheInSeconds;
     private final Cache<String, String> tokenCache;
-
-    /**
-     * Erstellt einen ClientCredentialsAccessTokenProvider
-     *
-     * @param webClientBuilder zum Initialisieren des WebClient
-     * @param tokenUrl URL, an der Auth-Tokens abgeholt werden sollen
-     * @param clientId client-id mit der Auth-Tokens abgeholt werden sollen
-     * @param clientSecret client-secret, mit dem Auth-Tokens abgeholt werden sollen
-     * @param scope scope für die Anmeldung
-     * @param tokenCacheInSeconds Aufbewahrungszeit für Tokens
-     */
-    public ClientCredentialsAccessTokenProvider(final WebClient.Builder webClientBuilder, final String tokenUrl, final String clientId,
-            final String clientSecret, final String scope, final int tokenCacheInSeconds) {
-        this.webClient = webClientBuilder.baseUrl(tokenUrl).build();
-        this.tokenUrl = tokenUrl;
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.scope = scope;
-        this.tokenCacheInSeconds = tokenCacheInSeconds;
-        log.info("Initialized with tokenUrl='{}', client-id: '{}' and scope '{}'.", this.tokenUrl, this.clientId,
-                this.scope);
-
-        tokenCache = CacheBuilder.newBuilder().maximumSize(1)
-                .expireAfterWrite(this.tokenCacheInSeconds, TimeUnit.SECONDS)
-                .build();
-
-        this.getAccessToken();
-
-        log.info("Retrieved initial access token, caching for {} seconds...", this.tokenCacheInSeconds);
-    }
 
     /**
      * @return retrieves an access token using client credentials flow
@@ -104,11 +90,17 @@ public class ClientCredentialsAccessTokenProvider {
             final String accessToken = response.get("access_token");
             final int expiresInSeconds = Integer.parseInt(response.get("expires_in"));
             log.debug("Aquired access token (expires in: {} s)", expiresInSeconds);
-            if (expiresInSeconds <= this.tokenCacheInSeconds) {
+
+            final long expiresAfterWrite = tokenCache.policy()
+                    .expireAfterWrite()
+                    .orElseThrow()
+                    .getExpiresAfter(TimeUnit.SECONDS);
+
+            if (expiresInSeconds <= expiresAfterWrite) {
                 log.error(
                         "New access token expires in {} seconds, but it will be cached and used for the next {} seconds!" +
-                                "Consider configuring a shorter token cache duration!",
-                        expiresInSeconds, this.tokenCacheInSeconds);
+                                " Consider configuring a shorter token cache duration!",
+                        expiresInSeconds, expiresAfterWrite);
             }
             tokenCache.put(this.clientId, accessToken);
             return Mono.just(accessToken);

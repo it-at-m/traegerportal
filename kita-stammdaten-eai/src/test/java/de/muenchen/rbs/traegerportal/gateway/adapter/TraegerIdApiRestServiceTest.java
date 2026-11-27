@@ -11,6 +11,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import de.muenchen.rbs.traegerportal.gateway.adapter.configuration.TraegerIdApiRestServiceConfiguration;
+import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,14 +29,13 @@ class TraegerIdApiRestServiceTest {
 
     private TraegerIdApiRestService sut;
 
+    private static final String TEST_UK_ID = "test-uk-id";
     private static final Long TEST_TRAEGER_ID = 123L;
     private static final String TEST_TOKEN = "testToken";
-    private static final String TEST_EV_URL = "testEvUrl";
     private static final String EV_ID_PATH = "/external/traeger/by-unternehmenskontoid/{ukId}/id";
 
     @BeforeEach
     void setUp() {
-        final WebClient.Builder webClientBuilder = mock(WebClient.Builder.class);
         tokenProvider = mock(ClientCredentialsAccessTokenProvider.class);
 
         webClient = mock(WebClient.class);
@@ -45,41 +47,38 @@ class TraegerIdApiRestServiceTest {
         when(requestHeadersSpec.header(anyString(), any())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.exchangeToMono(any())).thenReturn(Mono.just(TEST_TRAEGER_ID));
 
-        when(webClientBuilder.baseUrl(any())).thenReturn(webClientBuilder);
-        when(webClientBuilder.build()).thenReturn(webClient);
+        final Cache<String, Long> cache = TraegerIdApiRestServiceConfiguration.getCache(Duration.ofSeconds(600), 1000);
 
         when(tokenProvider.getAccessToken()).thenReturn(Mono.just(TEST_TOKEN));
 
-        sut = new TraegerIdApiRestService(webClientBuilder, TEST_EV_URL, EV_ID_PATH, tokenProvider);
+        sut = new TraegerIdApiRestService(webClient, EV_ID_PATH, cache, tokenProvider);
     }
 
     @Test
     void testIdResolution_ok() {
-        final String ukId = "test-uk-id";
-        final Long result = sut.getTraegerIdByUnternehmenskontoId(ukId).block();
+        final Long result = sut.getTraegerIdByUnternehmenskontoId(TEST_UK_ID).block();
 
         assertThat(result).isEqualTo(TEST_TRAEGER_ID);
         Mockito.verify(tokenProvider, times(1)).getAccessToken();
         Mockito.verify(webClient.get().uri(""), times(1)).header(Mockito.eq("Authorization"), Mockito.contains(TEST_TOKEN));
-        Mockito.verify(webClient.get(), times(1)).uri(EV_ID_PATH, ukId);
+        Mockito.verify(webClient.get(), times(1)).uri(EV_ID_PATH, TEST_UK_ID);
     }
 
     @Test
     void testIdResolution_uses_cache() {
-        final String ukId = "test-uk-id";
-        Long result = sut.getTraegerIdByUnternehmenskontoId(ukId).block();
+        Long result = sut.getTraegerIdByUnternehmenskontoId(TEST_UK_ID).block();
 
         assertThat(result).isEqualTo(TEST_TRAEGER_ID);
         Mockito.verify(tokenProvider, times(1)).getAccessToken();
         Mockito.verify(webClient.get().uri(""), times(1)).header(Mockito.eq("Authorization"), Mockito.contains(TEST_TOKEN));
-        Mockito.verify(webClient.get(), times(1)).uri(EV_ID_PATH, ukId);
+        Mockito.verify(webClient.get(), times(1)).uri(EV_ID_PATH, TEST_UK_ID);
 
-        result = sut.getTraegerIdByUnternehmenskontoId(ukId).block();
+        result = sut.getTraegerIdByUnternehmenskontoId(TEST_UK_ID).block();
 
         // still 1 of each call after second service call
         assertThat(result).isEqualTo(TEST_TRAEGER_ID);
         Mockito.verify(tokenProvider, times(1)).getAccessToken();
         Mockito.verify(webClient.get().uri(""), times(1)).header(Mockito.eq("Authorization"), Mockito.contains(TEST_TOKEN));
-        Mockito.verify(webClient.get(), times(1)).uri(EV_ID_PATH, ukId);
+        Mockito.verify(webClient.get(), times(1)).uri(EV_ID_PATH, TEST_UK_ID);
     }
 }

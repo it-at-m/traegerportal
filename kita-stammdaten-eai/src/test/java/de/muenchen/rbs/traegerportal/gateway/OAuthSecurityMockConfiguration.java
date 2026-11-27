@@ -5,15 +5,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
 
 import de.muenchen.rbs.traegerportal.gateway.adapter.ClientCredentialsAccessTokenProvider;
-import de.muenchen.rbs.traegerportal.gateway.adapter.StammdatenSecurityGatewayFilterFactory;
-import de.muenchen.rbs.traegerportal.gateway.configuration.GatewayConfig;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -25,7 +22,6 @@ import reactor.core.publisher.Mono;
  * Test configuration providing mocked authentication and JWT infrastructure.
  */
 @TestConfiguration
-@Import({ GatewayConfig.class, StammdatenSecurityGatewayFilterFactory.class })
 public class OAuthSecurityMockConfiguration {
 
     public static final String JWT_KEYS_HEADERS_ALG = "alg";
@@ -73,12 +69,12 @@ public class OAuthSecurityMockConfiguration {
         final ReactiveJwtDecoder mock = mock(ReactiveJwtDecoder.class);
 
         when(mock.decode(JWT_FRONTEND_DEFAULT_TOKEN_VALUE))
-                .thenAnswer(invocation -> jwtFrontend != null
+                .thenAnswer(_ -> jwtFrontend != null
                         ? Mono.just(jwtFrontend)
                         : Mono.error(new IllegalStateException("Frontend JWT not available")));
 
         when(mock.decode(JWT_BACKEND_DEFAULT_TOKEN_VALUE))
-                .thenAnswer(invocation -> jwtBackend != null
+                .thenAnswer(_ -> jwtBackend != null
                         ? Mono.just(jwtBackend)
                         : Mono.error(new IllegalStateException("Backend JWT not available")));
 
@@ -90,7 +86,7 @@ public class OAuthSecurityMockConfiguration {
     public ClientCredentialsAccessTokenProvider mClientCredentialsAccessTokenProvider() {
         final ClientCredentialsAccessTokenProvider mock = mock(ClientCredentialsAccessTokenProvider.class);
 
-        when(mock.getAccessToken()).thenAnswer(invocation -> {
+        when(mock.getAccessToken()).thenAnswer(_ -> {
             if (getJwtBackend() == null) {
                 return Mono.error(new IllegalStateException("Access token not available"));
             }

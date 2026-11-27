@@ -1,3 +1,25 @@
+/*
+ * The MIT License
+ * Copyright © 2026 Landeshauptstadt München | it@M
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package de.muenchen.rbs.traegerportal.gateway.route;
 
 import static de.muenchen.rbs.traegerportal.gateway.TestConstants.SPRING_TEST_PROFILE;
@@ -48,6 +70,14 @@ class StammdatenRouteWireMockTest {
     }
 
     @Test
+    void stammdaten_traeger_get_forbidden() {
+        webTestClient
+                .get().uri(PATH_MEIN_TRAEGER)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
     void stammdaten_einrichtungen_for_traeger_get_success() {
         webTestClient
                 .get().uri(PATH_EINRICHTUNGEN_FOR_MEIN_TRAEGER)
@@ -61,11 +91,25 @@ class StammdatenRouteWireMockTest {
     }
 
     @Test
-    void stammdaten_traeger_get_forbidden() {
+    void stammdaten_einrichtungen_for_traeger_get_forbidden() {
         webTestClient
-                .get().uri(PATH_MEIN_TRAEGER)
+                .get().uri(PATH_EINRICHTUNGEN_FOR_MEIN_TRAEGER)
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void stammdaten_vorgaenge_for_traeger_get_success() {
+        webTestClient
+                .get().uri(PATH_MEINE_VORGAENGE)
+                .headers(oauthSecurityMockConfiguration::addFrontendBearerAuth)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.OK)
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.content").isArray()
+                .jsonPath("$.content[*].aktenzeichen").value(ids -> assertThat(ids).asInstanceOf(InstanceOfAssertFactories.LIST)
+                        .containsExactlyInAnyOrder("EA-0000001", "EA-0000002", "TA-0000001"));
     }
 
     @Test

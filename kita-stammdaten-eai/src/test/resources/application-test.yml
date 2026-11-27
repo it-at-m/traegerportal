@@ -9,11 +9,18 @@ wiremock:
     port: 0
     https-port: -1
 
+resourceserver:
+  client-access-rules:
+    - path-matchers: /clients/egovfor-validierungs-eai/**
+      client-id: max.mustermann
+      jwt:
+        issuer-uri: "http://example.test"
+        jwk-set-uri: "http://example.test"
+
 adapter:
   fallbearbeitung:
-    base-url: http://localhost:${wiremock.server.port}/
-    base-path: /external/traeger/(id)/vorgaenge
+    base-url: http://localhost:${wiremock.server.port}
+    path-prefix: /external
   einrichtungsverwaltung:
-    base-url: http://localhost:${wiremock.server.port}/
-    base-path: /external/traeger/(id)
-    id-path: /external/traeger/by-unternehmenskontoid/{ukid}/id
+    base-url: http://localhost:${wiremock.server.port}
+    path-prefix: /external
